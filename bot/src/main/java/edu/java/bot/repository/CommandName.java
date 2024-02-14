@@ -1,4 +1,4 @@
-package edu.java.bot.enums;
+package edu.java.bot.repository;
 
 public enum CommandName {
     START("/start"),
@@ -6,6 +6,15 @@ public enum CommandName {
     TRACK("/track"),
     UNTRACK("/untrack"),
     LIST("/list");
+
+    private final String s;
+
     CommandName(String s) {
+        this.s = s;
     }
+
+    public String getCommand() {
+        return s;
+    }
+
 }

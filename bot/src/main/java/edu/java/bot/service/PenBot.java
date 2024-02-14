@@ -1,0 +1,189 @@
+package edu.java.bot.service;
+
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.configuration.ApplicationConfig;
+import edu.java.bot.model.Bot;
+import edu.java.bot.model.BotUser;
+import edu.java.bot.model.Chat;
+import edu.java.bot.repository.BotProcessor;
+import edu.java.bot.repository.CommandHandler;
+import edu.java.bot.repository.CommandName;
+import edu.java.bot.utils.PropertiesHandler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+@Component
+@EnableConfigurationProperties(ApplicationConfig.class)
+public class PenBot implements BotProcessor, CommandHandler {
+
+    private Bot bot;
+
+    private final UserMessageHandlerImpl messageHandler = new UserMessageHandlerImpl();
+
+    @Autowired
+    ApplicationConfig applicationConfig;
+
+    PenBot() {
+        String token = new PropertiesHandler().getToken();
+        bot = new Bot(new TelegramBot(token), new HashMap<>(), new HashMap<>());
+        start();
+    }
+
+    @Override
+    public void processUserRequest(Update upd) {
+        String c = messageHandler.convert(upd).text();
+        CommandName command = messageHandler.commands.get(c);
+        bot.bot().execute(apply(command).apply(upd));
+    }
+
+    @Override
+    public int process(List<Update> updates) {
+        updates.forEach(this::processUserRequest);
+        return UpdatesListener.CONFIRMED_UPDATES_ALL;
+    }
+
+    @Override
+    public void start() {
+        bot.bot().setUpdatesListener(this);
+    }
+
+    @Override
+    public void close() {
+        bot.bot().removeGetUpdatesListener();
+    }
+
+    @SuppressWarnings("ReturnCount")
+    @Override
+    public Function<Update, SendMessage> apply(CommandName command) {
+        switch (command) {
+            case START -> {
+                return update -> registerUser(messageHandler.extractUser(update));
+            }
+            case HELP -> {
+                return update -> messageHandler.listCommands(messageHandler.convert(update));
+            }
+            case LIST -> {
+                return update -> {
+                    BotUser botUser = messageHandler.extractUser(update);
+                    if (isBotHaving(botUser)) {
+                        return listLinks(botUser);
+                    } else {
+                        return askToRegister(botUser.chatId());
+                    }
+                };
+            }
+            case TRACK, UNTRACK -> {
+                return update -> {
+                    BotUser botUser = messageHandler.extractUser(update);
+                    if (isBotHaving(botUser)) {
+                        return waitForALink(botUser, command);
+                    } else {
+                        return askToRegister(botUser.chatId());
+                    }
+                };
+            }
+            case null, default -> {
+                return update -> {
+                    BotUser botUser = messageHandler.extractUser(update);
+                    String text = messageHandler.convert(update).text();
+                    if (isBotHaving(botUser) && bot.isWaiting().get(botUser) != null) {
+                        return convertToLink(botUser, text, bot.isWaiting().get(botUser));
+                    } else {
+                        return askToRegister(botUser.chatId());
+                    }
+                };
+            }
+        }
+    }
+
+    private SendMessage registerUser(BotUser botUser) {
+        if (bot.chats().containsKey(botUser)) {
+            return new SendMessage(botUser.chatId(), applicationConfig.alreadyRegistered());
+        } else {
+            Chat chat = new Chat(
+                botUser.chatId(),
+                botUser.id(),
+                botUser.name(),
+                new ArrayList<>()
+            );
+            bot.chats().put(botUser, chat);
+            bot.isWaiting().put(botUser, null);
+            return new SendMessage(
+                botUser.chatId(),
+                applicationConfig.registered()
+            );
+        }
+    }
+
+    private SendMessage waitForALink(BotUser botUser, CommandName command) {
+        bot.isWaiting().replace(botUser, command);
+        return new SendMessage(
+            botUser.chatId(),
+            applicationConfig.sendLink()
+        );
+    }
+
+    private SendMessage listLinks(BotUser botUser) {
+        bot.isWaiting().replace(botUser, null);
+        return new SendMessage(
+            botUser.chatId(),
+            applicationConfig.linksHeader() + Arrays.deepToString(bot.chats().get(botUser).links().toArray())
+        );
+    }
+
+    private SendMessage convertToLink(BotUser botUser, String text, CommandName command) {
+        bot.isWaiting().replace(botUser, command);
+        Pattern pattern = Pattern.compile(applicationConfig.pattern());
+        Matcher ulrMatcher = pattern.matcher(text);
+        if (ulrMatcher.find() && command.equals(CommandName.TRACK)) {
+            return processTrack(botUser, text);
+        } else if (ulrMatcher.find() && command.equals(CommandName.UNTRACK)) {
+            return processUnTrack(botUser, text);
+        }
+        return new SendMessage(
+            botUser.chatId(),
+            applicationConfig.notUnderstand()
+        );
+    }
+
+    private SendMessage processTrack(BotUser botUser, String url) {
+        bot.isWaiting().replace(botUser, null);
+        bot.chats().get(botUser).links().add(url);
+        return new SendMessage(
+            botUser.chatId(),
+            applicationConfig.done()
+        );
+    }
+
+    private SendMessage processUnTrack(BotUser botUser, String url) {
+        bot.isWaiting().replace(botUser, null);
+        bot.chats().get(botUser).links().remove(url);
+        return new SendMessage(
+            botUser.chatId(),
+            applicationConfig.done()
+        );
+    }
+
+    private boolean isBotHaving(BotUser botUser) {
+        return bot.chats().containsKey(botUser);
+    }
+
+    private SendMessage askToRegister(long chatId) {
+        return new SendMessage(
+            chatId,
+            applicationConfig.register()
+        );
+    }
+
+}

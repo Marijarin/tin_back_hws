@@ -1,9 +1,6 @@
 package edu.java.bot.configuration;
 
-import com.pengrad.telegrambot.TelegramBot;
 import jakarta.validation.constraints.NotEmpty;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -11,7 +8,23 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationConfig(
     @NotEmpty
-    String telegramToken
+    String telegramToken,
+    @NotEmpty
+    String register,
+    @NotEmpty
+    String registered,
+    @NotEmpty
+    String alreadyRegistered,
+    @NotEmpty
+    String notUnderstand,
+    @NotEmpty
+    String sendLink,
+    @NotEmpty
+    String linksHeader,
+    @NotEmpty
+    String done,
+    @NotEmpty
+    String pattern
 ) {
 
 }
