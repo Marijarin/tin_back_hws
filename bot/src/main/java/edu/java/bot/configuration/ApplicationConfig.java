@@ -22,9 +22,13 @@ public record ApplicationConfig(
     @NotEmpty
     String linksHeader,
     @NotEmpty
+    String emptyList,
+    @NotEmpty
     String done,
     @NotEmpty
-    String pattern
+    String pattern,
+     @NotEmpty
+    String notTracked
 ) {
 
 }

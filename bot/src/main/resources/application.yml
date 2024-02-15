@@ -1,12 +1,14 @@
 app:
-  telegram-token: "${TELEGRAM_TOKEN}"
+  telegram-token: ${TELEGRAM_TOKEN}
   register: "Please register using /start command"
-  registered: "Registered, hello, dear user"
+  registered: "Registered, hello, dear "
   alreadyRegistered: "You have already been registered"
   notUnderstand: "I can not understand you, use /help command to proceed"
   sendLink: "Now send a link in next message"
   linksHeader: "Here you are: "
-  done: "Done"
+  emptyList: "You have no links to track. Print /track to add a link"
+  done: "Done: "
+  notTracked: "This link is not tracked: "
   pattern: "^(https?://)?([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$"
 
 spring:

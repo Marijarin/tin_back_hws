@@ -3,6 +3,7 @@ package edu.java.bot.service;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.model.BotUser;
+import edu.java.bot.model.CustomCommand;
 import edu.java.bot.model.UserMessage;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.repository.UserMessageHandler;
@@ -11,7 +12,7 @@ import java.util.Map;
 
 public class UserMessageHandlerImpl implements UserMessageHandler {
 
-    Map<String, CommandName> commands = new HashMap<>();
+    Map<String, CustomCommand> commands = new HashMap<>();
 
     UserMessageHandlerImpl() {
         addCommands();
@@ -48,9 +49,9 @@ public class UserMessageHandlerImpl implements UserMessageHandler {
     }
 
     private void addCommands() {
-        CommandName[] cNames = CommandName.values();
-        for (CommandName c : cNames) {
-            commands.put(c.getCommand(), c);
+        CustomCommand[] cNames = CommandName.HELP.getCommandsWithDescriptions();
+        for (CustomCommand c : cNames) {
+            commands.put(c.commandName().getCommand(), c);
         }
     }
 
@@ -59,6 +60,8 @@ public class UserMessageHandlerImpl implements UserMessageHandler {
         for (String c : commands.keySet()) {
             sb.append("\n");
             sb.append(c);
+            sb.append(" - ");
+            sb.append(commands.get(c).description());
         }
         return sb.toString();
     }

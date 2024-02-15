@@ -8,6 +8,7 @@ import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.BotUser;
 import edu.java.bot.model.Chat;
+import edu.java.bot.model.UserMessage;
 import edu.java.bot.repository.BotProcessor;
 import edu.java.bot.repository.CommandHandler;
 import edu.java.bot.repository.CommandName;
@@ -27,7 +28,7 @@ import org.springframework.stereotype.Component;
 @EnableConfigurationProperties(ApplicationConfig.class)
 public class PenBot implements BotProcessor, CommandHandler {
 
-    private Bot bot;
+    private final Bot bot;
 
     private final UserMessageHandlerImpl messageHandler = new UserMessageHandlerImpl();
 
@@ -42,9 +43,14 @@ public class PenBot implements BotProcessor, CommandHandler {
 
     @Override
     public void processUserRequest(Update upd) {
-        String c = messageHandler.convert(upd).text();
-        CommandName command = messageHandler.commands.get(c);
-        bot.bot().execute(apply(command).apply(upd));
+        UserMessage userMessage = messageHandler.convert(upd);
+        if (messageHandler.isCommand(userMessage)) {
+            String c = userMessage.text();
+            CommandName command = messageHandler.commands.get(c).commandName();
+            bot.bot().execute(apply(command).apply(upd));
+        } else {
+            bot.bot().execute(apply(null).apply(upd));
+        }
     }
 
     @Override
@@ -100,7 +106,7 @@ public class PenBot implements BotProcessor, CommandHandler {
                     if (isBotHaving(botUser) && bot.isWaiting().get(botUser) != null) {
                         return convertToLink(botUser, text, bot.isWaiting().get(botUser));
                     } else {
-                        return askToRegister(botUser.chatId());
+                        return invalidUserMessage(botUser.chatId());
                     }
                 };
             }
@@ -121,7 +127,7 @@ public class PenBot implements BotProcessor, CommandHandler {
             bot.isWaiting().put(botUser, null);
             return new SendMessage(
                 botUser.chatId(),
-                applicationConfig.registered()
+                applicationConfig.registered() + botUser.name()
             );
         }
     }
@@ -136,25 +142,29 @@ public class PenBot implements BotProcessor, CommandHandler {
 
     private SendMessage listLinks(BotUser botUser) {
         bot.isWaiting().replace(botUser, null);
+        var list = bot.chats().get(botUser).links();
+        if (list.isEmpty()) {
+            return new SendMessage(botUser.chatId(), applicationConfig.emptyList());
+        }
         return new SendMessage(
             botUser.chatId(),
-            applicationConfig.linksHeader() + Arrays.deepToString(bot.chats().get(botUser).links().toArray())
+            applicationConfig.linksHeader() + Arrays.deepToString(list.toArray())
         );
     }
 
     private SendMessage convertToLink(BotUser botUser, String text, CommandName command) {
         bot.isWaiting().replace(botUser, command);
         Pattern pattern = Pattern.compile(applicationConfig.pattern());
-        Matcher ulrMatcher = pattern.matcher(text);
-        if (ulrMatcher.find() && command.equals(CommandName.TRACK)) {
-            return processTrack(botUser, text);
-        } else if (ulrMatcher.find() && command.equals(CommandName.UNTRACK)) {
-            return processUnTrack(botUser, text);
+        Matcher ulrMatcher = pattern.matcher(text.trim());
+        if (ulrMatcher.find()) {
+            return switch (command) {
+                case TRACK -> processTrack(botUser, text);
+                case UNTRACK -> processUnTrack(botUser, text);
+                case null, default -> invalidUserMessage(botUser.chatId());
+            };
+        } else {
+            return invalidUserMessage(botUser.chatId());
         }
-        return new SendMessage(
-            botUser.chatId(),
-            applicationConfig.notUnderstand()
-        );
     }
 
     private SendMessage processTrack(BotUser botUser, String url) {
@@ -162,16 +172,22 @@ public class PenBot implements BotProcessor, CommandHandler {
         bot.chats().get(botUser).links().add(url);
         return new SendMessage(
             botUser.chatId(),
-            applicationConfig.done()
+            applicationConfig.done() + url
         );
     }
 
     private SendMessage processUnTrack(BotUser botUser, String url) {
         bot.isWaiting().replace(botUser, null);
-        bot.chats().get(botUser).links().remove(url);
+        var list = bot.chats().get(botUser).links();
+        if (list.remove(url)) {
+            return new SendMessage(
+                botUser.chatId(),
+                applicationConfig.done() + Arrays.deepToString(list.toArray())
+            );
+        }
         return new SendMessage(
             botUser.chatId(),
-            applicationConfig.done()
+            applicationConfig.notTracked() + url
         );
     }
 
@@ -183,6 +199,13 @@ public class PenBot implements BotProcessor, CommandHandler {
         return new SendMessage(
             chatId,
             applicationConfig.register()
+        );
+    }
+
+    private SendMessage invalidUserMessage(long chatId) {
+        return new SendMessage(
+            chatId,
+            applicationConfig.notUnderstand()
         );
     }
 
