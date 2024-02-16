@@ -27,6 +27,42 @@ public class PenBotTest {
     BotUser botUser = new BotUser(1, 123, "Test User", false);
     HashMap<BotUser, CommandName> isWaiting = new HashMap<>();
 
+    @ParameterizedTest
+    @EnumSource(CommandName.class)
+    void appliesCommands(CommandName command) {
+        Chat chat = new Chat(
+            botUser.chatId(),
+            botUser.id(),
+            botUser.name(),
+            List.of()
+        );
+        isWaiting.put(botUser, null);
+        Bot bot = new Bot(
+            telegramBot,
+            Map.of(botUser, chat),
+            isWaiting
+        );
+        ApplicationConfig applicationConfig = new ApplicationConfig(
+            "12345",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1"
+
+        );
+        try (PenBot penBot = new PenBot(bot, applicationConfig)) {
+            var result = penBot.apply(command);
+
+            assertThat(result).hasNoNullFieldsOrProperties();
+        }
+    }
+
     @Test
     void notifiesWhenAreLinks() {
         Chat chat = new Chat(
