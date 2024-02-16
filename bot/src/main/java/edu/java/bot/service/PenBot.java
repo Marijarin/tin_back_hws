@@ -12,7 +12,7 @@ import edu.java.bot.model.UserMessage;
 import edu.java.bot.repository.BotProcessor;
 import edu.java.bot.repository.CommandHandler;
 import edu.java.bot.repository.CommandName;
-import edu.java.bot.utils.PropertiesHandler;
+import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,16 +29,19 @@ import org.springframework.stereotype.Component;
 public class PenBot implements BotProcessor, CommandHandler {
 
     private final Bot bot;
-
+    private final ApplicationConfig applicationConfig;
     private final UserMessageHandlerImpl messageHandler = new UserMessageHandlerImpl();
 
     @Autowired
-    ApplicationConfig applicationConfig;
-
-    PenBot() {
-        String token = new PropertiesHandler().getToken();
+    private PenBot(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
+        String token = applicationConfig.telegramToken();
         bot = new Bot(new TelegramBot(token), new HashMap<>(), new HashMap<>());
-        start();
+    }
+
+    public PenBot(Bot bot, ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
+        this.bot = bot;
     }
 
     @Override
@@ -60,6 +63,7 @@ public class PenBot implements BotProcessor, CommandHandler {
     }
 
     @Override
+    @PostConstruct
     public void start() {
         bot.bot().setUpdatesListener(this);
     }
@@ -113,7 +117,7 @@ public class PenBot implements BotProcessor, CommandHandler {
         }
     }
 
-    private SendMessage registerUser(BotUser botUser) {
+    public SendMessage registerUser(BotUser botUser) {
         if (bot.chats().containsKey(botUser)) {
             return new SendMessage(botUser.chatId(), applicationConfig.alreadyRegistered());
         } else {
@@ -132,7 +136,7 @@ public class PenBot implements BotProcessor, CommandHandler {
         }
     }
 
-    private SendMessage waitForALink(BotUser botUser, CommandName command) {
+    public SendMessage waitForALink(BotUser botUser, CommandName command) {
         bot.isWaiting().replace(botUser, command);
         return new SendMessage(
             botUser.chatId(),
@@ -140,7 +144,7 @@ public class PenBot implements BotProcessor, CommandHandler {
         );
     }
 
-    private SendMessage listLinks(BotUser botUser) {
+    public SendMessage listLinks(BotUser botUser) {
         bot.isWaiting().replace(botUser, null);
         var list = bot.chats().get(botUser).links();
         if (list.isEmpty()) {
@@ -152,8 +156,8 @@ public class PenBot implements BotProcessor, CommandHandler {
         );
     }
 
-    private SendMessage convertToLink(BotUser botUser, String text, CommandName command) {
-        bot.isWaiting().replace(botUser, command);
+    public SendMessage convertToLink(BotUser botUser, String text, CommandName command) {
+        bot.isWaiting().replace(botUser, null);
         Pattern pattern = Pattern.compile(applicationConfig.pattern());
         Matcher ulrMatcher = pattern.matcher(text.trim());
         if (ulrMatcher.find()) {
@@ -167,7 +171,7 @@ public class PenBot implements BotProcessor, CommandHandler {
         }
     }
 
-    private SendMessage processTrack(BotUser botUser, String url) {
+    public SendMessage processTrack(BotUser botUser, String url) {
         bot.isWaiting().replace(botUser, null);
         bot.chats().get(botUser).links().add(url);
         return new SendMessage(
@@ -176,13 +180,13 @@ public class PenBot implements BotProcessor, CommandHandler {
         );
     }
 
-    private SendMessage processUnTrack(BotUser botUser, String url) {
+    public SendMessage processUnTrack(BotUser botUser, String url) {
         bot.isWaiting().replace(botUser, null);
         var list = bot.chats().get(botUser).links();
         if (list.remove(url)) {
             return new SendMessage(
                 botUser.chatId(),
-                applicationConfig.done() + Arrays.deepToString(list.toArray())
+                applicationConfig.done() + Arrays.deepToString(bot.chats().get(botUser).links().toArray())
             );
         }
         return new SendMessage(
@@ -191,18 +195,18 @@ public class PenBot implements BotProcessor, CommandHandler {
         );
     }
 
-    private boolean isBotHaving(BotUser botUser) {
+    public boolean isBotHaving(BotUser botUser) {
         return bot.chats().containsKey(botUser);
     }
 
-    private SendMessage askToRegister(long chatId) {
+    public SendMessage askToRegister(long chatId) {
         return new SendMessage(
             chatId,
             applicationConfig.register()
         );
     }
 
-    private SendMessage invalidUserMessage(long chatId) {
+    public SendMessage invalidUserMessage(long chatId) {
         return new SendMessage(
             chatId,
             applicationConfig.notUnderstand()

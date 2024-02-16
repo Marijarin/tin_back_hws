@@ -14,7 +14,7 @@ public class UserMessageHandlerImpl implements UserMessageHandler {
 
     Map<String, CustomCommand> commands = new HashMap<>();
 
-    UserMessageHandlerImpl() {
+    public UserMessageHandlerImpl() {
         addCommands();
     }
 
@@ -49,7 +49,7 @@ public class UserMessageHandlerImpl implements UserMessageHandler {
     }
 
     private void addCommands() {
-        CustomCommand[] cNames = CommandName.HELP.getCommandsWithDescriptions();
+        CustomCommand[] cNames = CommandName.getCommandsWithDescriptions();
         for (CustomCommand c : cNames) {
             commands.put(c.commandName().getCommand(), c);
         }

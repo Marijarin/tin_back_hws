@@ -19,7 +19,7 @@ public enum CommandName {
         return s;
     }
 
-    private CustomCommand[] addDescriptions() {
+    private static CustomCommand[] addDescriptions() {
         CustomCommand[] descriptedCommands = new CustomCommand[CommandName.values().length];
         for (CommandName c : CommandName.values()) {
             descriptedCommands[c.ordinal()] = switch (c) {
@@ -39,7 +39,7 @@ public enum CommandName {
         return descriptedCommands;
     }
 
-    public CustomCommand[] getCommandsWithDescriptions() {
+    public static CustomCommand[] getCommandsWithDescriptions() {
         return addDescriptions();
     }
 
