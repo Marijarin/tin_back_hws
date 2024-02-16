@@ -1,13 +1,18 @@
 package hw1;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.BotUser;
 import edu.java.bot.model.Chat;
 import edu.java.bot.repository.CommandName;
+import edu.java.bot.repository.UserMessageHandler;
 import edu.java.bot.service.PenBot;
+import edu.java.bot.service.UserMessageHandlerImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,14 +23,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public class PenBotTest {
     @Mock TelegramBot telegramBot = new TelegramBot("12345");
     BotUser botUser = new BotUser(1, 123, "Test User", false);
     HashMap<BotUser, CommandName> isWaiting = new HashMap<>();
+
+    Update update = mock(Update.class);
+
+    Message message = mock(Message.class);
+
+    User user = new User(1L);
+
+    UserMessageHandler messageHandler = mock(UserMessageHandlerImpl.class);
+    com.pengrad.telegrambot.model.Chat chat = mock(com.pengrad.telegrambot.model.Chat.class);
 
     @ParameterizedTest
     @EnumSource(CommandName.class)
@@ -97,6 +113,54 @@ public class PenBotTest {
 
             assertThat(result.getParameters().get("text")).isEqualTo(
                 ("Here you are: " + Arrays.deepToString(bot.chats().get(botUser).links().toArray())
+                ));
+        }
+    }
+
+    @Test
+    void appliesLinkCommand() {
+        var botUser1 = new BotUser(1L, 1L, null, true);
+        Chat chat1 = new Chat(
+            botUser1.chatId(),
+            botUser1.id(),
+            botUser1.name(),
+            List.of("https://stackoverflow.com/search?q=unsupported%20link")
+        );
+        isWaiting.put(botUser1, null);
+        Bot bot = new Bot(
+            telegramBot,
+            Map.of(botUser1, chat1),
+            isWaiting
+        );
+        ApplicationConfig applicationConfig = new ApplicationConfig(
+            "12345",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "Here you are: ",
+            "1",
+            "1",
+            "1",
+            "1"
+
+        );
+
+        try (PenBot penBot = new PenBot(bot, applicationConfig)) {
+            var result1 = penBot.apply(CommandName.LIST);
+            Mockito.when(messageHandler.extractUser(update)).thenReturn(botUser);
+
+            Mockito.when(update.message()).thenReturn(message);
+            Mockito.when(message.text()).thenReturn("/start");
+            Mockito.when(message.chat()).thenReturn(chat);
+            Mockito.when(message.chat().id()).thenReturn(1L);
+            Mockito.when(message.from()).thenReturn(user);
+
+            var result2 = result1.apply(update);
+
+            assertThat(result2.getParameters().get("text")).isEqualTo(
+                ("Here you are: " + Arrays.deepToString(bot.chats().get(botUser1).links().toArray())
                 ));
         }
     }
