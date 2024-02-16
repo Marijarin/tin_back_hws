@@ -173,7 +173,9 @@ public class PenBot implements BotProcessor, CommandHandler {
 
     public SendMessage processTrack(BotUser botUser, String url) {
         bot.isWaiting().replace(botUser, null);
-        bot.chats().get(botUser).links().add(url);
+        if (!bot.chats().get(botUser).links().contains(url)) {
+            bot.chats().get(botUser).links().add(url);
+        }
         return new SendMessage(
             botUser.chatId(),
             applicationConfig.done() + url

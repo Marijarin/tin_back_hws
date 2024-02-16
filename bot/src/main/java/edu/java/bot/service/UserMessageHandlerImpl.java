@@ -20,11 +20,21 @@ public class UserMessageHandlerImpl implements UserMessageHandler {
 
     @Override
     public BotUser extractUser(Update update) {
+        var user = update.message().from();
+        var chat = update.message().chat();
+        if (user.isBot() == null) {
+            return new BotUser(
+                user.id(),
+                chat.id(),
+                user.username(),
+                true
+            );
+        }
         return new BotUser(
-            update.message().from().id(),
-            update.message().chat().id(),
-            update.message().from().username(),
-            update.message().from().isBot()
+            user.id(),
+            chat.id(),
+            user.username(),
+            user.isBot()
         );
     }
 
@@ -55,7 +65,7 @@ public class UserMessageHandlerImpl implements UserMessageHandler {
         }
     }
 
-    String prettyPrint() {
+    private String prettyPrint() {
         StringBuilder sb = new StringBuilder();
         for (String c : commands.keySet()) {
             sb.append("\n");
