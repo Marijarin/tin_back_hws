@@ -6,13 +6,12 @@ import edu.java.bot.model.BotUser;
 import edu.java.bot.model.CustomCommand;
 import edu.java.bot.model.UserMessage;
 import edu.java.bot.repository.CommandName;
-import edu.java.bot.repository.UserMessageHandler;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserMessageHandlerImpl implements UserMessageHandler {
 
-    Map<String, CustomCommand> commands = new HashMap<>();
+    private final Map<String, CustomCommand> commands = new HashMap<>();
 
     public UserMessageHandlerImpl() {
         addCommands();
@@ -56,6 +55,10 @@ public class UserMessageHandlerImpl implements UserMessageHandler {
     @Override
     public SendMessage listCommands(UserMessage userMessage) {
         return new SendMessage(userMessage.chatId(), prettyPrint());
+    }
+
+    public Map<String, CustomCommand> getCommands(){
+        return commands;
     }
 
     private void addCommands() {

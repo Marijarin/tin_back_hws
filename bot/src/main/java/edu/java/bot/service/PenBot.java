@@ -9,8 +9,6 @@ import edu.java.bot.model.Bot;
 import edu.java.bot.model.BotUser;
 import edu.java.bot.model.Chat;
 import edu.java.bot.model.UserMessage;
-import edu.java.bot.repository.BotProcessor;
-import edu.java.bot.repository.CommandHandler;
 import edu.java.bot.repository.CommandName;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -49,7 +47,7 @@ public class PenBot implements BotProcessor, CommandHandler {
         UserMessage userMessage = messageHandler.convert(upd);
         if (messageHandler.isCommand(userMessage)) {
             String c = userMessage.text();
-            CommandName command = messageHandler.commands.get(c).commandName();
+            CommandName command = messageHandler.getCommands().get(c).commandName();
             bot.bot().execute(apply(command).apply(upd));
         } else {
             bot.bot().execute(apply(null).apply(upd));

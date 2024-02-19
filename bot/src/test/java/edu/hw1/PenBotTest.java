@@ -1,4 +1,4 @@
-package hw1;
+package edu.hw1;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
@@ -10,7 +10,7 @@ import edu.java.bot.model.Bot;
 import edu.java.bot.model.BotUser;
 import edu.java.bot.model.Chat;
 import edu.java.bot.repository.CommandName;
-import edu.java.bot.repository.UserMessageHandler;
+import edu.java.bot.service.UserMessageHandler;
 import edu.java.bot.service.PenBot;
 import edu.java.bot.service.UserMessageHandlerImpl;
 import java.util.ArrayList;
@@ -292,7 +292,7 @@ public class PenBotTest {
             "12345",
             "1",
             "1",
-            "12345",
+            "1234567",
             "1",
             "1",
             "1",
@@ -307,7 +307,7 @@ public class PenBotTest {
             SendMessage result = penBot.registerUser(botUser);
 
             assertThat(result.getParameters().get("text")).isEqualTo(
-                ("12345")
+                ("1234567")
             );
         }
     }
@@ -446,7 +446,7 @@ public class PenBotTest {
             "1",
             "1",
             "1",
-            "12345",
+            "1234567",
             "1",
             "1",
             "1",
@@ -460,7 +460,7 @@ public class PenBotTest {
             SendMessage result =
                 penBot.convertToLink(botUser, "stackoverflow.com/search?q=unsupported%20link", CommandName.TRACK);
 
-            assertThat(result.getParameters().get("text")).isEqualTo(("12345"));
+            assertThat(result.getParameters().get("text")).isEqualTo(("1234567"));
         }
     }
 
