@@ -6,9 +6,9 @@ import edu.java.bot.model.BotUser;
 import edu.java.bot.model.CustomCommand;
 import edu.java.bot.model.UserMessage;
 import edu.java.bot.repository.CommandName;
+import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
-
 public class UserMessageHandlerImpl implements UserMessageHandler {
 
     private final Map<String, CustomCommand> commands = new HashMap<>();
@@ -71,6 +71,7 @@ public class UserMessageHandlerImpl implements UserMessageHandler {
     private String prettyPrint() {
         StringBuilder sb = new StringBuilder();
         for (String c : commands.keySet()) {
+            if (c.isEmpty() || c.isBlank()) continue;
             sb.append("\n");
             sb.append(c);
             sb.append(" - ");

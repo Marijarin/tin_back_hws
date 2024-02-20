@@ -7,7 +7,9 @@ public enum CommandName {
     HELP("/help"),
     TRACK("/track"),
     UNTRACK("/untrack"),
-    LIST("/list");
+    LIST("/list"),
+
+    NOCOMMAND("");
 
     private final String s;
 
@@ -34,6 +36,7 @@ public enum CommandName {
                     "Request to wait for a link to untrack, is followed by a message containing a link"
                 );
                 case LIST -> new CustomCommand(LIST, "Receive a list of tracked links");
+                case NOCOMMAND -> new CustomCommand(NOCOMMAND, "");
             };
         }
         return descriptedCommands;
