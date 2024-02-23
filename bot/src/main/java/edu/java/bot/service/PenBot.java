@@ -59,7 +59,6 @@ public class PenBot implements BotProcessor {
     }
 
     @Override
-    @PostConstruct
     public void start() {
         bot.bot().setUpdatesListener(this);
     }
