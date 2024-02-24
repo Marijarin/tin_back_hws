@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @EnableConfigurationProperties(ApplicationConfig.class)
 public class PenBot implements BotProcessor {
 
-    final Bot bot;
+    private final Bot bot;
     private final ApplicationConfig applicationConfig;
     private final UserMessageHandlerImpl messageHandler = new UserMessageHandlerImpl();
 

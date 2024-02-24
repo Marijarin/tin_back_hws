@@ -1,4 +1,4 @@
-package edu.hw1;
+package edu.java.hw1;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
