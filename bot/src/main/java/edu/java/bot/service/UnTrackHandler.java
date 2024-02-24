@@ -8,12 +8,20 @@ import edu.java.bot.model.BotUser;
 import edu.java.bot.repository.CommandName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.util.function.Function;
 
 @Component("UNTRACK")
 public class UnTrackHandler implements CommandHandler {
+    private final ApplicationConfig applicationConfig;
+
     @Autowired
-    private ApplicationConfig applicationConfig;
+    private UnTrackHandler(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
+    }
+
+    public UnTrackHandler(ApplicationConfig applicationConfig, boolean isTest) {
+        this.applicationConfig = applicationConfig;
+    }
+
     @Override
     public SendMessage handle(Bot bot, UserMessageHandler messageHandler, Update update) {
         BotUser botUser = messageHandler.extractUser(update);
@@ -23,12 +31,14 @@ public class UnTrackHandler implements CommandHandler {
             return askToRegister(botUser.chatId());
         }
     }
+
     public SendMessage askToRegister(long chatId) {
         return new SendMessage(
             chatId,
             applicationConfig.register()
         );
     }
+
     public SendMessage waitForALink(BotUser botUser, Bot bot) {
         bot.isWaiting().replace(botUser, getCommand());
         return new SendMessage(
@@ -36,6 +46,7 @@ public class UnTrackHandler implements CommandHandler {
             applicationConfig.sendLink()
         );
     }
+
     @Override
     public CommandName getCommand() {
         return CommandName.UNTRACK;

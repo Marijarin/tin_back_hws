@@ -7,14 +7,22 @@ import edu.java.bot.model.Bot;
 import edu.java.bot.model.BotUser;
 import edu.java.bot.repository.CommandName;
 import java.util.Arrays;
-import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("LIST")
 public class ListHandler implements CommandHandler {
+    private final ApplicationConfig applicationConfig;
+
     @Autowired
-    ApplicationConfig applicationConfig;
+    private ListHandler(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
+    }
+
+    public ListHandler(ApplicationConfig applicationConfig, boolean isTest) {
+        this.applicationConfig = applicationConfig;
+    }
+
     @Override
     public SendMessage handle(Bot bot, UserMessageHandler messageHandler, Update update) {
         BotUser botUser = messageHandler.extractUser(update);
@@ -24,12 +32,13 @@ public class ListHandler implements CommandHandler {
             return askToRegister(botUser.chatId());
         }
     }
+
     @Override
     public CommandName getCommand() {
         return CommandName.LIST;
     }
 
-    public SendMessage listLinks(BotUser botUser, Bot bot) {
+    private SendMessage listLinks(BotUser botUser, Bot bot) {
         bot.isWaiting().replace(botUser, null);
         var list = bot.chats().get(botUser).links();
         if (list.isEmpty()) {
@@ -40,7 +49,8 @@ public class ListHandler implements CommandHandler {
             applicationConfig.linksHeader() + Arrays.deepToString(list.toArray())
         );
     }
-    public SendMessage askToRegister(long chatId) {
+
+    private SendMessage askToRegister(long chatId) {
         return new SendMessage(
             chatId,
             applicationConfig.register()

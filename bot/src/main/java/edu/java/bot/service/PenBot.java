@@ -7,7 +7,6 @@ import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.model.Bot;
 import edu.java.bot.model.UserMessage;
 import edu.java.bot.repository.CommandName;
-import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +46,7 @@ public class PenBot implements BotProcessor {
         if (messageHandler.isCommand(userMessage)) {
             command = messageHandler.getCommands().get(c).commandName();
         } else {
-           command = CommandName.NOCOMMAND;
+            command = CommandName.NOCOMMAND;
         }
         bot.bot().execute(commandHandlers.get(command.toString()).handle(bot, messageHandler, upd));
     }

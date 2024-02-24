@@ -11,8 +11,16 @@ import org.springframework.stereotype.Component;
 
 @Component("TRACK")
 public class TrackHandler implements CommandHandler {
+    private final ApplicationConfig applicationConfig;
+
     @Autowired
-    private ApplicationConfig applicationConfig;
+    private TrackHandler(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
+    }
+
+    public TrackHandler(ApplicationConfig applicationConfig, boolean isTest) {
+        this.applicationConfig = applicationConfig;
+    }
 
     @Override
     public SendMessage handle(Bot bot, UserMessageHandler messageHandler, Update update) {
@@ -23,6 +31,7 @@ public class TrackHandler implements CommandHandler {
             return askToRegister(botUser.chatId());
         }
     }
+
     @Override
     public CommandName getCommand() {
         return CommandName.TRACK;
@@ -35,6 +44,7 @@ public class TrackHandler implements CommandHandler {
             applicationConfig.sendLink()
         );
     }
+
     public SendMessage askToRegister(long chatId) {
         return new SendMessage(
             chatId,

@@ -13,8 +13,17 @@ import org.springframework.stereotype.Component;
 
 @Component("START")
 public class StartHandler implements CommandHandler {
+    private final ApplicationConfig applicationConfig;
+
     @Autowired
-    ApplicationConfig applicationConfig;
+    private StartHandler(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
+    }
+
+    public StartHandler(ApplicationConfig applicationConfig, boolean isTest) {
+        this.applicationConfig = applicationConfig;
+    }
+
     @Override
     public SendMessage handle(Bot bot, UserMessageHandler messageHandler, Update update) {
         BotUser botUser = messageHandler.extractUser(update);
