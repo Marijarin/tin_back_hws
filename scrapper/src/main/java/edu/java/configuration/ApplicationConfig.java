@@ -1,5 +1,6 @@
 package edu.java.configuration;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,7 +12,11 @@ import org.springframework.validation.annotation.Validated;
 public record ApplicationConfig(
     @NotNull
     @Bean
-    Scheduler scheduler
+    Scheduler scheduler,
+    @NotEmpty
+    String baseUrlGitHub,
+    @NotEmpty
+    String baseUrlStackOverflow
 ) {
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }
