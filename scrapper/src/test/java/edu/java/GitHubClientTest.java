@@ -15,12 +15,13 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
+@WireMockTest
 public class GitHubClientTest {
     @RegisterExtension
     static WireMockExtension wm = WireMockExtension.newInstance()
         .options(wireMockConfig().port(8080))
         .build();
-    WebClient webClient = WebClient.builder()
+    WebClient webClient1 = WebClient.builder()
         .baseUrl("http://localhost:8080")
         .exchangeStrategies(ExchangeStrategies
             .builder()
@@ -31,7 +32,7 @@ public class GitHubClientTest {
         .build();
     HttpServiceProxyFactory httpServiceProxyFactory =
         HttpServiceProxyFactory
-            .builderFor(WebClientAdapter.create(webClient))
+            .builderFor(WebClientAdapter.create(webClient1))
             .build();
 
     @Test

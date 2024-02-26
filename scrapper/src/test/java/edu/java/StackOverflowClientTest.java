@@ -21,7 +21,7 @@ public class StackOverflowClientTest {
     static WireMockExtension wm = WireMockExtension.newInstance()
         .options(wireMockConfig().port(8080))
         .build();
-    WebClient webClient = WebClient.builder()
+    WebClient webClient2 = WebClient.builder()
         .baseUrl("http://localhost:8080")
         .exchangeStrategies(ExchangeStrategies
             .builder()
@@ -32,7 +32,7 @@ public class StackOverflowClientTest {
         .build();
     HttpServiceProxyFactory httpServiceProxyFactory =
         HttpServiceProxyFactory
-            .builderFor(WebClientAdapter.create(webClient))
+            .builderFor(WebClientAdapter.create(webClient2))
             .build();
 
     @Test
