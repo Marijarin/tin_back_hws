@@ -7,5 +7,5 @@ import reactor.core.publisher.Mono;
 
 public interface StackOverflowClient {
     @GetExchange("/questions/{ids}/timeline?site=stackoverflow")
-    Mono<ResponseStackOverflowDTO> getResponse(@PathVariable String ids);
+    ResponseStackOverflowDTO getResponse(@PathVariable String ids);
 }

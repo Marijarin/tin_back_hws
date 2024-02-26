@@ -19,13 +19,11 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     public void run(String... args) throws Exception {
         var result1 = gitHubClient
             .getResponse("Marijarin", "tin_back_hws")
-            .toFuture().get()
             .getFirst()
             .createdAt();
         logger.info(result1);
         var result2 = stackOverflowClient
             .getResponse("75867589")
-            .toFuture().get()
             .items()
             .getFirst()
             .creationDate();

@@ -10,5 +10,5 @@ import reactor.core.publisher.Mono;
 @HttpExchange(url = "/repos/{owner}/{repo}", accept = "application/vnd.github.v3+json")
 public interface GitHubClient {
     @GetExchange("/events")
-    Mono<List<ResponseGitHubDTO>> getResponse(@PathVariable String owner, @PathVariable String repo);
+    List<ResponseGitHubDTO> getResponse(@PathVariable String owner, @PathVariable String repo);
 }
