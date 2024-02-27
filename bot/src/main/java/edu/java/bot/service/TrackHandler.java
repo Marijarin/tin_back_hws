@@ -9,7 +9,7 @@ import edu.java.bot.repository.CommandName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("TRACK")
+@Component
 public class TrackHandler implements CommandHandler {
     private final ApplicationConfig applicationConfig;
 

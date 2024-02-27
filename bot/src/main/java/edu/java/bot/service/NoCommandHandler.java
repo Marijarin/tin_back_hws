@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("NOCOMMAND")
+@Component
 public class NoCommandHandler implements CommandHandler {
     private final ApplicationConfig applicationConfig;
 

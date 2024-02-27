@@ -8,7 +8,9 @@ import edu.java.bot.model.UserMessage;
 import edu.java.bot.repository.CommandName;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserMessageHandlerImpl implements UserMessageHandler {
 
     private final Map<String, CustomCommand> commands = new HashMap<>();

@@ -1,4 +1,4 @@
-package edu.java.hw1;
+package hw1;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
@@ -16,6 +16,7 @@ import edu.java.bot.service.UserMessageHandler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import edu.java.bot.service.UserMessageHandlerImpl;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -31,9 +32,9 @@ public class PenBotTest {
     BotUser botUser = new BotUser(1, 123, "Test User", false);
     HashMap<BotUser, CommandName> isWaiting = new HashMap<>();
 
-    Update update = mock(Update.class);
+    @Mock Update update = new Update();
 
-    Message message = mock(Message.class);
+    @Mock Message message = new Message();
 
     User user = new User(1L);
     com.pengrad.telegrambot.model.Chat chat = mock(com.pengrad.telegrambot.model.Chat.class);
@@ -78,7 +79,7 @@ public class PenBotTest {
                 return command;
             }
         });
-        try (PenBot penBot = new PenBot(bot, applicationConfig, commandHandlers)) {
+        try (PenBot penBot = new PenBot(bot, applicationConfig, new UserMessageHandlerImpl(), commandHandlers)) {
             penBot.start();
             Mockito.when(update.message()).thenReturn(message);
             Mockito.when(message.text()).thenReturn(command.getCommand());

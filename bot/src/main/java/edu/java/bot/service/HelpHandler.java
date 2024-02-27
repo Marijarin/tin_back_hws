@@ -6,7 +6,7 @@ import edu.java.bot.model.Bot;
 import edu.java.bot.repository.CommandName;
 import org.springframework.stereotype.Component;
 
-@Component("HELP")
+@Component
 public class HelpHandler implements CommandHandler {
 
     @Override
@@ -18,4 +18,5 @@ public class HelpHandler implements CommandHandler {
     public CommandName getCommand() {
         return CommandName.HELP;
     }
+
 }

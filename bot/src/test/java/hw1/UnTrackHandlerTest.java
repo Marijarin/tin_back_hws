@@ -1,4 +1,4 @@
-package edu.java.hw1;
+package hw1;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
@@ -9,40 +9,41 @@ import edu.java.bot.model.Bot;
 import edu.java.bot.model.BotUser;
 import edu.java.bot.model.Chat;
 import edu.java.bot.repository.CommandName;
-import edu.java.bot.service.ListHandler;
+import edu.java.bot.service.UnTrackHandler;
 import edu.java.bot.service.UserMessageHandler;
 import edu.java.bot.service.UserMessageHandlerImpl;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class ListHandlerTest {
+@ExtendWith(MockitoExtension.class)
+public class UnTrackHandlerTest {
     @Mock TelegramBot telegramBot = new TelegramBot("12345");
     HashMap<BotUser, CommandName> isWaiting = new HashMap<>();
 
-    Update update = mock(Update.class);
+    @Mock Update update = new Update();
 
-    Message message = mock(Message.class);
+    @Mock Message message = new Message();
 
     User user = new User(1L);
 
     UserMessageHandler messageHandler = new UserMessageHandlerImpl();
     com.pengrad.telegrambot.model.Chat chat = mock(com.pengrad.telegrambot.model.Chat.class);
     BotUser botUser = new BotUser(1L, 1L, null, true);
-
     ApplicationConfig applicationConfig = new ApplicationConfig(
         "12345",
         "aa",
         "1",
         "1",
         "1",
-        "1",
+        "ttt",
         "Here you are: ",
         "You have no links being tracked. Print /track to add a link",
         "1",
@@ -52,7 +53,7 @@ public class ListHandlerTest {
     );
 
     @Test
-    void appliesListCommand() {
+    void waitsForALink() {
         Chat chat1 = new Chat(
             botUser.chatId(),
             botUser.id(),
@@ -65,70 +66,32 @@ public class ListHandlerTest {
             Map.of(botUser, chat1),
             isWaiting
         );
-
-        var handler = new ListHandler(applicationConfig, true);
+        var handler = new UnTrackHandler(applicationConfig, true);
         Mockito.when(update.message()).thenReturn(message);
-        Mockito.when(message.text()).thenReturn(CommandName.LIST.getCommand());
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
 
         var result = handler.handle(bot, messageHandler, update);
 
-        assertThat(result.getParameters().get("text")).isEqualTo(
-            ("Here you are: " + Arrays.deepToString(bot.chats().get(botUser).links().toArray())
-            ));
-    }
-
-    @Test
-    void notifiesWhenNoLinks() {
-        Chat chat1 = new Chat(
-            botUser.chatId(),
-            botUser.id(),
-            botUser.name(),
-            List.of()
-        );
-        isWaiting.put(botUser, null);
-        Bot bot = new Bot(
-            telegramBot,
-            Map.of(botUser, chat1),
-            isWaiting
-        );
-        var handler = new ListHandler(applicationConfig, true);
-
-        Mockito.when(update.message()).thenReturn(message);
-        Mockito.when(message.text()).thenReturn(CommandName.LIST.getCommand());
-        Mockito.when(message.chat()).thenReturn(chat);
-        Mockito.when(message.chat().id()).thenReturn(1L);
-        Mockito.when(message.from()).thenReturn(user);
-
-        var result = handler.handle(bot, messageHandler, update);
-
-        assertThat(result.getParameters().get("text")).isEqualTo(
-            ("You have no links being tracked. Print /track to add a link")
-        );
+        assertThat(result.getParameters().get("text")).isEqualTo("ttt");
     }
 
     @Test
     void asksToRegister() {
         Bot bot = new Bot(
             telegramBot,
-            Map.of(),
-            Map.of()
+            new HashMap<>(),
+            new HashMap<>()
         );
-        var handler = new ListHandler(applicationConfig, true);
-
+        var handler = new UnTrackHandler(applicationConfig, true);
         Mockito.when(update.message()).thenReturn(message);
-        Mockito.when(message.text()).thenReturn(CommandName.LIST.getCommand());
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
 
         var result = handler.handle(bot, messageHandler, update);
 
-        assertThat(result.getParameters().get("text")).isEqualTo(
-            ("aa")
-        );
+        assertThat(result.getParameters().get("text")).isEqualTo("aa");
     }
 }
-

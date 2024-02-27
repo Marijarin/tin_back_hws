@@ -1,4 +1,4 @@
-package edu.java.hw1;
+package hw1;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
@@ -9,24 +9,29 @@ import edu.java.bot.model.Bot;
 import edu.java.bot.model.BotUser;
 import edu.java.bot.model.Chat;
 import edu.java.bot.repository.CommandName;
-import edu.java.bot.service.StartHandler;
+import edu.java.bot.service.ListHandler;
 import edu.java.bot.service.UserMessageHandler;
 import edu.java.bot.service.UserMessageHandlerImpl;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class StartHandlerTest {
+@ExtendWith(MockitoExtension.class)
+public class ListHandlerTest {
     @Mock TelegramBot telegramBot = new TelegramBot("12345");
-
-    Update update = mock(Update.class);
     HashMap<BotUser, CommandName> isWaiting = new HashMap<>();
-    Message message = mock(Message.class);
+
+    @Mock Update update = new Update();
+
+    @Mock Message message = new Message();
 
     User user = new User(1L);
 
@@ -34,30 +39,38 @@ public class StartHandlerTest {
     com.pengrad.telegrambot.model.Chat chat = mock(com.pengrad.telegrambot.model.Chat.class);
     BotUser botUser = new BotUser(1L, 1L, null, true);
 
-    @Test
-    void registerNewUser() {
-        Bot bot = new Bot(
-            telegramBot,
-            new HashMap<>(),
-            new HashMap<>()
-        );
-        ApplicationConfig applicationConfig = new ApplicationConfig(
-            "12345",
-            "1",
-            "Registered! Hello, dear ",
-            "123123",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1"
+    ApplicationConfig applicationConfig = new ApplicationConfig(
+        "12345",
+        "aa",
+        "1",
+        "1",
+        "1",
+        "1",
+        "Here you are: ",
+        "You have no links being tracked. Print /track to add a link",
+        "1",
+        "1",
+        "1"
 
+    );
+
+    @Test
+    void appliesListCommand() {
+        Chat chat1 = new Chat(
+            botUser.chatId(),
+            botUser.id(),
+            botUser.name(),
+            List.of("https://stackoverflow.com/search?q=unsupported%20link")
         );
-        var handler = new StartHandler(applicationConfig, true);
+        isWaiting.put(botUser, null);
+        var bot = new Bot(
+            telegramBot,
+            Map.of(botUser, chat1),
+            isWaiting
+        );
+
+        var handler = new ListHandler(applicationConfig, true);
         Mockito.when(update.message()).thenReturn(message);
-        Mockito.when(message.text()).thenReturn(CommandName.START.getCommand());
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
@@ -65,12 +78,12 @@ public class StartHandlerTest {
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(
-            ("Registered! Hello, dear " + botUser.name())
-        );
+            ("Here you are: " + Arrays.deepToString(bot.chats().get(botUser).links().toArray())
+            ));
     }
 
     @Test
-    void saysIsAlreadyRegistered() {
+    void notifiesWhenNoLinks() {
         Chat chat1 = new Chat(
             botUser.chatId(),
             botUser.id(),
@@ -83,23 +96,9 @@ public class StartHandlerTest {
             Map.of(botUser, chat1),
             isWaiting
         );
-        ApplicationConfig applicationConfig = new ApplicationConfig(
-            "12345",
-            "1",
-            "1",
-            "1234567",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1"
+        var handler = new ListHandler(applicationConfig, true);
 
-        );
-        var handler = new StartHandler(applicationConfig, true);
         Mockito.when(update.message()).thenReturn(message);
-        Mockito.when(message.text()).thenReturn(CommandName.START.getCommand());
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
@@ -107,7 +106,29 @@ public class StartHandlerTest {
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(
-            ("1234567")
+            ("You have no links being tracked. Print /track to add a link")
+        );
+    }
+
+    @Test
+    void asksToRegister() {
+        Bot bot = new Bot(
+            telegramBot,
+            Map.of(),
+            Map.of()
+        );
+        var handler = new ListHandler(applicationConfig, true);
+
+        Mockito.when(update.message()).thenReturn(message);
+        Mockito.when(message.chat()).thenReturn(chat);
+        Mockito.when(message.chat().id()).thenReturn(1L);
+        Mockito.when(message.from()).thenReturn(user);
+
+        var result = handler.handle(bot, messageHandler, update);
+
+        assertThat(result.getParameters().get("text")).isEqualTo(
+            ("aa")
         );
     }
 }
+

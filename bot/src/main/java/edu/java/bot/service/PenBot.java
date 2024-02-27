@@ -13,28 +13,41 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
+import static java.util.stream.Collectors.toMap;
 
 @Service
 @EnableConfigurationProperties(ApplicationConfig.class)
 public class PenBot implements BotProcessor {
-
     private final Bot bot;
     private final ApplicationConfig applicationConfig;
-    private final UserMessageHandlerImpl messageHandler = new UserMessageHandlerImpl();
+    private final UserMessageHandlerImpl messageHandler;
 
-    private final Map<String, CommandHandler> commandHandlers;
+    private Map<String, CommandHandler> commandHandlers;
 
     @Autowired
-    private PenBot(ApplicationConfig applicationConfig, Map<String, CommandHandler> commandHandlers) {
+    private PenBot(
+        ApplicationConfig applicationConfig,
+        List<CommandHandler> commandHandlersList,
+        UserMessageHandlerImpl messageHandler
+    ) {
         this.applicationConfig = applicationConfig;
-        this.commandHandlers = commandHandlers;
+        this.commandHandlers = commandHandlersList
+            .stream()
+            .collect(toMap(CommandHandler::getBeanName, commandHandler -> commandHandler));
+        this.messageHandler = messageHandler;
         String token = applicationConfig.telegramToken();
         bot = new Bot(new TelegramBot(token), new HashMap<>(), new HashMap<>());
     }
 
-    public PenBot(Bot bot, ApplicationConfig applicationConfig, Map<String, CommandHandler> commandHandlers) {
+    public PenBot(
+        Bot bot,
+        ApplicationConfig applicationConfig,
+        UserMessageHandlerImpl messageHandler,
+        Map<String, CommandHandler> commandHandlers
+    ) {
         this.applicationConfig = applicationConfig;
         this.bot = bot;
+        this.messageHandler = messageHandler;
         this.commandHandlers = commandHandlers;
     }
 

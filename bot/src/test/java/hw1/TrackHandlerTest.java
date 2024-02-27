@@ -1,4 +1,4 @@
-package edu.java.hw1;
+package hw1;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
@@ -9,25 +9,28 @@ import edu.java.bot.model.Bot;
 import edu.java.bot.model.BotUser;
 import edu.java.bot.model.Chat;
 import edu.java.bot.repository.CommandName;
-import edu.java.bot.service.UnTrackHandler;
+import edu.java.bot.service.TrackHandler;
 import edu.java.bot.service.UserMessageHandler;
 import edu.java.bot.service.UserMessageHandlerImpl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class UnTrackHandlerTest {
+@ExtendWith(MockitoExtension.class)
+public class TrackHandlerTest {
     @Mock TelegramBot telegramBot = new TelegramBot("12345");
     HashMap<BotUser, CommandName> isWaiting = new HashMap<>();
 
-    Update update = mock(Update.class);
+    @Mock Update update = new Update();
 
-    Message message = mock(Message.class);
+    @Mock Message message = new Message();
 
     User user = new User(1L);
 
@@ -63,9 +66,8 @@ public class UnTrackHandlerTest {
             Map.of(botUser, chat1),
             isWaiting
         );
-        var handler = new UnTrackHandler(applicationConfig, true);
+        var handler = new TrackHandler(applicationConfig, true);
         Mockito.when(update.message()).thenReturn(message);
-        Mockito.when(message.text()).thenReturn(CommandName.UNTRACK.getCommand());
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
@@ -82,9 +84,8 @@ public class UnTrackHandlerTest {
             new HashMap<>(),
             new HashMap<>()
         );
-        var handler = new UnTrackHandler(applicationConfig, true);
+        var handler = new TrackHandler(applicationConfig, true);
         Mockito.when(update.message()).thenReturn(message);
-        Mockito.when(message.text()).thenReturn(CommandName.UNTRACK.getCommand());
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);

@@ -14,4 +14,8 @@ public interface CommandHandler {
     }
 
     CommandName getCommand();
+
+    default String getBeanName() {
+        return getCommand().name();
+    }
 }

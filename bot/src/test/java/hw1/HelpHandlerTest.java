@@ -1,4 +1,4 @@
-package edu.java.hw1;
+package hw1;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
@@ -15,18 +15,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 
+@ExtendWith(MockitoExtension.class)
 public class HelpHandlerTest {
     @Mock TelegramBot telegramBot = new TelegramBot("12345");
     HashMap<BotUser, CommandName> isWaiting = new HashMap<>();
 
-    Update update = mock(Update.class);
+    @Mock Update update = new Update();
 
-    Message message = mock(Message.class);
+    @Mock Message message = new Message();
 
     User user = new User(1L);
 
