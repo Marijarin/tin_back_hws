@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-@EnableScheduling
 public class LinkUpdaterScheduler {
     Logger logger = LogManager.getLogger();
 
