@@ -1,4 +1,4 @@
-package hw1;
+package edu.java.hw1;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
@@ -9,7 +9,7 @@ import edu.java.bot.model.Bot;
 import edu.java.bot.model.BotUser;
 import edu.java.bot.model.Chat;
 import edu.java.bot.repository.CommandName;
-import edu.java.bot.service.TrackHandler;
+import edu.java.bot.service.UnTrackHandler;
 import edu.java.bot.service.UserMessageHandler;
 import edu.java.bot.service.UserMessageHandlerImpl;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-public class TrackHandlerTest {
+public class UnTrackHandlerTest {
     @Mock TelegramBot telegramBot = new TelegramBot("12345");
     HashMap<BotUser, CommandName> isWaiting = new HashMap<>();
 
@@ -66,7 +66,7 @@ public class TrackHandlerTest {
             Map.of(botUser, chat1),
             isWaiting
         );
-        var handler = new TrackHandler(applicationConfig, true);
+        var handler = new UnTrackHandler(applicationConfig, true);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
@@ -84,7 +84,7 @@ public class TrackHandlerTest {
             new HashMap<>(),
             new HashMap<>()
         );
-        var handler = new TrackHandler(applicationConfig, true);
+        var handler = new UnTrackHandler(applicationConfig, true);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
