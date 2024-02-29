@@ -1,8 +1,6 @@
-package edu.java.configuration;
+package edu.java.bot.configuration;
 
-import edu.java.client.BotClient;
-import edu.java.client.GitHubClient;
-import edu.java.client.StackOverflowClient;
+import edu.java.bot.client.ScrapperClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,11 +11,11 @@ import org.springframework.web.reactive.function.client.support.WebClientAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 @Configuration
-public class ClientConfiguration {
+public class ClientConfig {
     private final ApplicationConfig applicationConfig;
 
     @Autowired
-    public ClientConfiguration(ApplicationConfig applicationConfig) {
+    public ClientConfig(ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
     }
 
@@ -37,31 +35,12 @@ public class ClientConfiguration {
     }
 
     @Bean
-    StackOverflowClient stackOverflowClient() {
+    ScrapperClient stackOverflowClient() {
         HttpServiceProxyFactory httpServiceProxyFactory =
             HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlStackOverflow())))
+                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlScrapper())))
                 .build();
-        return httpServiceProxyFactory.createClient(StackOverflowClient.class);
-    }
-
-    @Bean
-    GitHubClient gitHubClient() {
-        HttpServiceProxyFactory httpServiceProxyFactory =
-            HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlGitHub())))
-                .build();
-        return httpServiceProxyFactory
-            .createClient(GitHubClient.class);
-    }
-
-    @Bean
-    BotClient botClient() {
-        HttpServiceProxyFactory httpServiceProxyFactory =
-            HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlBot())))
-                .build();
-        return httpServiceProxyFactory
-            .createClient(BotClient.class);
+        return httpServiceProxyFactory.createClient(ScrapperClient.class);
     }
 }
+

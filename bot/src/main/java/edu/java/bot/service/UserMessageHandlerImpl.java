@@ -2,9 +2,9 @@ package edu.java.bot.service;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.model.BotUser;
-import edu.java.bot.model.CustomCommand;
-import edu.java.bot.model.UserMessage;
+import edu.java.bot.service.model.BotUser;
+import edu.java.bot.service.model.CustomCommand;
+import edu.java.bot.service.model.UserMessage;
 import edu.java.bot.repository.CommandName;
 import java.util.HashMap;
 import java.util.Map;

@@ -2,7 +2,7 @@ package edu.java.bot.service;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.model.Bot;
+import edu.java.bot.service.model.Bot;
 import edu.java.bot.repository.CommandName;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,6 @@
 package edu.java.bot.repository;
 
-import edu.java.bot.model.CustomCommand;
+import edu.java.bot.service.model.CustomCommand;
 
 public enum CommandName {
     START("/start"),

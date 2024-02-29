@@ -1,7 +1,9 @@
 package edu.java;
 
-import edu.java.service.GitHubClient;
-import edu.java.service.StackOverflowClient;
+import edu.java.client.BotClient;
+import edu.java.client.GitHubClient;
+import edu.java.client.StackOverflowClient;
+import edu.java.client.model.LinkUpdate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,8 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     @Autowired GitHubClient gitHubClient;
 
     @Autowired StackOverflowClient stackOverflowClient;
+
+    @Autowired BotClient botClient;
 
     @Override
     public void run(String... args) throws Exception {
@@ -28,5 +32,8 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
             .getFirst()
             .creationDate();
         logger.info(result2);
+        var result3 = botClient
+            .postUpdate(new LinkUpdate(1, "fgfgfg", "fgfgfg", new long[]{1,2,3}));
+        logger.info(result3);
     }
 }
