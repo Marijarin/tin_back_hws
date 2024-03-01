@@ -18,6 +18,6 @@ logging:
 
 springdoc:
   swagger-ui:
-    path: /swagger-ui.html
+    path: /swagger-ui
   api-docs:
     path: /api-docs

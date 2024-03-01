@@ -9,9 +9,6 @@ import org.springframework.validation.annotation.Validated;
 public record ApplicationConfig(
     @NotEmpty
     String telegramToken,
-
-    @NotEmpty
-    String baseUrlScrapper,
     @NotEmpty
     String register,
     @NotEmpty
@@ -31,7 +28,10 @@ public record ApplicationConfig(
     @NotEmpty
     String pattern,
     @NotEmpty
-    String notTracked
-) {
+    String notTracked,
+
+    @NotEmpty
+    String baseUrlScrapper
+    ) {
 
 }
