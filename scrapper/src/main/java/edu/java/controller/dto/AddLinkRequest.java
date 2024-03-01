@@ -1,6 +1,10 @@
 package edu.java.controller.dto;
 
+import jakarta.validation.constraints.NotNull;
+import java.net.URI;
+
 public record AddLinkRequest(
-    String link
+    @NotNull
+    URI link
 ) {
 }

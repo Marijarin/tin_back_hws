@@ -11,8 +11,8 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI botOpenAPI() {
         return new OpenAPI()
-            .info(new Info().title("Bot API")
-                .description("Bot for sites updates scrapping")
+            .info(new Info().title("Scrapper API")
+                .description("Scrapper for sites updates bot")
                 .version("1.0.0"));
     }
 }

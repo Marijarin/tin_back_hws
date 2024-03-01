@@ -1,7 +1,9 @@
 package edu.java.controller.dto;
 
+import java.util.List;
+
 public record ListLinksResponse(
-    LinkResponse [] links,
+    List<LinkResponse> links,
     int size
 ) {
 }

@@ -4,6 +4,7 @@ import edu.java.client.BotClient;
 import edu.java.client.GitHubClient;
 import edu.java.client.StackOverflowClient;
 import edu.java.client.model.LinkUpdate;
+import java.net.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
 
     @Autowired BotClient botClient;
 
+    @SuppressWarnings("MagicNumber")
     @Override
     public void run(String... args) throws Exception {
         var result1 = gitHubClient
@@ -33,7 +35,13 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
             .creationDate();
         logger.info(result2);
         var result3 = botClient
-            .postUpdate(new LinkUpdate(1, "fgfgfg", "fgfgfg", new long[]{1,2,3}));
+            .postUpdate(new LinkUpdate(
+                1,
+                URI.create(
+                    "https://edu.tinkoff.ru/my-activities/courses/stream/b37f2c9a-b73c-4cc8-a092-0bcbf49faac7/exam/18329/1"),
+                "fgfgfg",
+                new long[] {1, 2, 3}
+            ));
         logger.info(result3);
     }
 }

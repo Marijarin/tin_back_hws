@@ -30,7 +30,7 @@ public record ApplicationConfig(
     String done,
     @NotEmpty
     String pattern,
-     @NotEmpty
+    @NotEmpty
     String notTracked
 ) {
 

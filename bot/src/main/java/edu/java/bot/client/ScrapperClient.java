@@ -1,6 +1,8 @@
 package edu.java.bot.client;
 
+import edu.java.bot.client.model.AddLinkRequest;
 import edu.java.bot.client.model.LinkResponse;
+import edu.java.bot.client.model.RemoveLinkRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,9 +22,12 @@ public interface ScrapperClient {
     ResponseEntity<Void> getLinksFromTG(@RequestHeader("Tg-Chat-Id") long tgChatId);
 
     @PostExchange("/links")
-    LinkResponse startLinkTracking(@RequestHeader("Tg-Chat-Id") long tgChatId, @RequestBody String link);
+    LinkResponse startLinkTracking(@RequestHeader("Tg-Chat-Id") long tgChatId, @RequestBody AddLinkRequest linkRequest);
 
     @DeleteExchange("/links")
-    LinkResponse stopLinkTracking(@RequestHeader("Tg-Chat-Id") long tgChatId, @RequestBody String link);
+    LinkResponse stopLinkTracking(
+        @RequestHeader("Tg-Chat-Id") long tgChatId,
+        @RequestBody RemoveLinkRequest linkRequest
+    );
 
 }
