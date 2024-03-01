@@ -50,7 +50,8 @@ public class ListHandlerTest {
         "You have no links being tracked. Print /track to add a link",
         "1",
         "1",
-        "1"
+        "1",
+        ""
 
     );
 

@@ -55,7 +55,8 @@ public class StartHandlerTest {
             "1",
             "1",
             "1",
-            "1"
+            "1",
+            ""
 
         );
         var handler = new StartHandler(applicationConfig, true);
