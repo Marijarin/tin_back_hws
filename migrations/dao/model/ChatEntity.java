@@ -1,11 +1,11 @@
-package model;
+package migrations.dao.model;
 
+import java.time.OffsetDateTime;
 import java.util.List;
-import lombok.Data;
 
-@Data
 public record ChatEntity(
     long id,
+    OffsetDateTime createdAt,
     List<LinkEntity> links
 ) {
 }
