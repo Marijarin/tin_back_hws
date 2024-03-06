@@ -31,7 +31,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {IntegrationTest.class, ChatRepository.class, Chat.class, Link.class, TestConfig.class})
+@SpringBootTest(classes = {IntegrationTest.class, ChatRepository.class, Chat.class, Link.class})
 @TestPropertySource("/application-test.yml")
 @EnableJdbcRepositories(basePackages = "dao")
 @Testcontainers
