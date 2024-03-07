@@ -14,22 +14,20 @@ import liquibase.resource.DirectoryResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 import liquibase.resource.SearchPathResourceAccessor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {IntegrationTest.class})
-@TestPropertySource("/application-test.yml")
-//@EnableJdbcRepositories(basePackages = "edu.java.dao")
+//@SpringBootTest(classes = {TestConfig.class})
 @Testcontainers
 public class IntegrationTest {
     public static PostgreSQLContainer<?> POSTGRES;
-    //@Autowired ChatRepository chatRepository;
 
     static {
         POSTGRES = new PostgreSQLContainer<>("postgres:15")
@@ -45,9 +43,11 @@ public class IntegrationTest {
         }
     }
 
+
     private static void runMigrations(JdbcDatabaseContainer<?> c) throws LiquibaseException, SQLException {
         java.sql.Connection connection = DriverManager
-            .getConnection(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
+            .getConnection(c.getJdbcUrl(), c.getUsername(), c.getPassword());
+        System.out.println(c.getJdbcUrl());
         Database database = DatabaseFactory
             .getInstance()
             .findCorrectDatabaseImplementation(new JdbcConnection(connection));
@@ -55,6 +55,7 @@ public class IntegrationTest {
             .getParent()
             .getParent()
             .resolve("migrations");
+
         try (ResourceAccessor resourceAccessor = new SearchPathResourceAccessor(
             new DirectoryResourceAccessor(changelogPath)
         )) {
@@ -74,34 +75,22 @@ public class IntegrationTest {
         registry.add("spring.datasource.password", POSTGRES::getPassword);
     }
 
-//    @Test
-//    public void performSql() throws SQLException {
-//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//        dataSource.setDriverClassName(POSTGRES.getDriverClassName());
-//        dataSource.setUrl(POSTGRES.getJdbcUrl());
-//        dataSource.setUsername(POSTGRES.getUsername());
-//        dataSource.setPassword(POSTGRES.getPassword());
-//        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-//        jdbcTemplate.setDataSource(dataSource);
-//        jdbcTemplate.execute("DROP TABLE scrapper.information_schema.sql_features");
-//
-//
-//    }
-//    @Test
-//    public void addsChat() {
-//        Chat result = chatRepository
-//            .save(new Chat(1L, OffsetDateTime.now(), new Link(1L, "url", "desc")));
-//        assertEquals(1L, result.getId());
-//        Optional<Chat> saved = chatRepository.findById(1L);
-//        assertTrue(saved.isPresent());
-//        saved.ifPresent(s -> assertEquals(s, result));
-//    }
+    @Test
+    void updateTable() {
+        var jdbcTemplate = new JdbcTemplate(DataSourceBuilder.create()
+            .url(POSTGRES.getJdbcUrl())
+            .username(POSTGRES.getUsername())
+            .password(POSTGRES.getPassword())
+            .build());
+
+       jdbcTemplate.queryForObject("SELECT COUNT(*) FROM scrapper.tracker.chat", Integer.class);
+    }
 
     @Test
     public void runsDB() {
-        var result2 = POSTGRES.withDatabaseName("scrapper.public.chat").getEnv();
+        var result2 = POSTGRES.withDatabaseName("scrapper.tracker.chat").getEnv();
 
-        assertTrue(POSTGRES.withDatabaseName("scrapper.public.chat").isRunning());
+        assertTrue(POSTGRES.withDatabaseName("scrapper.tracker.chat").isRunning());
         assertTrue(result2.toString()
             .contains("POSTGRES_USER=postgres, POSTGRES_PASSWORD=postgres, POSTGRES_DB=scrapper"));
     }
