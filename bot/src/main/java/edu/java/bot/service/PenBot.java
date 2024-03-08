@@ -22,7 +22,7 @@ public class PenBot implements BotProcessor {
     private final ApplicationConfig applicationConfig;
     private final UserMessageHandlerImpl messageHandler;
 
-    private Map<String, CommandHandler> commandHandlers;
+    private final Map<String, CommandHandler> commandHandlers;
 
     @Autowired
     private PenBot(

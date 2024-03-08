@@ -38,9 +38,9 @@ public class ClientConfig {
                     .maxInMemorySize(500 * 1024))
                 .build())
             .defaultStatusHandler(
-                HttpStatusCode::is5xxServerError,
+                HttpStatusCode::isError,
                 clientResponse -> {
-                    logger.error("Error! Chat is missing!");
+                    logger.error("Error! from bot api");
                     return Mono.empty();
                 }
             )

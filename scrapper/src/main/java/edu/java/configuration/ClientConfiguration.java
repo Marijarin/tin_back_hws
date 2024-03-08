@@ -3,6 +3,8 @@ package edu.java.configuration;
 import edu.java.client.BotClient;
 import edu.java.client.GitHubClient;
 import edu.java.client.StackOverflowClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +25,8 @@ public class ClientConfiguration {
         this.applicationConfig = applicationConfig;
     }
 
+    Logger logger = LogManager.getLogger();
+
     @SuppressWarnings("MagicNumber")
     @Bean
     @Scope("prototype")
@@ -36,9 +40,11 @@ public class ClientConfiguration {
                     .maxInMemorySize(500 * 1024))
                 .build())
             .defaultStatusHandler(
-                HttpStatusCode::is5xxServerError,
-                clientResponse ->
-                    Mono.error(new Throwable("No required data"))
+                HttpStatusCode::isError,
+                clientResponse -> {
+                    logger.error("Error! from scrapper api");
+                    return Mono.empty();
+                }
             )
             .build();
     }
