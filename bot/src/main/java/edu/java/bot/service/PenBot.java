@@ -4,9 +4,9 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.configuration.ApplicationConfig;
-import edu.java.bot.model.Bot;
-import edu.java.bot.model.UserMessage;
 import edu.java.bot.repository.CommandName;
+import edu.java.bot.service.model.Bot;
+import edu.java.bot.service.model.UserMessage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class PenBot implements BotProcessor {
     private final ApplicationConfig applicationConfig;
     private final UserMessageHandlerImpl messageHandler;
 
-    private Map<String, CommandHandler> commandHandlers;
+    private final Map<String, CommandHandler> commandHandlers;
 
     @Autowired
     private PenBot(

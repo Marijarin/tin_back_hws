@@ -1,4 +1,4 @@
-package edu.java.service;
+package edu.java.client;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

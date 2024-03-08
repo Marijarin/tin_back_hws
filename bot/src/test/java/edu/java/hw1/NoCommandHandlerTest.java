@@ -5,9 +5,9 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import edu.java.bot.configuration.ApplicationConfig;
-import edu.java.bot.model.Bot;
-import edu.java.bot.model.BotUser;
-import edu.java.bot.model.Chat;
+import edu.java.bot.service.model.Bot;
+import edu.java.bot.service.model.BotUser;
+import edu.java.bot.service.model.Chat;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.NoCommandHandler;
 import edu.java.bot.service.UserMessageHandler;
@@ -49,7 +49,8 @@ public class NoCommandHandlerTest {
         "8",
         "4 ",
         "^(https?://){1}([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$",
-        "6"
+        "6",
+        ""
 
     );
 

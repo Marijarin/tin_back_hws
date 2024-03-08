@@ -1,4 +1,4 @@
-package edu.java.service;
+package edu.java.client;
 
 import edu.java.model.ResponseGitHubDTO;
 import java.util.List;

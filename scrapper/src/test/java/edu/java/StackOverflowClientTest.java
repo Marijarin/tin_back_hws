@@ -2,7 +2,7 @@ package edu.java;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import edu.java.service.StackOverflowClient;
+import edu.java.client.StackOverflowClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;

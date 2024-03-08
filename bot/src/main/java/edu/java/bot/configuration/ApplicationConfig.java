@@ -27,8 +27,11 @@ public record ApplicationConfig(
     String done,
     @NotEmpty
     String pattern,
-     @NotEmpty
-    String notTracked
-) {
+    @NotEmpty
+    String notTracked,
+
+    @NotEmpty
+    String baseUrlScrapper
+    ) {
 
 }

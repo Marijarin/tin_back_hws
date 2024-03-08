@@ -5,6 +5,7 @@ app:
     force-check-delay: 10000
   baseUrlGitHub: "https://api.github.com"
   baseUrlStackOverflow: "https://api.stackexchange.com/2.3"
+  baseUrlBot: "http://localhost:8090"
 spring:
   application:
     name: scrapper
@@ -14,3 +15,10 @@ server:
 
 logging:
   config: classpath:log4j2-plain.xml
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+  api-docs:
+    path: /api-docs
+  default-produces-media-type: application/json

@@ -6,9 +6,9 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.configuration.ApplicationConfig;
-import edu.java.bot.model.Bot;
-import edu.java.bot.model.BotUser;
-import edu.java.bot.model.Chat;
+import edu.java.bot.service.model.Bot;
+import edu.java.bot.service.model.BotUser;
+import edu.java.bot.service.model.Chat;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.CommandHandler;
 import edu.java.bot.service.PenBot;
@@ -65,7 +65,8 @@ public class PenBotTest {
             "1",
             "1",
             "1",
-            "1"
+            "1",
+            ""
 
         );
         Map<String, CommandHandler> commandHandlers = Map.of(command.name(), new CommandHandler() {

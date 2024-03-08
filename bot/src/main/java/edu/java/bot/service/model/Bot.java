@@ -1,4 +1,4 @@
-package edu.java.bot.model;
+package edu.java.bot.service.model;
 
 import com.pengrad.telegrambot.TelegramBot;
 import edu.java.bot.repository.CommandName;

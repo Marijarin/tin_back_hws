@@ -10,7 +10,7 @@ app:
   done: "Done: "
   notTracked: "This link is not tracked: "
   pattern: "^(https?://){1}([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$"
-
+  baseUrlScrapper: "http://localhost:8080"
 spring:
   application:
     name: bot
@@ -24,3 +24,12 @@ server:
 
 logging:
   config: classpath:log4j2-plain.xml
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+  api-docs:
+    path: /api-docs
+  default-produces-media-type: application/json
+
+

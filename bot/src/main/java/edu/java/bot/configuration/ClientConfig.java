@@ -1,8 +1,6 @@
-package edu.java.configuration;
+package edu.java.bot.configuration;
 
-import edu.java.client.BotClient;
-import edu.java.client.GitHubClient;
-import edu.java.client.StackOverflowClient;
+import edu.java.bot.client.ScrapperClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +15,15 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import reactor.core.publisher.Mono;
 
 @Configuration
-public class ClientConfiguration {
+public class ClientConfig {
     private final ApplicationConfig applicationConfig;
 
+    Logger logger = LogManager.getLogger();
+
     @Autowired
-    public ClientConfiguration(ApplicationConfig applicationConfig) {
+    public ClientConfig(ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
     }
-
-    Logger logger = LogManager.getLogger();
 
     @SuppressWarnings("MagicNumber")
     @Bean
@@ -42,7 +40,7 @@ public class ClientConfiguration {
             .defaultStatusHandler(
                 HttpStatusCode::isError,
                 clientResponse -> {
-                    logger.error("Error! from scrapper api");
+                    logger.error("Error! from bot api");
                     return Mono.empty();
                 }
             )
@@ -50,31 +48,12 @@ public class ClientConfiguration {
     }
 
     @Bean
-    StackOverflowClient stackOverflowClient() {
+    ScrapperClient scrapperClient() {
         HttpServiceProxyFactory httpServiceProxyFactory =
             HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlStackOverflow())))
+                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlScrapper())))
                 .build();
-        return httpServiceProxyFactory.createClient(StackOverflowClient.class);
-    }
-
-    @Bean
-    GitHubClient gitHubClient() {
-        HttpServiceProxyFactory httpServiceProxyFactory =
-            HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlGitHub())))
-                .build();
-        return httpServiceProxyFactory
-            .createClient(GitHubClient.class);
-    }
-
-    @Bean
-    BotClient botClient() {
-        HttpServiceProxyFactory httpServiceProxyFactory =
-            HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlBot())))
-                .build();
-        return httpServiceProxyFactory
-            .createClient(BotClient.class);
+        return httpServiceProxyFactory.createClient(ScrapperClient.class);
     }
 }
+
