@@ -7,9 +7,6 @@
     <changeSet id="tag_init" author="Marijarin">
         <tagDatabase tag="tag_init"/>
     </changeSet>
-    <changeSet id="create_schema" author="Marijarin">
-        <sqlFile path="sql/create_schema.sql" relativeToChangelogFile="true"/>
-    </changeSet>
     <changeSet id="init_tables" author="Marijarin">
         <sqlFile path="sql/init_tables.sql" relativeToChangelogFile="true"/>
     </changeSet>

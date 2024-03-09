@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import liquibase.Contexts;
+import liquibase.LabelExpression;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -14,9 +15,9 @@ import liquibase.resource.DirectoryResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 import liquibase.resource.SearchPathResourceAccessor;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
@@ -24,7 +25,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-//@SpringBootTest(classes = {TestConfig.class})
+@SpringBootTest(classes = {TestConfig.class})
 @Testcontainers
 public class IntegrationTest {
     public static PostgreSQLContainer<?> POSTGRES;
@@ -43,6 +44,7 @@ public class IntegrationTest {
         }
     }
 
+    @Autowired JdbcTemplate jdbcTemplate;
 
     private static void runMigrations(JdbcDatabaseContainer<?> c) throws LiquibaseException, SQLException {
         java.sql.Connection connection = DriverManager
@@ -61,8 +63,8 @@ public class IntegrationTest {
         )) {
             Liquibase liquibase = new liquibase
                 .Liquibase("master.xml", resourceAccessor, database);
-            var writer = new StringWriter();
-            liquibase.update(new Contexts(), writer);
+
+            liquibase.update(new Contexts(), new LabelExpression());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -76,28 +78,9 @@ public class IntegrationTest {
     }
 
     @Test
-    void updateTable() {
-        var jdbcTemplate = new JdbcTemplate(DataSourceBuilder.create()
-            .url(POSTGRES.getJdbcUrl())
-            .username(POSTGRES.getUsername())
-            .password(POSTGRES.getPassword())
-            .build());
-
-       jdbcTemplate.queryForObject("SELECT COUNT(*) FROM scrapper.tracker.chat", Integer.class);
-    }
-
-    @Test
-    public void runsDB() {
-        var result2 = POSTGRES.withDatabaseName("scrapper.tracker.chat").getEnv();
-
-        assertTrue(POSTGRES.withDatabaseName("scrapper.tracker.chat").isRunning());
-        assertTrue(result2.toString()
-            .contains("POSTGRES_USER=postgres, POSTGRES_PASSWORD=postgres, POSTGRES_DB=scrapper"));
-    }
-
-    @Test
-    public void createdDb() {
-        assertTrue(POSTGRES.withDatabaseName("scrapper.public.chat").isCreated());
-        assertTrue(POSTGRES.withDatabaseName("scrapper.public.chat").isRunning());
+    void updateTable() throws SQLException, InterruptedException {
+        Thread.sleep(1000);
+        System.out.println(jdbcTemplate.getDataSource().getConnection().getClientInfo());
+        jdbcTemplate.update("INSERT INTO scrapper.public.chat (id, created_at) VALUES (100000, CURRENT_TIMESTAMP)");
     }
 }

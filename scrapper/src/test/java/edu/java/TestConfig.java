@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import static edu.java.IntegrationTest.POSTGRES;
 
 @Configuration
@@ -14,12 +13,11 @@ public class TestConfig {
     @Bean
     @Primary
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(POSTGRES.getDriverClassName());
-        dataSource.setUrl(POSTGRES.getJdbcUrl());
-        dataSource.setUsername(POSTGRES.getUsername());
-        dataSource.setPassword(POSTGRES.getPassword());
-        return DataSourceBuilder.create().build();
+       return DataSourceBuilder.create()
+           .url(POSTGRES.getJdbcUrl())
+           .username(POSTGRES.getUsername())
+           .password(POSTGRES.getPassword())
+           .build();
     }
 
     @Bean
