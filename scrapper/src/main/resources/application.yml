@@ -6,6 +6,9 @@ app:
   baseUrlGitHub: "https://api.github.com"
   baseUrlStackOverflow: "https://api.stackexchange.com/2.3"
   baseUrlBot: "http://localhost:8090"
+  url: jdbc:postgresql://postgresql:5432/scrapper
+  user-name: postgres
+  password: postgres
 spring:
   application:
     name: scrapper

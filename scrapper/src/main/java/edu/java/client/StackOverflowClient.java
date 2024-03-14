@@ -1,6 +1,6 @@
 package edu.java.client;
 
-import edu.java.model.ResponseStackOverflowDTO;
+import edu.java.site_dto.ResponseStackOverflowDTO;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.service.annotation.GetExchange;
 
