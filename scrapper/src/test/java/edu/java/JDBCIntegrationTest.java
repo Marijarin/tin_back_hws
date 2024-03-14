@@ -118,7 +118,7 @@ public class JDBCIntegrationTest extends IntegrationTest {
                     resultChatList.add(chat);
                 }
                 var resultList = chatRepository.findAllChats();
-                
+
                 assertThat(resultChatList.size()).isEqualTo(resultList.size());
                 return 0;
             }
