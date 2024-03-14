@@ -19,4 +19,11 @@ public class LinkDao {
     String description;
     @NotNull
     OffsetDateTime lastUpdated;
+
+    public LinkDao(long id, URI uri, String description) {
+        this.id = id;
+        this.uri = uri;
+        this.description = description;
+        this.lastUpdated = OffsetDateTime.now();
+    }
 }

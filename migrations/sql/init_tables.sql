@@ -14,6 +14,6 @@ CREATE TABLE IF NOT EXISTS link
 
 CREATE TABLE IF NOT EXISTS assignment
 (
-    chat_id       bigint NOT NULL REFERENCES chat(id),
-    link_id       bigint NOT NULL REFERENCES link(id)
+    chat_id       bigint NOT NULL REFERENCES chat(id) ON DELETE CASCADE,
+    link_id       bigint NOT NULL REFERENCES link(id) ON DELETE CASCADE
 );
