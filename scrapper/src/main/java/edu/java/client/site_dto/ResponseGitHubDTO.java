@@ -5,6 +5,6 @@ import java.time.OffsetDateTime;
 
 public record ResponseGitHubDTO(
     String id,
-    @JsonProperty("created_at") OffsetDateTime createdAt
+    @JsonProperty("pushed_at") OffsetDateTime updatedAt
 ) {
 }

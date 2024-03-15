@@ -3,14 +3,11 @@ package edu.java.domain;
 import edu.java.domain.dao.Chat;
 import edu.java.domain.dao.Link;
 import java.net.URI;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,6 +15,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@SuppressWarnings({"LocalVariableName", "MultipleStringLiterals"})
 public class JDBCChatRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -69,21 +67,22 @@ public class JDBCChatRepository {
                     new ArrayList<>()
                 )
         );
-        if(!chatList.isEmpty()) {
+        if (!chatList.isEmpty()) {
             for (Chat c : chatList) {
                 c.getLinks().addAll(findAllLinksForChat(c.getId()));
             }
         }
         return chatList;
     }
-    public void deleteAll(){
+
+    public void deleteAll() {
         String SQL = "delete from chat";
         jdbcTemplate.update(SQL);
     }
 
-    public Chat findChat(long id){
+    public Chat findChat(long id) {
         String SQL = "select * from chat where id = ?";
-       var chat =  jdbcTemplate.queryForObject(
+        var chat = jdbcTemplate.queryForObject(
             SQL,
             (rs, rowNum) ->
                 new Chat(

@@ -5,6 +5,8 @@ import edu.java.domain.JDBCLinkDao;
 import edu.java.domain.dao.Chat;
 import edu.java.domain.dao.Link;
 import java.net.URI;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -164,7 +166,23 @@ public class JDBCIntegrationTest extends IntegrationTest {
     @Test
     @Transactional
     @Rollback
-    void findAllLinksFromChat(){
+    void addLinkThenUpdate() throws InterruptedException {
+        var resultChat = chatRepository.addChat(1L);
+        var uri = URI.create(
+            "https://stackoverflow.com/questions/64268012/java-postgresql-how-to-generate-primary-key-automatically");
+        var resultLink = linkRepository.addLink(resultChat, uri);
+        Thread.sleep(Duration.ofSeconds(3));
+        var update = OffsetDateTime.now();
+
+        var result = linkRepository.updateLink(resultLink, update);
+
+        assertThat(resultLink.getLastUpdated().isBefore(result.getLastUpdated())).isTrue();
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void findAllLinksFromChat() {
         for (int i = 1; i < 4; i++) {
             chatRepository.addChat(i);
         }
@@ -181,5 +199,26 @@ public class JDBCIntegrationTest extends IntegrationTest {
 
         assertThat(result1).isEqualTo(List.of(uri2));
         assertThat(result2).isEqualTo(List.of(uri1));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void findAllLinksNotUpdatedYet() throws InterruptedException {
+        for (int i = 1; i < 4; i++) {
+            chatRepository.addChat(i);
+        }
+        var uri1 = URI.create("https://github.com/Marijarin/FoodOrderTW");
+        var uri2 = URI.create("https://github.com/Marijarin/tin_back_hws");
+
+        linkRepository.addLink(2L, uri2);
+        Thread.sleep(Duration.ofSeconds(5));
+        linkRepository.addLink(1L, uri1);
+        var checkTime = OffsetDateTime.now().minusSeconds(3);
+
+        var result = linkRepository.findAllLinksWithLastUpdateEarlierThan(checkTime);
+
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.getFirst().getUri()).isEqualTo(uri2);
     }
 }
