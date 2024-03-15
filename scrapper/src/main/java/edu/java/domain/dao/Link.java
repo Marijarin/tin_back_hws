@@ -11,7 +11,7 @@ import org.springframework.data.annotation.Id;
 @Setter
 @Getter
 @AllArgsConstructor
-public class LinkDao {
+public class Link {
     @Id
     long id;
     @NotNull
@@ -20,7 +20,7 @@ public class LinkDao {
     @NotNull
     OffsetDateTime lastUpdated;
 
-    public LinkDao(long id, URI uri, String description) {
+    public Link(long id, URI uri, String description) {
         this.id = id;
         this.uri = uri;
         this.description = description;

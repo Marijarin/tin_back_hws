@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS chat
 (
-    id         SERIAL PRIMARY KEY,
+    id         bigint NOT NULL PRIMARY KEY,
     created_at timestamp with time zone NOT NULL
 );
 

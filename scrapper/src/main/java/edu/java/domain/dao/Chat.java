@@ -11,10 +11,10 @@ import org.springframework.data.annotation.Id;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ChatDao {
+public class Chat {
     @Id
     long id;
     @NotNull
     OffsetDateTime createdAt;
-    List<LinkDao> links;
+    List<Link> links;
 }

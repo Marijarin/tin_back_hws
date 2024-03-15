@@ -1,4 +1,13 @@
 package edu.java.service.jdbc;
 
-public class JdbcLinkUpdater {
+import edu.java.service.LinkUpdater;
+import org.springframework.stereotype.Service;
+
+@Service
+public class JdbcLinkUpdater implements LinkUpdater {
+    @Override
+    public int update() {
+
+        return 0;
+    }
 }
