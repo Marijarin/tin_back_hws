@@ -1,6 +1,10 @@
 package edu.java.domain;
 
 import edu.java.domain.dao.Link;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 import java.net.URI;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -9,10 +13,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 
 @Repository @SuppressWarnings({"LocalVariableName", "MultipleStringLiterals", "OperatorWrap", "MagicNumber"})
 public class JDBCLinkDao {
@@ -113,6 +113,24 @@ public class JDBCLinkDao {
             rs.getString("description"),
             rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
         ));
+    }
+
+    public long findByUrlAndChat(long chatId, URI url) {
+        String SQL = "select link.id from link where url = ?";
+        var linkId = jdbcTemplate.queryForObject(SQL, (rs, rowNum) ->
+                rs.getLong("id"),
+            url.toString()
+        );
+        String SQL2 = "select assignment.chat_id from assignment where link_id = ?";
+        var chatIds = jdbcTemplate.query(SQL2, (rs, rowNum) ->
+                rs.getLong("chat_id"),
+            linkId
+        );
+        if (chatIds.contains(chatId)) {
+            return chatId;
+        } else {
+            return -1L;
+        }
     }
 
     public List<Link> findAllLinksFromChat(long chatId) {

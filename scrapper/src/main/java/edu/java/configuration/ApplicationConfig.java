@@ -18,16 +18,7 @@ public record ApplicationConfig(
     @NotEmpty
     String baseUrlStackOverflow,
     @NotEmpty
-    String baseUrlBot,
-
-    @NotNull
-    String url,
-
-    @NotNull
-    String userName,
-
-    @NotNull
-    String password
+    String baseUrlBot
 ) {
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
     }

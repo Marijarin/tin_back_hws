@@ -32,6 +32,11 @@ public class JdbcLinkService implements LinkService {
     }
 
     @Override
+    public long findLinkId(long tgChatId, URI url) {
+        return linkRepository.findByUrlAndChat(tgChatId, url);
+    }
+
+    @Override
     @Transactional
     public Collection<Link> listAll(long tgChatId) {
         return linkRepository.findAllLinksFromChat(tgChatId);

@@ -221,4 +221,19 @@ public class JDBCIntegrationTest extends IntegrationTest {
         assertThat(result.size()).isEqualTo(1);
         assertThat(result.getFirst().getUri()).isEqualTo(uri2);
     }
+
+    @Test
+    @Transactional
+    @Rollback
+    void findsWhenLinkIsPresent() {
+        for (int i = 1; i < 4; i++) {
+            chatRepository.addChat(i);
+        }
+        var uri2 = URI.create("https://github.com/Marijarin/tin_back_hws");
+
+        linkRepository.addLink(2L, uri2);
+        var result = linkRepository.findByUrlAndChat(2L, uri2);
+
+        assertThat(result).isEqualTo(2L);
+    }
 }

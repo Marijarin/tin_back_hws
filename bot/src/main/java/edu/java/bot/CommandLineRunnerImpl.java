@@ -29,7 +29,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     public void run(String... args) throws Exception {
         penBot.start();
         Thread.sleep(10000);
-        // scrapperClient.registerChat(1L);
+        scrapperClient.registerChat(1L);
         AddLinkRequest linkRequest =
             new AddLinkRequest(URI.create(
                 "https://stackoverflow.com/questions/49132346/spring-rest-controller-string-response"));

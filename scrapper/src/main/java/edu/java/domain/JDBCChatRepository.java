@@ -94,7 +94,7 @@ public class JDBCChatRepository {
         if (chat != null) {
             return chat;
         }
-        throw new NullPointerException();
+        return new Chat(-1L, OffsetDateTime.now(), null);
     }
 
     public List<Link> findAllLinksForChat(long chatId) {
