@@ -27,6 +27,7 @@ public class JdbcChatService implements ChatService {
     public void unregister(long tgChatId) {
         chatRepository.deleteChat(tgChatId);
     }
+
     @Override
     @Transactional
     public Chat findChatById(long tgChatId) {

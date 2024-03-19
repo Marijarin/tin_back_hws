@@ -41,7 +41,7 @@ public class NoCommandHandlerTest {
 
     ApplicationConfig applicationConfig = new ApplicationConfig(
         "12345",
-        "aa",
+        "register",
         "1",
         "2",
         "sorry",
@@ -72,7 +72,7 @@ public class NoCommandHandlerTest {
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(
-            ("sorry")
+            ("register")
         );
     }
 
@@ -131,7 +131,7 @@ public class NoCommandHandlerTest {
         assertThat(result.getParameters().get("text")).isEqualTo(
             ("4 []")
         );
-        assertThat(chat1.links()).isEqualTo(new ArrayList<>());
+        assertThat(chat1.links()).isEqualTo(new HashSet<>());
     }
 
     @Test

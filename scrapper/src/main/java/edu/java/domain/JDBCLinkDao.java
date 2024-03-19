@@ -1,10 +1,6 @@
 package edu.java.domain;
 
 import edu.java.domain.dao.Link;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
 import java.net.URI;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -13,6 +9,10 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 @Repository @SuppressWarnings({"LocalVariableName", "MultipleStringLiterals", "OperatorWrap", "MagicNumber"})
 public class JDBCLinkDao {
@@ -90,7 +90,8 @@ public class JDBCLinkDao {
             rs.getString("description"),
             rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
         ), url.toString());
-        String SQL = "with d as (delete from public.assignment where assignment.link_id = ?) delete from link where url=?";
+        String SQL =
+            "with d as (delete from public.assignment where assignment.link_id = ?) delete from link where url=?";
         assert link != null;
         jdbcTemplate.update(SQL, link.getId(), url.toString());
         return link;

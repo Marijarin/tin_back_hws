@@ -25,6 +25,7 @@ public interface CommandHandler {
         bot.chats().put(botUser, chat);
         bot.isWaiting().put(botUser, null);
     }
+
     CommandName getCommand();
 
     default String getBeanName() {

@@ -3,16 +3,13 @@ package edu.java;
 import edu.java.client.BotClient;
 import edu.java.client.GitHubClient;
 import edu.java.client.StackOverflowClient;
-import edu.java.client.model.LinkUpdate;
-import java.net.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-@Component
-public class CommandLineRunnerImpl implements CommandLineRunner {
+@Component public class CommandLineRunnerImpl implements CommandLineRunner {
     Logger logger = LogManager.getLogger();
     private final GitHubClient gitHubClient;
 
@@ -20,20 +17,15 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
 
     private final BotClient botClient;
 
-    @Autowired
-    public CommandLineRunnerImpl(
-        GitHubClient gitHubClient,
-        StackOverflowClient stackOverflowClient,
-        BotClient botClient
+    @Autowired public CommandLineRunnerImpl(
+        GitHubClient gitHubClient, StackOverflowClient stackOverflowClient, BotClient botClient
     ) {
         this.gitHubClient = gitHubClient;
         this.stackOverflowClient = stackOverflowClient;
         this.botClient = botClient;
     }
 
-    @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
-    @Override
-    public void run(String... args) {
+    @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"}) @Override public void run(String... args) {
 //        gitHubClient
 //            .getResponse("Marijarin", "tin_back_hws")
 //            .getFirst();
@@ -59,5 +51,5 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
 //                "fgfgfg",
 //                new long[] {1, 2, 3}
 //            ));
-  }
+    }
 }

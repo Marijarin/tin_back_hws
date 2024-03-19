@@ -35,7 +35,8 @@ public class JDBCChatRepository {
     }
 
     public long deleteChat(long id) {
-        String SQL = "with d as (delete from public.assignment where assignment.chat_id = ?) delete from chat where id=?";
+        String SQL =
+            "with d as (delete from public.assignment where assignment.chat_id = ?) delete from chat where id=?";
         jdbcTemplate.update(SQL, id, id);
         return id;
     }
@@ -85,13 +86,13 @@ public class JDBCChatRepository {
         String SQL = "select * from chat where id = ?";
         try {
             return jdbcTemplate.queryForObject(
-                    SQL,
-                    (rs, rowNum) ->
-                            new Chat(
-                                    rs.getLong("id"),
-                                    rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC),
-                                    new ArrayList<>()
-                            ), id
+                SQL,
+                (rs, rowNum) ->
+                    new Chat(
+                        rs.getLong("id"),
+                        rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC),
+                        new ArrayList<>()
+                    ), id
             );
         } catch (EmptyResultDataAccessException e) {
             return new Chat(-1L, OffsetDateTime.now(), null);

@@ -1,10 +1,7 @@
 package edu.java.bot;
 
 import edu.java.bot.client.ScrapperClient;
-import edu.java.bot.client.model.AddLinkRequest;
-import edu.java.bot.client.model.RemoveLinkRequest;
 import edu.java.bot.service.PenBot;
-import java.net.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +24,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     @SuppressWarnings("MagicNumber")
     @Override
     public void run(String... args) throws Exception {
-       penBot.start();
+        penBot.start();
 //        Thread.sleep(10000);
 //        scrapperClient.registerChat(1L);
 //        AddLinkRequest linkRequest =

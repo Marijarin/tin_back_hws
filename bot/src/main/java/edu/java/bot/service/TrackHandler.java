@@ -7,8 +7,6 @@ import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.model.Bot;
 import edu.java.bot.service.model.BotUser;
-import edu.java.bot.service.model.Chat;
-import java.util.HashSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,5 @@
 package edu.java.bot.service.model;
 
-import java.util.List;
 import java.util.Set;
 
 public record Chat(

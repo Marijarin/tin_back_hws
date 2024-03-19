@@ -10,10 +10,8 @@ import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.model.Bot;
 import edu.java.bot.service.model.BotUser;
-import edu.java.bot.service.model.Chat;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,9 +98,14 @@ public class NoCommandHandler implements CommandHandler {
             linkResponse = scrapperClient.stopLinkTracking(botUser.chatId(), linkRequest);
         }
         var list = bot.chats().get(botUser).links();
-        assert linkResponse != null;
-        if (linkResponse.id() > 0 && linkResponse.url().toString().equals(url)) {
-            list.remove(url);
+
+        if (linkResponse != null && linkResponse.id() > 0 && linkResponse.url().toString().equals(url)) {
+            return new SendMessage(
+                botUser.chatId(),
+                applicationConfig.done() + Arrays.deepToString(bot.chats().get(botUser).links().toArray())
+            );
+        }
+        if (list.remove(url)) {
             return new SendMessage(
                 botUser.chatId(),
                 applicationConfig.done() + Arrays.deepToString(bot.chats().get(botUser).links().toArray())
