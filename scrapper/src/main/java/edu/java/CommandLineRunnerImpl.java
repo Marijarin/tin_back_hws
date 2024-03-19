@@ -34,30 +34,30 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
     @Override
     public void run(String... args) {
-        gitHubClient
-            .getResponse("Marijarin", "tin_back_hws")
-            .getFirst();
-
-        stackOverflowClient
-            .getResponse("75867589")
-            .items()
-            .getFirst();
-
-        botClient
-            .postUpdate(new LinkUpdate(
-                1,
-                URI.create(
-                    "https://edu.tinkoff.ru/my-activities/courses/stream/b37f2c9a-b73c-4cc8-a092-0bcbf49faac7/exam/18329/1"),
-                "fgfgfg",
-                new long[] {1, 2, 3}
-            ));
-        botClient
-            .postUpdate(new LinkUpdate(
-                14,
-                URI.create(
-                    "https://edu.tinkoff.ru/my-activities/courses/stream/b37f2c9a-b73c-4cc8-a092-0bcbf49faac7/exam/18329/1"),
-                "fgfgfg",
-                new long[] {1, 2, 3}
-            ));
-    }
+//        gitHubClient
+//            .getResponse("Marijarin", "tin_back_hws")
+//            .getFirst();
+//
+//        stackOverflowClient
+//            .getResponse("75867589")
+//            .items()
+//            .getFirst();
+//
+//        botClient
+//            .postUpdate(new LinkUpdate(
+//                1,
+//                URI.create(
+//                    "https://edu.tinkoff.ru/my-activities/courses/stream/b37f2c9a-b73c-4cc8-a092-0bcbf49faac7/exam/18329/1"),
+//                "fgfgfg",
+//                new long[] {1, 2, 3}
+//            ));
+//        botClient
+//            .postUpdate(new LinkUpdate(
+//                14,
+//                URI.create(
+//                    "https://edu.tinkoff.ru/my-activities/courses/stream/b37f2c9a-b73c-4cc8-a092-0bcbf49faac7/exam/18329/1"),
+//                "fgfgfg",
+//                new long[] {1, 2, 3}
+//            ));
+  }
 }

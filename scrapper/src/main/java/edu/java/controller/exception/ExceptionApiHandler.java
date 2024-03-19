@@ -7,6 +7,7 @@ import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,7 +37,7 @@ public class ExceptionApiHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ApiResponse(responseCode = "404", description = "Чат не существует")
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler({ResourceNotFoundException.class, org.springframework.dao.EmptyResultDataAccessException.class})
     public ApiErrorResponse handle404(ResourceNotFoundException exception) {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
             "Объект не существует",

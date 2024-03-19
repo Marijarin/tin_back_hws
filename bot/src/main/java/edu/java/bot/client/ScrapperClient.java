@@ -1,7 +1,9 @@
 package edu.java.bot.client;
 
 import edu.java.bot.client.model.AddLinkRequest;
+import edu.java.bot.client.model.ChatResponse;
 import edu.java.bot.client.model.LinkResponse;
+import edu.java.bot.client.model.ListLinksResponse;
 import edu.java.bot.client.model.RemoveLinkRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,9 +18,11 @@ public interface ScrapperClient {
 
     @DeleteExchange("/tg-chat/{id}")
     void deleteChat(@PathVariable long id);
+    @GetExchange("/tg-chat/{id}")
+    ChatResponse findChat(@PathVariable long id);
 
     @GetExchange("/links")
-    void getLinksFromTG(@RequestHeader("Tg-Chat-Id") long tgChatId);
+    ListLinksResponse getLinksFromTG(@RequestHeader("Tg-Chat-Id") long tgChatId);
 
     @PostExchange("/links")
     LinkResponse startLinkTracking(@RequestHeader("Tg-Chat-Id") long tgChatId, @RequestBody AddLinkRequest linkRequest);
@@ -28,5 +32,4 @@ public interface ScrapperClient {
         @RequestHeader("Tg-Chat-Id") long tgChatId,
         @RequestBody RemoveLinkRequest linkRequest
     );
-
 }

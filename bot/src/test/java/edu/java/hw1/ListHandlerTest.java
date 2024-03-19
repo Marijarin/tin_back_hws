@@ -5,16 +5,16 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import edu.java.bot.configuration.ApplicationConfig;
-import edu.java.bot.service.model.Bot;
-import edu.java.bot.service.model.BotUser;
-import edu.java.bot.service.model.Chat;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.ListHandler;
 import edu.java.bot.service.UserMessageHandler;
 import edu.java.bot.service.UserMessageHandlerImpl;
+import edu.java.bot.service.model.Bot;
+import edu.java.bot.service.model.BotUser;
+import edu.java.bot.service.model.Chat;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,8 +61,9 @@ public class ListHandlerTest {
             botUser.chatId(),
             botUser.id(),
             botUser.name(),
-            List.of("https://stackoverflow.com/search?q=unsupported%20link")
+            new HashSet<>()
         );
+        chat1.links().add("https://stackoverflow.com/search?q=unsupported%20link");
         isWaiting.put(botUser, null);
         var bot = new Bot(
             telegramBot,
@@ -89,7 +90,7 @@ public class ListHandlerTest {
             botUser.chatId(),
             botUser.id(),
             botUser.name(),
-            List.of()
+            new HashSet<>()
         );
         isWaiting.put(botUser, null);
         Bot bot = new Bot(

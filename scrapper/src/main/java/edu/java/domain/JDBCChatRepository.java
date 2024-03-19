@@ -9,6 +9,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -34,8 +35,8 @@ public class JDBCChatRepository {
     }
 
     public long deleteChat(long id) {
-        String SQL = "delete from chat where id=?";
-        jdbcTemplate.update(SQL, id);
+        String SQL = "with d as (delete from public.assignment where assignment.chat_id = ?) delete from chat where id=?";
+        jdbcTemplate.update(SQL, id, id);
         return id;
     }
 
@@ -82,19 +83,19 @@ public class JDBCChatRepository {
 
     public Chat findChat(long id) {
         String SQL = "select * from chat where id = ?";
-        var chat = jdbcTemplate.queryForObject(
-            SQL,
-            (rs, rowNum) ->
-                new Chat(
-                    rs.getLong("id"),
-                    rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC),
-                    new ArrayList<>()
-                ), id
-        );
-        if (chat != null) {
-            return chat;
+        try {
+            return jdbcTemplate.queryForObject(
+                    SQL,
+                    (rs, rowNum) ->
+                            new Chat(
+                                    rs.getLong("id"),
+                                    rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC),
+                                    new ArrayList<>()
+                            ), id
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return new Chat(-1L, OffsetDateTime.now(), null);
         }
-        return new Chat(-1L, OffsetDateTime.now(), null);
     }
 
     public List<Link> findAllLinksForChat(long chatId) {

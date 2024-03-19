@@ -1,6 +1,7 @@
 package edu.java.controller;
 
 import edu.java.controller.dto.AddLinkRequest;
+import edu.java.controller.dto.ChatResponse;
 import edu.java.controller.dto.LinkResponse;
 import edu.java.controller.dto.ListLinksResponse;
 import edu.java.controller.dto.RemoveLinkRequest;
@@ -14,7 +15,6 @@ import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +45,17 @@ public class ScrapperController {
     @PostMapping("/tg-chat/{id}")
     void registerChat(@PathVariable long id) {
         chatService.register(id);
-        logger.info(HttpStatus.OK);
+    }
+
+    @Operation(
+        summary = "Найти чат",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Чат найден")
+        })
+    @GetMapping("/tg-chat/{id}")
+    ChatResponse findChat(@PathVariable long id) {
+        var chat = chatService.findChatById(id);
+        return new ChatResponse(chat.getId());
     }
 
     @Operation(
@@ -56,8 +66,7 @@ public class ScrapperController {
     @DeleteMapping("/tg-chat/{id}")
     void deleteChat(@PathVariable long id) {
         chatService.unregister(id);
-        logger.info(HttpStatus.OK);
-    }
+    } //todo
 
     @Operation(
         summary = "Получить все отслеживаемые ссылки",
@@ -70,12 +79,10 @@ public class ScrapperController {
         if (links.isEmpty()) {
             throw new ResourceNotFoundException("Not found");
         }
-        ListLinksResponse listLinksResponse = new ListLinksResponse(
+        return new ListLinksResponse(
             links.stream().map(link -> new LinkResponse(link.getId(), link.getUri())).toList(),
             links.size()
         );
-        logger.info(HttpStatus.OK);
-        return listLinksResponse;
     }
 
     @Operation(
@@ -103,6 +110,7 @@ public class ScrapperController {
         @RequestHeader("Tg-Chat-Id") long tgChatId,
         @RequestBody @Valid RemoveLinkRequest linkRequest
     ) {
+        linkService.remove(tgChatId, linkRequest.link()); //todo
         LinkResponse linkResponse = new LinkResponse(tgChatId, linkRequest.link());
         return ResponseEntity.of(Optional.of(linkResponse));
     }

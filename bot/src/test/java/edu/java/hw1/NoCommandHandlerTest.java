@@ -14,6 +14,7 @@ import edu.java.bot.service.UserMessageHandler;
 import edu.java.bot.service.UserMessageHandlerImpl;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,7 +82,7 @@ public class NoCommandHandlerTest {
             botUser.chatId(),
             botUser.id(),
             botUser.name(),
-            new ArrayList<>()
+            new HashSet<>()
         );
         isWaiting.put(botUser, CommandName.TRACK);
         Bot bot = new Bot(
@@ -109,7 +110,7 @@ public class NoCommandHandlerTest {
             botUser.chatId(),
             botUser.id(),
             botUser.name(),
-            new ArrayList<>()
+            new HashSet<>()
         );
         chat1.links().add("https://stackoverflow.com/search?q=unsupported%20link");
         isWaiting.put(botUser, CommandName.UNTRACK);
@@ -139,7 +140,7 @@ public class NoCommandHandlerTest {
             botUser.chatId(),
             botUser.id(),
             botUser.name(),
-            new ArrayList<>()
+            new HashSet<>()
         );
         isWaiting.put(botUser, CommandName.TRACK);
         Bot bot = new Bot(

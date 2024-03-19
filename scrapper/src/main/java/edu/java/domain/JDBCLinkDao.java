@@ -90,8 +90,9 @@ public class JDBCLinkDao {
             rs.getString("description"),
             rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
         ), url.toString());
-        String SQL = "delete from link where url=?";
-        jdbcTemplate.update(SQL, url.toString());
+        String SQL = "with d as (delete from public.assignment where assignment.link_id = ?) delete from link where url=?";
+        assert link != null;
+        jdbcTemplate.update(SQL, link.getId(), url.toString());
         return link;
     }
 
