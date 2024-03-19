@@ -58,6 +58,25 @@ public class JDBCChatRepository {
         return chatList;
     }
 
+    @SuppressWarnings("LineLength")
+    public List<Chat> findAllChatsWithLink(URI url) {
+        String SQL =
+            "select * from chat where id = (select chat_id from assignment where link_id=(select id from link where url = ?))";
+        List<Chat> chatList = jdbcTemplate.query(
+            SQL,
+            (rs, rowNum) ->
+                new Chat(
+                    rs.getLong("id"),
+                    rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC),
+                    new ArrayList<>()
+                ), url.toString()
+        );
+        for (Chat c : chatList) {
+            c.getLinks().addAll(findAllLinksForChat(c.getId()));
+        }
+        return chatList;
+    }
+
     public List<Chat> findAllChats() {
         String SQL = "select * from chat";
         List<Chat> chatList = jdbcTemplate.query(

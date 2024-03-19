@@ -6,6 +6,7 @@ import edu.java.domain.JDBCLinkDao;
 import edu.java.domain.dao.Link;
 import edu.java.service.LinkUpdater;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -30,12 +31,16 @@ public class JdbcLinkUpdater implements LinkUpdater {
     }
 
     @Override
-    public int update() {
+    public List<Link> update() {
         var mapOfNotUpdatedYet = classifySavedLinksNotUpdatedYet(1);
-        var stackOverFlowList = extractLinksByKeyWord(mapOfNotUpdatedYet, "stackoverflow");
-        var gitHubList = extractLinksByKeyWord(mapOfNotUpdatedYet, "github");
-
-        return updateFromGithub(gitHubList) + updateFromStackOverFlow(stackOverFlowList);
+        if (!mapOfNotUpdatedYet.isEmpty()) {
+            var stackOverFlowList = extractLinksByKeyWord(mapOfNotUpdatedYet, "stackoverflow");
+            var gitHubList = extractLinksByKeyWord(mapOfNotUpdatedYet, "github");
+            var result = updateFromGithub(gitHubList);
+            result.addAll(updateFromStackOverFlow(stackOverFlowList));
+            return result;
+        }
+        return List.of();
     }
 
     private Map<String, List<Link>> classifySavedLinksNotUpdatedYet(long days) {
@@ -45,7 +50,7 @@ public class JdbcLinkUpdater implements LinkUpdater {
     }
 
     private List<Link> extractLinksByKeyWord(Map<String, List<Link>> all, String key) {
-        var mapKey = all.keySet().stream().filter(it -> it.contains(key)).findFirst().orElseThrow();
+        var mapKey = all.keySet().stream().filter(it -> it.contains(key)).findFirst().orElseGet(String::new);
         var list = all.get(mapKey);
         if (list != null) {
             return list;
@@ -53,41 +58,50 @@ public class JdbcLinkUpdater implements LinkUpdater {
         return List.of();
     }
 
-    private int updateFromGithub(List<Link> gitHubList) {
-        int sum = 0;
+    private List<Link> updateFromGithub(List<Link> gitHubList) {
+        var result = new ArrayList<Link>();
         if (!gitHubList.isEmpty()) {
             for (Link link : gitHubList) {
-                sum += checkOneGitHubLink(link);
+                if (checkOneGitHubLink(link)) {
+                    result.add(link);
+                }
             }
         }
-        return sum;
+        return result;
     }
 
-    private int checkOneGitHubLink(Link link) {
-        var findOwnerRepoRegexp = "^(.*(github.com/))(?<owner>.*)(/)(?<repo>.*)";
-        Pattern pattern = Pattern.compile(findOwnerRepoRegexp);
-        Matcher matcher = pattern.matcher(link.getUri().toString());
-        String owner = matcher.group("owner");
-        String repo = matcher.group("name");
+    @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
+    private boolean checkOneGitHubLink(Link link) {
+//        var findOwnerRepoRegexp = "^(.*(github.com/))(?<owner>.*)(/)(?<repo>.*)";
+//        Pattern pattern = Pattern.compile(findOwnerRepoRegexp);
+//        String s = link.getUri().toString();
+//        Matcher matcher = pattern.matcher(s);
+//        String owner = matcher.group("owner");
+//        String repo = matcher.group("name");
+        var sList = link.getUri().toString().split("/");
+        String owner = sList[3];
+        String repo = sList[4];
         var updateFromSite = gitHubClient.getResponse(owner, repo);
         if (updateFromSite.getFirst().updatedAt().isAfter(link.getLastUpdated())) {
             linkDao.updateLink(link, updateFromSite.getFirst().updatedAt());
-            return 1;
+            return true;
         }
-        return 0;
+        return false;
     }
 
-    private int updateFromStackOverFlow(List<Link> stackOverFlowList) {
-        int sum = 0;
+    private List<Link> updateFromStackOverFlow(List<Link> stackOverFlowList) {
+        var result = new ArrayList<Link>();
         if (!stackOverFlowList.isEmpty()) {
             for (Link link : stackOverFlowList) {
-                sum += checkOneStackOverFlowLink(link);
+                if (checkOneStackOverFlowLink(link)) {
+                    result.add(link);
+                }
             }
         }
-        return sum;
+        return result;
     }
 
-    private int checkOneStackOverFlowLink(Link link) {
+    private boolean checkOneStackOverFlowLink(Link link) {
         var findIdsRegexp = "^(.*(stackoverflow.com/questions/))(?<ids>.*)(/)(?<name>.*)";
         Pattern pattern = Pattern.compile(findIdsRegexp);
         Matcher matcher = pattern.matcher(link.getUri().toString());
@@ -95,8 +109,8 @@ public class JdbcLinkUpdater implements LinkUpdater {
         var updateFromSite = stackOverflowClient.getResponse(ids);
         if (updateFromSite.items().getFirst().creationDate().isAfter(link.getLastUpdated())) {
             linkDao.updateLink(link, updateFromSite.items().getFirst().creationDate());
-            return 1;
+            return true;
         }
-        return 0;
+        return false;
     }
 }

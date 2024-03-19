@@ -6,6 +6,7 @@ import com.pengrad.telegrambot.model.Update;
 import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.model.Bot;
+import edu.java.bot.service.model.SendUpdate;
 import edu.java.bot.service.model.UserMessage;
 import java.util.HashMap;
 import java.util.List;
@@ -24,17 +25,20 @@ public class PenBot implements BotProcessor {
 
     private final Map<String, CommandHandler> commandHandlers;
 
+    private final UpdateHandler updateHandler;
+
     @Autowired
     private PenBot(
         ApplicationConfig applicationConfig,
         List<CommandHandler> commandHandlersList,
-        UserMessageHandlerImpl messageHandler
+        UserMessageHandlerImpl messageHandler, UpdateHandler updateHandler
     ) {
         this.applicationConfig = applicationConfig;
         this.commandHandlers = commandHandlersList
             .stream()
             .collect(toMap(CommandHandler::getBeanName, commandHandler -> commandHandler));
         this.messageHandler = messageHandler;
+        this.updateHandler = updateHandler;
         String token = applicationConfig.telegramToken();
         bot = new Bot(new TelegramBot(token), new HashMap<>(), new HashMap<>());
     }
@@ -49,6 +53,7 @@ public class PenBot implements BotProcessor {
         this.bot = bot;
         this.messageHandler = messageHandler;
         this.commandHandlers = commandHandlers;
+        this.updateHandler = null;
     }
 
     @Override
@@ -78,5 +83,13 @@ public class PenBot implements BotProcessor {
     @Override
     public void close() {
         bot.bot().removeGetUpdatesListener();
+    }
+
+    @Override
+    public void processUpdateFromScrapper(SendUpdate sendUpdate) {
+        var chats = sendUpdate.tgChatIds();
+        for (long chat : chats) {
+            bot.bot().execute(updateHandler.sendUpdate(sendUpdate, chat));
+        }
     }
 }

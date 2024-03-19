@@ -1,8 +1,8 @@
 app:
   scheduler:
     enable: true
-    interval: 20000
-    force-check-delay: 20000
+    interval: 90000
+    force-check-delay: 90000
   baseUrlGitHub: "https://api.github.com"
   baseUrlStackOverflow: "https://api.stackexchange.com/2.3"
   baseUrlBot: "http://localhost:8090"

@@ -67,6 +67,7 @@ public class PenBotTest {
             "1",
             "1",
             "1",
+            "",
             ""
 
         );
