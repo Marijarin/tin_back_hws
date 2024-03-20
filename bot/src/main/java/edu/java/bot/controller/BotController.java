@@ -32,7 +32,11 @@ public class BotController {
         })
     @PostMapping("/updates")
     void postUpdate(@RequestBody @Valid LinkUpdate linkUpdate) {
-        var sendUpdate = new SendUpdate(linkUpdate.url(), linkUpdate.description(), linkUpdate.tgChatIds());
+        var sendUpdate = new SendUpdate(
+            linkUpdate.url(),
+            linkUpdate.description(),
+            linkUpdate.tgChatIds(),
+            linkUpdate.description());
         penBot.processUpdateFromScrapper(sendUpdate);
         logger.info(linkUpdate.url());
     }

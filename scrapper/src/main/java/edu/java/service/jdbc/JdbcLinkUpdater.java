@@ -5,6 +5,8 @@ import edu.java.client.StackOverflowClient;
 import edu.java.domain.JDBCLinkDao;
 import edu.java.domain.dao.Link;
 import edu.java.service.LinkUpdater;
+import edu.java.service.model.EventLink;
+import edu.java.service.model.EventName;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +23,18 @@ public class JdbcLinkUpdater implements LinkUpdater {
 
     private final StackOverflowClient stackOverflowClient;
 
+    private final Map<String, EventName> eventMap;
+
     @Autowired
     public JdbcLinkUpdater(JDBCLinkDao linkDao, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient) {
         this.linkDao = linkDao;
         this.gitHubClient = gitHubClient;
         this.stackOverflowClient = stackOverflowClient;
+        this.eventMap = EventName.getEventMap();
     }
 
     @Override
-    public List<Link> update() {
+    public List<EventLink> update() {
         var mapOfNotUpdatedYet = classifySavedLinksNotUpdatedYet(1);
         if (!mapOfNotUpdatedYet.isEmpty()) {
             var stackOverFlowList = extractLinksByKeyWord(mapOfNotUpdatedYet, "stackoverflow");
@@ -56,12 +61,13 @@ public class JdbcLinkUpdater implements LinkUpdater {
         return List.of();
     }
 
-    private List<Link> updateFromGithub(List<Link> gitHubList) {
-        var result = new ArrayList<Link>();
+    private List<EventLink> updateFromGithub(List<Link> gitHubList) {
+        var result = new ArrayList<EventLink>();
         if (!gitHubList.isEmpty()) {
             for (Link link : gitHubList) {
-                if (checkOneGitHubLink(link)) {
-                    result.add(link);
+                var eventLink = checkOneGitHubLink(link);
+                if (eventLink != null && eventLink.getEvent() != null) {
+                    result.add(eventLink);
                 }
             }
         }
@@ -69,7 +75,7 @@ public class JdbcLinkUpdater implements LinkUpdater {
     }
 
     @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
-    private boolean checkOneGitHubLink(Link link) {
+    private EventLink checkOneGitHubLink(Link link) {
         var sList = link.getUri().toString().split("/");
         String owner = "";
         String repo = "";
@@ -77,39 +83,54 @@ public class JdbcLinkUpdater implements LinkUpdater {
             owner = sList[3];
             repo = sList[4];
         } else {
-            return false;
+            return null;
         }
         var updateFromSite = gitHubClient.getResponse(owner, repo);
         if (!updateFromSite.isEmpty()) {
             if (updateFromSite.getFirst().updatedAt().isAfter(link.getLastUpdated())) {
-                linkDao.updateLink(link, updateFromSite.getFirst().updatedAt());
-                return true;
+                var update = updateFromSite.getFirst();
+                var linkResult = linkDao.updateLink(link, update.updatedAt());
+                String description = decipherEventType(update.eventType());
+                var eventResult = linkDao.putEventType(link.getId(), description);
+                return new EventLink(linkResult, eventResult);
             }
         }
-        return false;
+        return null;
     }
 
-    private List<Link> updateFromStackOverFlow(List<Link> stackOverFlowList) {
-        var result = new ArrayList<Link>();
+    private List<EventLink> updateFromStackOverFlow(List<Link> stackOverFlowList) {
+        var result = new ArrayList<EventLink>();
         if (!stackOverFlowList.isEmpty()) {
             for (Link link : stackOverFlowList) {
-                if (checkOneStackOverFlowLink(link)) {
-                    result.add(link);
+                var eventLink = checkOneStackOverFlowLink(link);
+                if (eventLink != null && eventLink.getEvent() != null) {
+                    result.add(eventLink);
                 }
             }
         }
         return result;
     }
 
-    private boolean checkOneStackOverFlowLink(Link link) {
+    private EventLink checkOneStackOverFlowLink(Link link) {
         String ids = link.getUri().toString().split("stackoverflow.com/questions/")[1].split("/")[0];
         var updateFromSite = stackOverflowClient.getResponse(ids);
         if (updateFromSite != null && updateFromSite.items() != null) {
             if (updateFromSite.items().getFirst().creationDate().isAfter(link.getLastUpdated())) {
-                linkDao.updateLink(link, updateFromSite.items().getFirst().creationDate());
-                return true;
+                var update = updateFromSite.items().getFirst();
+                var linkResult = linkDao.updateLink(link, update.creationDate());
+                String description = decipherEventType(update.eventType());
+                var eventResult = linkDao.putEventType(link.getId(), description);
+                return new EventLink(linkResult, eventResult);
             }
         }
-        return false;
+        return null;
+    }
+
+    private String decipherEventType(String eventType) {
+        if (eventMap.containsKey(eventType)) {
+            return eventMap.get(eventType).getDescription();
+        } else {
+            return "A new unknown event!";
+        }
     }
 }

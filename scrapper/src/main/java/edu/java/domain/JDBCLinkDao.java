@@ -1,5 +1,6 @@
 package edu.java.domain;
 
+import edu.java.domain.dao.Event;
 import edu.java.domain.dao.Link;
 import java.net.URI;
 import java.sql.PreparedStatement;
@@ -127,7 +128,7 @@ public class JDBCLinkDao {
         if (!ids.isEmpty()) {
             for (Long id : ids) {
                 String SQL = "select  * from link where id = ? ";
-                var link =  jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Link(
+                var link = jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Link(
                     rs.getLong("id"),
                     URI.create(rs.getString("url")),
                     rs.getString("description"),
@@ -137,5 +138,15 @@ public class JDBCLinkDao {
             }
         }
         return links;
+    }
+
+    public Event putEventType(long linkId, String description) {
+
+        String SQL = "insert into events (event, link_id) VALUES (?, ?) returning event, link_id";
+        return jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Event(
+            rs.getString("event"),
+            rs.getLong("link_id")
+        ), description, linkId);
+
     }
 }

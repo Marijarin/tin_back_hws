@@ -1,9 +1,9 @@
-package edu.java.client.model;
+package edu.java.service.model;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Event {
+public enum EventName {
     Created {
         @Override
         public String getMeaning() {
@@ -49,16 +49,22 @@ public enum Event {
         }
     };
     private final String heading = "Check out a latest update ->> ";
+
     public abstract String getMeaning();
+
     public abstract String getDescription();
 
-    public Map<String, Event> getEventMap(){
-        var map = new HashMap<String, Event>();
-        switch (this) {
-            case Answer -> map.put(Answer.getMeaning(), Answer);
-            case SOFComment -> map.put(SOFComment.getMeaning(), SOFComment);
-            case Created -> map.put(Created.getMeaning(), Created);
-            case IssueComment -> map.put(IssueComment.getMeaning(), IssueComment);
+    @SuppressWarnings("MissingSwitchDefault")
+    public static Map<String, EventName> getEventMap() {
+        var listEventNames = EventName.values();
+        var map = new HashMap<String, EventName>();
+        for (EventName e : listEventNames) {
+            switch (e) {
+                case Answer -> map.put(Answer.getMeaning(), Answer);
+                case SOFComment -> map.put(SOFComment.getMeaning(), SOFComment);
+                case Created -> map.put(Created.getMeaning(), Created);
+                case IssueComment -> map.put(IssueComment.getMeaning(), IssueComment);
+            }
         }
         return map;
     }

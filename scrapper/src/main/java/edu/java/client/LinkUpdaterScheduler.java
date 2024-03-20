@@ -2,9 +2,9 @@ package edu.java.client;
 
 import edu.java.client.model.LinkUpdate;
 import edu.java.domain.dao.Chat;
-import edu.java.domain.dao.Link;
 import edu.java.service.ChatService;
 import edu.java.service.LinkUpdater;
+import edu.java.service.model.EventLink;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +44,13 @@ public class LinkUpdaterScheduler {
         }
     }
 
-    private LinkUpdate makeItFromLink(Link link) {
+    private LinkUpdate makeItFromLink(EventLink eventLink) {
         return new LinkUpdate(
-            link.getId(),
-            link.getUri(),
-            link.getDescription(),
-            chatService.findAllChatsWithLink(link.getUri()).stream().map(Chat::getId).toList()
+            eventLink.getLink().getId(),
+            eventLink.getLink().getUri(),
+            eventLink.getEvent().getDescription(),
+            chatService.findAllChatsWithLink(eventLink.getLink().getUri()).stream().map(Chat::getId).toList(),
+            eventLink.getEvent().getDescription()
         );
     }
 }

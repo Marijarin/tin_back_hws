@@ -1,8 +1,8 @@
 package edu.java.service;
 
-import edu.java.domain.dao.Link;
+import edu.java.service.model.EventLink;
 import java.util.List;
 
 public interface LinkUpdater {
-    List<Link> update();
+    List<EventLink> update();
 }
