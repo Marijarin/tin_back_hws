@@ -11,6 +11,7 @@ public record LinkUpdate(
     @NotBlank
     URI url,
     String description,
-    List<Long> tgChatIds
+    List<Long> tgChatIds,
+    String eventDescription
 ) {
 }
