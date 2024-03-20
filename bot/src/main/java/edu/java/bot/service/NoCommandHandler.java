@@ -97,9 +97,11 @@ public class NoCommandHandler implements CommandHandler {
             assert scrapperClient != null;
             linkResponse = scrapperClient.stopLinkTracking(botUser.chatId(), linkRequest);
         }
+
         var list = bot.chats().get(botUser).links();
 
         if (linkResponse != null && linkResponse.id() > 0 && linkResponse.url().toString().equals(url)) {
+            bot.chats().get(botUser).links().remove(linkResponse.url().toString());
             return new SendMessage(
                 botUser.chatId(),
                 applicationConfig.done() + Arrays.deepToString(bot.chats().get(botUser).links().toArray())

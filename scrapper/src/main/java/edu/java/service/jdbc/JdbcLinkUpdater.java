@@ -9,8 +9,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import static java.util.stream.Collectors.groupingBy;
@@ -72,19 +70,15 @@ public class JdbcLinkUpdater implements LinkUpdater {
 
     @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
     private boolean checkOneGitHubLink(Link link) {
-//        var findOwnerRepoRegexp = "^(.*(github.com/))(?<owner>.*)(/)(?<repo>.*)";
-//        Pattern pattern = Pattern.compile(findOwnerRepoRegexp);
-//        String s = link.getUri().toString();
-//        Matcher matcher = pattern.matcher(s);
-//        String owner = matcher.group("owner");
-//        String repo = matcher.group("name");
         var sList = link.getUri().toString().split("/");
         String owner = sList[3];
         String repo = sList[4];
         var updateFromSite = gitHubClient.getResponse(owner, repo);
-        if (updateFromSite.getFirst().updatedAt().isAfter(link.getLastUpdated())) {
-            linkDao.updateLink(link, updateFromSite.getFirst().updatedAt());
-            return true;
+        if (!updateFromSite.isEmpty()) {
+            if (updateFromSite.getFirst().updatedAt().isAfter(link.getLastUpdated())) {
+                linkDao.updateLink(link, updateFromSite.getFirst().updatedAt());
+                return true;
+            }
         }
         return false;
     }
@@ -102,14 +96,13 @@ public class JdbcLinkUpdater implements LinkUpdater {
     }
 
     private boolean checkOneStackOverFlowLink(Link link) {
-        var findIdsRegexp = "^(.*(stackoverflow.com/questions/))(?<ids>.*)(/)(?<name>.*)";
-        Pattern pattern = Pattern.compile(findIdsRegexp);
-        Matcher matcher = pattern.matcher(link.getUri().toString());
-        String ids = matcher.group("ids");
+        String ids = link.getUri().toString().split("stackoverflow.com/questions/")[1].split("/")[0];
         var updateFromSite = stackOverflowClient.getResponse(ids);
-        if (updateFromSite.items().getFirst().creationDate().isAfter(link.getLastUpdated())) {
-            linkDao.updateLink(link, updateFromSite.items().getFirst().creationDate());
-            return true;
+        if (updateFromSite != null && updateFromSite.items()!=null) {
+            if (updateFromSite.items().getFirst().creationDate().isAfter(link.getLastUpdated())) {
+                linkDao.updateLink(link, updateFromSite.items().getFirst().creationDate());
+                return true;
+            }
         }
         return false;
     }

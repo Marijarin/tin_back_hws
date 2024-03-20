@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -136,12 +137,24 @@ public class JDBCLinkDao {
     }
 
     public List<Link> findAllLinksFromChat(long chatId) {
-        String SQL = "select  * from link where id = (select assignment.link_id from assignment where chat_id = ?)";
-        return jdbcTemplate.query(SQL, (rs, rowNum) -> new Link(
-            rs.getLong("id"),
-            URI.create(rs.getString("url")),
-            rs.getString("description"),
-            rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
-        ), chatId);
+        String SQL1 = "select assignment.link_id from assignment where chat_id = ?";
+        List<Long> ids = jdbcTemplate.query(SQL1, (rs, rowNum) ->
+                rs.getLong("link_id"),
+            chatId
+        );
+        List<Link> links = new ArrayList<>();
+        if (!ids.isEmpty()) {
+            for (Long id : ids) {
+                String SQL = "select  * from link where id = ? ";
+                var link =  jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Link(
+                    rs.getLong("id"),
+                    URI.create(rs.getString("url")),
+                    rs.getString("description"),
+                    rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
+                ), id);
+                links.add(link);
+            }
+        }
+        return links;
     }
 }

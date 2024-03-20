@@ -42,39 +42,41 @@ public class JDBCChatRepository {
     }
 
     public List<Chat> findAllChatsWithLink(long linkId) {
-        String SQL = "select * from chat where id = (select chat_id from assignment where link_id=?)";
-        List<Chat> chatList = jdbcTemplate.query(
-            SQL,
-            (rs, rowNum) ->
-                new Chat(
-                    rs.getLong("id"),
-                    rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC),
-                    new ArrayList<>()
-                ), linkId
+        String SQL1 = "select assignment.chat_id from assignment where link_id = ?";
+        Long id = jdbcTemplate.queryForObject(SQL1, (rs, rowNum) ->
+                rs.getLong("chat_id"),
+            linkId
         );
-        for (Chat c : chatList) {
-            c.getLinks().addAll(findAllLinksForChat(c.getId()));
+        List<Chat> chatList = List.of();
+        if (id != null) {
+            String SQL = "select * from chat where id = ?";
+            chatList = jdbcTemplate.query(
+                SQL,
+                (rs, rowNum) ->
+                    new Chat(
+                        rs.getLong("id"),
+                        rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC),
+                        new ArrayList<>()
+                    ), id
+            );
+            for (Chat c : chatList) {
+                c.getLinks().addAll(findAllLinksForChat(c.getId()));
+            }
         }
         return chatList;
     }
 
     @SuppressWarnings("LineLength")
     public List<Chat> findAllChatsWithLink(URI url) {
-        String SQL =
-            "select * from chat where id = (select chat_id from assignment where link_id=(select id from link where url = ?))";
-        List<Chat> chatList = jdbcTemplate.query(
-            SQL,
-            (rs, rowNum) ->
-                new Chat(
-                    rs.getLong("id"),
-                    rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC),
-                    new ArrayList<>()
-                ), url.toString()
+        String SQL1 = "select id from link where url = ?";
+        Long id = jdbcTemplate.queryForObject(SQL1, (rs, rowNum) ->
+                rs.getLong("id"),
+            url.toString()
         );
-        for (Chat c : chatList) {
-            c.getLinks().addAll(findAllLinksForChat(c.getId()));
+        if (id != null) {
+            return findAllChatsWithLink(id);
         }
-        return chatList;
+        return List.of();
     }
 
     public List<Chat> findAllChats() {
@@ -119,16 +121,24 @@ public class JDBCChatRepository {
     }
 
     public List<Link> findAllLinksForChat(long chatId) {
-        String SQL = "select  * from link where id = (select link_id from assignment where chat_id=?)";
-        return jdbcTemplate.query(
-            SQL,
-            (rs, rowNum) ->
-                new Link(
+        String SQL1 = "select assignment.link_id from assignment where chat_id = ?";
+        List<Long> ids = jdbcTemplate.query(SQL1, (rs, rowNum) ->
+                rs.getLong("link_id"),
+            chatId
+        );
+        List<Link> links = new ArrayList<>();
+        if (!ids.isEmpty()) {
+            for (Long id : ids) {
+                String SQL = "select  * from link where id = ? ";
+                var link =  jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Link(
                     rs.getLong("id"),
                     URI.create(rs.getString("url")),
                     rs.getString("description"),
                     rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
-                ), chatId
-        );
+                ), id);
+                links.add(link);
+            }
+        }
+        return links;
     }
 }

@@ -41,7 +41,7 @@ public class ListHandler implements CommandHandler {
             bot.chats().get(botUser).links().addAll(processScrapperResponse(botUser.chatId()));
             return listLinks(botUser, bot);
         } else {
-            return checkDB(bot, botUser);
+            return checkChatInDB(bot, botUser);
         }
     }
 
@@ -82,7 +82,7 @@ public class ListHandler implements CommandHandler {
         );
     }
 
-    private SendMessage checkDB(Bot bot, BotUser botUser) {
+    private SendMessage checkChatInDB(Bot bot, BotUser botUser) {
         if (!isTest) {
             assert scrapperClient != null;
             var chatDB = scrapperClient.findChat(botUser.chatId());
@@ -90,6 +90,7 @@ public class ListHandler implements CommandHandler {
                 return askToRegister(botUser.chatId());
             }
             putUser(bot, botUser);
+            bot.chats().get(botUser).links().addAll(processScrapperResponse(botUser.chatId()));
             return listLinks(botUser, bot);
         }
         return askToRegister(botUser.chatId());
