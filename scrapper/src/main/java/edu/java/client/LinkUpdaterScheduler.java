@@ -1,6 +1,8 @@
 package edu.java.client;
 
 import edu.java.client.model.LinkUpdate;
+import edu.java.domain.dao.Chat;
+import edu.java.domain.dao.Link;
 import edu.java.service.ChatService;
 import edu.java.service.LinkUpdater;
 import org.apache.logging.log4j.LogManager;
@@ -33,18 +35,21 @@ public class LinkUpdaterScheduler {
     void update() {
         var links = linkUpdater.update();
         if (!links.isEmpty()) {
-            var linkUpdates = links.stream().map(link -> new LinkUpdate(
-                    link.getId(),
-                    link.getUri(),
-                    link.getDescription(),
-                    chatService.findAllChatsWithLink(link.getUri()).stream().map(chat -> chat.getId()).toList()
-                )
-            ).toList();
+            var linkUpdates = links.stream().map(this::makeItFromLink).toList();
             for (LinkUpdate linkUpdate : linkUpdates) {
                 botClient.postUpdate(linkUpdate);
             }
         } else {
             logger.info("No updates");
         }
+    }
+
+    private LinkUpdate makeItFromLink(Link link) {
+        return new LinkUpdate(
+            link.getId(),
+            link.getUri(),
+            link.getDescription(),
+            chatService.findAllChatsWithLink(link.getUri()).stream().map(Chat::getId).toList()
+        );
     }
 }

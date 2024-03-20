@@ -71,8 +71,14 @@ public class JdbcLinkUpdater implements LinkUpdater {
     @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
     private boolean checkOneGitHubLink(Link link) {
         var sList = link.getUri().toString().split("/");
-        String owner = sList[3];
-        String repo = sList[4];
+        String owner = "";
+        String repo = "";
+        if (sList.length > 4) {
+            owner = sList[3];
+            repo = sList[4];
+        } else {
+            return false;
+        }
         var updateFromSite = gitHubClient.getResponse(owner, repo);
         if (!updateFromSite.isEmpty()) {
             if (updateFromSite.getFirst().updatedAt().isAfter(link.getLastUpdated())) {
@@ -98,7 +104,7 @@ public class JdbcLinkUpdater implements LinkUpdater {
     private boolean checkOneStackOverFlowLink(Link link) {
         String ids = link.getUri().toString().split("stackoverflow.com/questions/")[1].split("/")[0];
         var updateFromSite = stackOverflowClient.getResponse(ids);
-        if (updateFromSite != null && updateFromSite.items()!=null) {
+        if (updateFromSite != null && updateFromSite.items() != null) {
             if (updateFromSite.items().getFirst().creationDate().isAfter(link.getLastUpdated())) {
                 linkDao.updateLink(link, updateFromSite.items().getFirst().creationDate());
                 return true;

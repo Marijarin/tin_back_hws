@@ -130,7 +130,7 @@ public class JDBCChatRepository {
         if (!ids.isEmpty()) {
             for (Long id : ids) {
                 String SQL = "select  * from link where id = ? ";
-                var link =  jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Link(
+                var link = jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Link(
                     rs.getLong("id"),
                     URI.create(rs.getString("url")),
                     rs.getString("description"),

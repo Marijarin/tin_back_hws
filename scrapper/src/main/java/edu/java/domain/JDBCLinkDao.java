@@ -47,27 +47,8 @@ public class JDBCLinkDao {
     }
 
     public Link addLink(long chatId, URI url) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        String SQL = "with link_insert as" +
-            " (insert into link (url, description, last_updated) values (?, ?, ?) returning id)" +
-            "insert into assignment(chat_id, link_id) values (? , (select id from link_insert)) ";
-        var updatedOffset = OffsetDateTime.now();
-        var updatedTime = Timestamp.from(updatedOffset.toInstant());
         var description = url.getHost();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, url.toString());
-            ps.setString(2, description);
-            ps.setTimestamp(3, updatedTime);
-            ps.setLong(4, chatId);
-            return ps;
-        }, keyHolder);
-        return new Link(
-            (long) Objects.requireNonNull(keyHolder.getKeys()).get("link_id"),
-            url,
-            description,
-            updatedOffset
-        );
+        return addLink(chatId, url, description);
     }
 
     public Link updateLink(Link link, OffsetDateTime lastUpdate) {

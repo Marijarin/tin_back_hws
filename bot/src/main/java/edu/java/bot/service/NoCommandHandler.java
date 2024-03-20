@@ -89,7 +89,7 @@ public class NoCommandHandler implements CommandHandler {
         );
     }
 
-    private SendMessage processUnTrack(BotUser botUser, String url, Bot bot) { //todo
+    private SendMessage processUnTrack(BotUser botUser, String url, Bot bot) {
         bot.isWaiting().replace(botUser, null);
         var linkRequest = new RemoveLinkRequest(URI.create(url));
         LinkResponse linkResponse = null;
@@ -97,25 +97,28 @@ public class NoCommandHandler implements CommandHandler {
             assert scrapperClient != null;
             linkResponse = scrapperClient.stopLinkTracking(botUser.chatId(), linkRequest);
         }
+        return handleLinkResponseOrInMemory(linkResponse, bot, botUser, url);
+    }
 
+    private SendMessage handleLinkResponseOrInMemory(LinkResponse linkResponse, Bot bot, BotUser botUser, String url) {
         var list = bot.chats().get(botUser).links();
-
         if (linkResponse != null && linkResponse.id() > 0 && linkResponse.url().toString().equals(url)) {
             bot.chats().get(botUser).links().remove(linkResponse.url().toString());
-            return new SendMessage(
-                botUser.chatId(),
-                applicationConfig.done() + Arrays.deepToString(bot.chats().get(botUser).links().toArray())
-            );
+            return sendListLinks(bot, botUser);
         }
         if (list.remove(url)) {
-            return new SendMessage(
-                botUser.chatId(),
-                applicationConfig.done() + Arrays.deepToString(bot.chats().get(botUser).links().toArray())
-            );
+            return sendListLinks(bot, botUser);
         }
         return new SendMessage(
             botUser.chatId(),
             applicationConfig.notTracked() + url
+        );
+    }
+
+    private SendMessage sendListLinks(Bot bot, BotUser botUser) {
+        return new SendMessage(
+            botUser.chatId(),
+            applicationConfig.done() + Arrays.deepToString(bot.chats().get(botUser).links().toArray())
         );
     }
 
