@@ -6,7 +6,6 @@ import edu.java.domain.model.LinkDao;
 import edu.java.scrapper.domain.jooq.dao.JooqLinkDao;
 import edu.java.service.LinkUpdater;
 import edu.java.service.model.EventLink;
-import edu.java.service.model.EventName;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;

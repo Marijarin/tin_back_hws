@@ -5,8 +5,6 @@ import edu.java.domain.model.LinkDao;
 import edu.java.service.LinkService;
 import java.net.URI;
 import java.util.Collection;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 //@Service
@@ -14,7 +12,7 @@ public class JdbcLinkService implements LinkService {
 
     private final JDBCLinkDao linkRepository;
 
-   // @Autowired
+    // @Autowired
     public JdbcLinkService(JDBCLinkDao linkRepository) {
         this.linkRepository = linkRepository;
     }
