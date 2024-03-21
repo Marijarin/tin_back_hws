@@ -1,7 +1,7 @@
 package edu.java.client;
 
 import edu.java.client.model.LinkUpdate;
-import edu.java.domain.dao.Chat;
+import edu.java.domain.model.ChatDao;
 import edu.java.service.ChatService;
 import edu.java.service.LinkUpdater;
 import edu.java.service.model.EventLink;
@@ -49,7 +49,7 @@ public class LinkUpdaterScheduler {
             eventLink.getLink().getId(),
             eventLink.getLink().getUri(),
             eventLink.getEvent().getDescription(),
-            chatService.findAllChatsWithLink(eventLink.getLink().getUri()).stream().map(Chat::getId).toList(),
+            chatService.findAllChatsWithLink(eventLink.getLink().getUri()).stream().map(ChatDao::getId).toList(),
             eventLink.getEvent().getDescription()
         );
     }

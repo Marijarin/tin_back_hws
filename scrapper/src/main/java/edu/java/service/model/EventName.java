@@ -48,7 +48,7 @@ public enum EventName {
             return SOFComment.heading + "Somebody commented this question!";
         }
     };
-    private final String heading = "Check out a latest update ->> ";
+    private final String heading = "Check out the latest update ->> ";
 
     public abstract String getMeaning();
 

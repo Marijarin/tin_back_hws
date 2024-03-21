@@ -1,15 +1,16 @@
 package edu.java.service;
 
-import edu.java.domain.dao.Chat;
+
+import edu.java.domain.model.ChatDao;
 import java.net.URI;
 import java.util.List;
 
 public interface ChatService {
     void register(long tgChatId);
 
-    Chat findChatById(long tgChatId);
+    ChatDao findChatById(long tgChatId);
 
     void unregister(long tgChatId);
 
-    List<Chat> findAllChatsWithLink(URI url);
+    List<ChatDao> findAllChatsWithLink(URI url);
 }

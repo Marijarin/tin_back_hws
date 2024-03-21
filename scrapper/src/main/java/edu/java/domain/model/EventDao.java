@@ -1,4 +1,4 @@
-package edu.java.domain.dao;
+package edu.java.domain.model;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @AllArgsConstructor
-public class Event {
+public class EventDao {
     @NotNull
     String description;
     @NotNull

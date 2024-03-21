@@ -1,4 +1,4 @@
-package edu.java.domain.dao;
+package edu.java.domain.model;
 
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -11,7 +11,7 @@ import org.springframework.data.annotation.Id;
 @Setter
 @Getter
 @AllArgsConstructor
-public class Link {
+public class LinkDao {
     @Id
     long id;
     @NotNull
@@ -20,7 +20,7 @@ public class Link {
     @NotNull
     OffsetDateTime lastUpdated;
 
-    public Link(long id, URI uri, String description) {
+    public LinkDao(long id, URI uri, String description) {
         this.id = id;
         this.uri = uri;
         this.description = description;

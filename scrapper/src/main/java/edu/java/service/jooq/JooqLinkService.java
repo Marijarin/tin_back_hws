@@ -1,7 +1,7 @@
-package edu.java.service.jdbc;
+package edu.java.service.jooq;
 
-import edu.java.domain.dao.JDBCLinkDao;
 import edu.java.domain.model.LinkDao;
+import edu.java.scrapper.domain.jooq.dao.JooqLinkDao;
 import edu.java.service.LinkService;
 import java.net.URI;
 import java.util.Collection;
@@ -9,13 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//@Service
-public class JdbcLinkService implements LinkService {
+@Service
+public class JooqLinkService implements LinkService {
+    private final JooqLinkDao linkRepository;
 
-    private final JDBCLinkDao linkRepository;
-
-   // @Autowired
-    public JdbcLinkService(JDBCLinkDao linkRepository) {
+    @Autowired
+    public JooqLinkService(JooqLinkDao linkRepository) {
         this.linkRepository = linkRepository;
     }
 
@@ -33,7 +32,7 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public long findLinkId(long tgChatId, URI url) {
-        return linkRepository.findByUrlAndChat(tgChatId, url);
+        return linkRepository.findByUrl(url).getId();
     }
 
     @Override

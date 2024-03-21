@@ -1,7 +1,7 @@
 package edu.java.service.jdbc;
 
-import edu.java.domain.JDBCChatRepository;
-import edu.java.domain.dao.Chat;
+import edu.java.domain.dao.JDBCChatRepository;
+import edu.java.domain.model.ChatDao;
 import edu.java.service.ChatService;
 import java.net.URI;
 import java.util.List;
@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+//@Service
 public class JdbcChatService implements ChatService {
     private final JDBCChatRepository chatRepository;
 
-    @Autowired
+    //@Autowired
     public JdbcChatService(JDBCChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }
@@ -32,13 +32,13 @@ public class JdbcChatService implements ChatService {
 
     @Override
     @Transactional
-    public Chat findChatById(long tgChatId) {
+    public ChatDao findChatById(long tgChatId) {
         return chatRepository.findChat(tgChatId);
     }
 
     @Override
     @Transactional
-    public List<Chat> findAllChatsWithLink(URI url) {
+    public List<ChatDao> findAllChatsWithLink(URI url) {
         return chatRepository.findAllChatsWithLink(url);
     }
 }
