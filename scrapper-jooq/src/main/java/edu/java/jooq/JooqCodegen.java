@@ -16,7 +16,7 @@ public class JooqCodegen {
             .withName("org.jooq.meta.extensions.liquibase.LiquibaseDatabase")
             .withProperties(
                 new Property().withKey("rootPath").withValue("migrations"),
-                new Property().withKey("scripts").withValue("master.xml")
+                new Property().withKey("scripts").withValue("master.yaml")
             );
 
         Generate options = new Generate()

@@ -1,7 +1,7 @@
 package edu.java.service.jooq;
 
+import edu.java.domain.jooq.JooqChatRepository;
 import edu.java.domain.model.ChatDao;
-import edu.java.scrapper.domain.jooq.dao.JooqChatRepository;
 import edu.java.service.ChatService;
 import java.net.URI;
 import java.util.List;

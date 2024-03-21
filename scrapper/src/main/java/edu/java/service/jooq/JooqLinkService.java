@@ -1,7 +1,7 @@
 package edu.java.service.jooq;
 
+import edu.java.domain.jooq.JooqLinkDao;
 import edu.java.domain.model.LinkDao;
-import edu.java.scrapper.domain.jooq.dao.JooqLinkDao;
 import edu.java.service.LinkService;
 import java.net.URI;
 import java.util.Collection;

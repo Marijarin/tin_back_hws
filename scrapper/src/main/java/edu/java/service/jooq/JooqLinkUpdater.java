@@ -2,8 +2,8 @@ package edu.java.service.jooq;
 
 import edu.java.client.GitHubClient;
 import edu.java.client.StackOverflowClient;
+import edu.java.domain.jooq.JooqLinkDao;
 import edu.java.domain.model.LinkDao;
-import edu.java.scrapper.domain.jooq.dao.JooqLinkDao;
 import edu.java.service.LinkUpdater;
 import edu.java.service.model.EventLink;
 import java.time.OffsetDateTime;

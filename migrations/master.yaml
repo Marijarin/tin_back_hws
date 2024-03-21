@@ -1,0 +1,6 @@
+databaseChangeLog:
+    - include:
+        file: sql/init_tables.sql
+    - include:
+        file: sql/add_events.sql
+

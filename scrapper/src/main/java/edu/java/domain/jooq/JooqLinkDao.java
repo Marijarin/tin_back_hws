@@ -1,4 +1,4 @@
-package edu.java.scrapper.domain.jooq.dao;
+package edu.java.domain.jooq;
 
 import edu.java.domain.model.EventDao;
 import edu.java.domain.model.LinkDao;
