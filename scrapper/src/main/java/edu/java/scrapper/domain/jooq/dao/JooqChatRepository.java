@@ -64,7 +64,7 @@ public class JooqChatRepository {
             .where(LINK.URL.eq(url.toString()))
             .fetchOne();
         assert linkId != null;
-        var id = Long.parseLong(linkId.toString());
+        var id = (long) linkId.component1();
         Result<Record1<Long>> chatRecords = jooq
             .select(ASSIGNMENT.CHAT_ID)
             .from(ASSIGNMENT)
