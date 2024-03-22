@@ -2,7 +2,10 @@ package edu.java.domain.jpa.entity;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
+
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,6 +17,7 @@ public class LinkEntity {
     private long id;
 
     @Column(name = "url")
+    @URL
     private String url;
 
     @Column(name = "description")
@@ -23,8 +27,8 @@ public class LinkEntity {
     private OffsetDateTime lastUpdated;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<ChatEntity> chats;
+    private List<ChatEntity> chats = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<EventEntity> events;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<EventEntity> events = new ArrayList<>();
 }

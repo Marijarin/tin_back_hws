@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.NoArgsConstructor;
 
@@ -21,6 +22,6 @@ public class ChatEntity {
     private OffsetDateTime createdAt;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<LinkEntity> links;
+    private List<LinkEntity> links = new ArrayList<>();
 
 }
