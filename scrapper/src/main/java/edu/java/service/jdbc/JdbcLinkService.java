@@ -1,6 +1,6 @@
 package edu.java.service.jdbc;
 
-import edu.java.domain.dao.JDBCLinkDao;
+import edu.java.domain.jdbc.JDBCLinkDao;
 import edu.java.domain.model.LinkDao;
 import edu.java.service.LinkService;
 import java.net.URI;

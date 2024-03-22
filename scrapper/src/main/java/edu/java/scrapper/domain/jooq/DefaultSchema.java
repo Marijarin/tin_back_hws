@@ -6,7 +6,7 @@ package edu.java.scrapper.domain.jooq;
 
 import edu.java.scrapper.domain.jooq.tables.Assignment;
 import edu.java.scrapper.domain.jooq.tables.Chat;
-import edu.java.scrapper.domain.jooq.tables.Events;
+import edu.java.scrapper.domain.jooq.tables.Event;
 import edu.java.scrapper.domain.jooq.tables.Link;
 
 import java.util.Arrays;
@@ -51,9 +51,9 @@ public class DefaultSchema extends SchemaImpl {
     public final Chat CHAT = Chat.CHAT;
 
     /**
-     * The table <code>EVENTS</code>.
+     * The table <code>EVENT</code>.
      */
-    public final Events EVENTS = Events.EVENTS;
+    public final Event EVENT = Event.EVENT;
 
     /**
      * The table <code>LINK</code>.
@@ -80,7 +80,7 @@ public class DefaultSchema extends SchemaImpl {
         return Arrays.asList(
             Assignment.ASSIGNMENT,
             Chat.CHAT,
-            Events.EVENTS,
+            Event.EVENT,
             Link.LINK
         );
     }

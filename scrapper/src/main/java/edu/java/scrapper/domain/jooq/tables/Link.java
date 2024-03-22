@@ -66,7 +66,7 @@ public class Link extends TableImpl<LinkRecord> {
     /**
      * The column <code>LINK.ID</code>.
      */
-    public final TableField<LinkRecord, Integer> ID = createField(DSL.name("ID"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+    public final TableField<LinkRecord, Long> ID = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>LINK.URL</code>.
@@ -124,8 +124,8 @@ public class Link extends TableImpl<LinkRecord> {
 
     @Override
     @NotNull
-    public Identity<LinkRecord, Integer> getIdentity() {
-        return (Identity<LinkRecord, Integer>) super.getIdentity();
+    public Identity<LinkRecord, Long> getIdentity() {
+        return (Identity<LinkRecord, Long>) super.getIdentity();
     }
 
     @Override
@@ -185,14 +185,14 @@ public class Link extends TableImpl<LinkRecord> {
 
     @Override
     @NotNull
-    public Row4<Integer, String, String, OffsetDateTime> fieldsRow() {
+    public Row4<Long, String, String, OffsetDateTime> fieldsRow() {
         return (Row4) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function4<? super Integer, ? super String, ? super String, ? super OffsetDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function4<? super Long, ? super String, ? super String, ? super OffsetDateTime, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -200,7 +200,7 @@ public class Link extends TableImpl<LinkRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function4<? super Integer, ? super String, ? super String, ? super OffsetDateTime, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function4<? super Long, ? super String, ? super String, ? super OffsetDateTime, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

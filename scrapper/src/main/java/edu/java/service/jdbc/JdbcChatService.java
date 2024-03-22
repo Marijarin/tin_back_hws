@@ -1,6 +1,6 @@
 package edu.java.service.jdbc;
 
-import edu.java.domain.dao.JDBCChatRepository;
+import edu.java.domain.jdbc.JDBCChatRepository;
 import edu.java.domain.model.ChatDao;
 import edu.java.service.ChatService;
 import java.net.URI;

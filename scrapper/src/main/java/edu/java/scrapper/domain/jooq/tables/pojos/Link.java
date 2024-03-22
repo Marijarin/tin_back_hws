@@ -31,7 +31,7 @@ public class Link implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
+    private Long id;
     private String url;
     private String description;
     private OffsetDateTime lastUpdated;
@@ -47,7 +47,7 @@ public class Link implements Serializable {
 
     @ConstructorProperties({ "id", "url", "description", "lastUpdated" })
     public Link(
-        @Nullable Integer id,
+        @Nullable Long id,
         @NotNull String url,
         @Nullable String description,
         @NotNull OffsetDateTime lastUpdated
@@ -62,14 +62,14 @@ public class Link implements Serializable {
      * Getter for <code>LINK.ID</code>.
      */
     @Nullable
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
 
     /**
      * Setter for <code>LINK.ID</code>.
      */
-    public void setId(@Nullable Integer id) {
+    public void setId(@Nullable Long id) {
         this.id = id;
     }
 

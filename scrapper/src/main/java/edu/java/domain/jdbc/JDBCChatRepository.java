@@ -1,4 +1,4 @@
-package edu.java.domain.dao;
+package edu.java.domain.jdbc;
 
 import edu.java.domain.model.ChatDao;
 import edu.java.domain.model.LinkDao;

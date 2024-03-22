@@ -6,11 +6,11 @@ package edu.java.scrapper.domain.jooq;
 
 import edu.java.scrapper.domain.jooq.tables.Assignment;
 import edu.java.scrapper.domain.jooq.tables.Chat;
-import edu.java.scrapper.domain.jooq.tables.Events;
+import edu.java.scrapper.domain.jooq.tables.Event;
 import edu.java.scrapper.domain.jooq.tables.Link;
 import edu.java.scrapper.domain.jooq.tables.records.AssignmentRecord;
 import edu.java.scrapper.domain.jooq.tables.records.ChatRecord;
-import edu.java.scrapper.domain.jooq.tables.records.EventsRecord;
+import edu.java.scrapper.domain.jooq.tables.records.EventRecord;
 import edu.java.scrapper.domain.jooq.tables.records.LinkRecord;
 
 import javax.annotation.processing.Generated;
@@ -41,6 +41,7 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final UniqueKey<ChatRecord> CONSTRAINT_1 = Internal.createUniqueKey(Chat.CHAT, DSL.name("CONSTRAINT_1"), new TableField[] { Chat.CHAT.ID }, true);
+    public static final UniqueKey<EventRecord> CONSTRAINT_3 = Internal.createUniqueKey(Event.EVENT, DSL.name("CONSTRAINT_3"), new TableField[] { Event.EVENT.ID }, true);
     public static final UniqueKey<LinkRecord> CONSTRAINT_2 = Internal.createUniqueKey(Link.LINK, DSL.name("CONSTRAINT_2"), new TableField[] { Link.LINK.ID }, true);
 
     // -------------------------------------------------------------------------
@@ -49,5 +50,5 @@ public class Keys {
 
     public static final ForeignKey<AssignmentRecord, ChatRecord> CONSTRAINT_5 = Internal.createForeignKey(Assignment.ASSIGNMENT, DSL.name("CONSTRAINT_5"), new TableField[] { Assignment.ASSIGNMENT.CHAT_ID }, Keys.CONSTRAINT_1, new TableField[] { Chat.CHAT.ID }, true);
     public static final ForeignKey<AssignmentRecord, LinkRecord> CONSTRAINT_5A = Internal.createForeignKey(Assignment.ASSIGNMENT, DSL.name("CONSTRAINT_5A"), new TableField[] { Assignment.ASSIGNMENT.LINK_ID }, Keys.CONSTRAINT_2, new TableField[] { Link.LINK.ID }, true);
-    public static final ForeignKey<EventsRecord, LinkRecord> CONSTRAINT_7 = Internal.createForeignKey(Events.EVENTS, DSL.name("CONSTRAINT_7"), new TableField[] { Events.EVENTS.LINK_ID }, Keys.CONSTRAINT_2, new TableField[] { Link.LINK.ID }, true);
+    public static final ForeignKey<EventRecord, LinkRecord> CONSTRAINT_3F = Internal.createForeignKey(Event.EVENT, DSL.name("CONSTRAINT_3F"), new TableField[] { Event.EVENT.LINK_ID }, Keys.CONSTRAINT_2, new TableField[] { Link.LINK.ID }, true);
 }

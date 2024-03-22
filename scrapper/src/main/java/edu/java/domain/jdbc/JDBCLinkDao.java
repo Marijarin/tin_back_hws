@@ -1,4 +1,4 @@
-package edu.java.domain.dao;
+package edu.java.domain.jdbc;
 
 import edu.java.domain.model.EventDao;
 import edu.java.domain.model.LinkDao;
@@ -141,9 +141,9 @@ public class JDBCLinkDao {
     }
 
     public EventDao putEventType(long linkId, String description) {
-        String SQL = "insert into events (event, link_id) VALUES (?, ?) returning event, link_id";
+        String SQL = "insert into event (type, link_id) VALUES (?, ?) returning type, link_id";
         return jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new EventDao(
-            rs.getString("event"),
+            rs.getString("type"),
             rs.getLong("link_id")
         ), description, linkId);
 

@@ -1,7 +1,7 @@
 package edu.java;
 
-import edu.java.domain.dao.JDBCChatRepository;
-import edu.java.domain.dao.JDBCLinkDao;
+import edu.java.domain.jdbc.JDBCChatRepository;
+import edu.java.domain.jdbc.JDBCLinkDao;
 import edu.java.domain.model.ChatDao;
 import edu.java.domain.model.LinkDao;
 import java.net.URI;

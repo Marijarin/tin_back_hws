@@ -2,7 +2,7 @@ package edu.java.service.jdbc;
 
 import edu.java.client.GitHubClient;
 import edu.java.client.StackOverflowClient;
-import edu.java.domain.dao.JDBCLinkDao;
+import edu.java.domain.jdbc.JDBCLinkDao;
 import edu.java.domain.model.LinkDao;
 import edu.java.service.LinkUpdater;
 import edu.java.service.model.EventLink;

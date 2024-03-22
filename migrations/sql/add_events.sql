@@ -1,5 +1,6 @@
-CREATE TABLE IF NOT EXISTS events
+CREATE TABLE IF NOT EXISTS event
 (
-    event   varchar NOT NULL,
+    id      BIGSERIAL PRIMARY KEY,
+    type   varchar NOT NULL,
     link_id bigint  NOT NULL REFERENCES link (id) ON DELETE CASCADE
 );

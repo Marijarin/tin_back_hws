@@ -56,13 +56,13 @@ public class JooqChatRepository {
 
     @Transactional
     public List<ChatDao> findAllChatsWithLink(URI url) {
-        Record1<Integer> linkId = jooq
+        Record1<Long> linkId = jooq
             .select(LINK.ID)
             .from(LINK)
             .where(LINK.URL.eq(url.toString()))
             .fetchOne();
         assert linkId != null;
-        var id = (long) linkId.component1();
+        var id = linkId.component1();
         Result<Record1<Long>> chatRecords = jooq
             .select(ASSIGNMENT.CHAT_ID)
             .from(ASSIGNMENT)

@@ -13,7 +13,7 @@ import org.jooq.Record4;
 import org.jooq.Result;
 import org.springframework.stereotype.Repository;
 import static edu.java.scrapper.domain.jooq.Tables.ASSIGNMENT;
-import static edu.java.scrapper.domain.jooq.Tables.EVENTS;
+import static edu.java.scrapper.domain.jooq.Tables.EVENT;
 import static edu.java.scrapper.domain.jooq.Tables.LINK;
 
 @Repository
@@ -57,10 +57,10 @@ public class JooqLinkDao {
             .fetch();
         var links = new ArrayList<LinkDao>();
         linkIds.forEach(longRecord1 -> {
-            Record4<Integer, String, String, OffsetDateTime> link = jooq
+            Record4<Long, String, String, OffsetDateTime> link = jooq
                 .select(LINK.ID, LINK.URL, LINK.DESCRIPTION, LINK.LAST_UPDATED)
                 .from(LINK)
-                .where(LINK.ID.eq(Math.toIntExact(longRecord1.component1())))
+                .where(LINK.ID.eq(longRecord1.component1()))
                 .fetchOne();
             assert link != null;
             links.add(new LinkDao(
@@ -74,7 +74,7 @@ public class JooqLinkDao {
     }
 
     public List<LinkDao> findAllLinksWithLastUpdateEarlierThan(OffsetDateTime lastUpdate) {
-        Result<Record4<Integer, String, String, OffsetDateTime>> linkRecords = jooq
+        Result<Record4<Long, String, String, OffsetDateTime>> linkRecords = jooq
             .select(LINK.ID, LINK.URL, LINK.DESCRIPTION, LINK.LAST_UPDATED)
             .from(LINK)
             .where(LINK.LAST_UPDATED.lessThan(lastUpdate))
@@ -90,9 +90,9 @@ public class JooqLinkDao {
     }
 
     public EventDao putEventType(long linkId, String description) {
-        jooq.insertInto(EVENTS)
-            .set(EVENTS.EVENT, description)
-            .set(EVENTS.LINK_ID, linkId)
+        jooq.insertInto(EVENT)
+            .set(EVENT.TYPE, description)
+            .set(EVENT.LINK_ID, linkId)
             .execute();
         return new EventDao(description, linkId);
     }
@@ -100,13 +100,13 @@ public class JooqLinkDao {
     public LinkDao updateLink(LinkDao link, OffsetDateTime lastUpdate) {
         jooq.update(LINK)
             .set(LINK.LAST_UPDATED, lastUpdate)
-            .where(LINK.ID.eq((int) link.getId()))
+            .where(LINK.ID.eq(link.getId()))
             .execute();
         return findByUrl(link.getUri());
     }
 
     public LinkDao findByUrl(URI url) {
-        Record4<Integer, String, String, OffsetDateTime> link = jooq
+        Record4<Long, String, String, OffsetDateTime> link = jooq
             .select(LINK.ID, LINK.URL, LINK.DESCRIPTION, LINK.LAST_UPDATED)
             .from(LINK)
             .where(LINK.URL.eq(url.toString()))
