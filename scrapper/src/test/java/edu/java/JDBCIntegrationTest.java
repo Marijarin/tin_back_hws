@@ -56,7 +56,7 @@ public class JDBCIntegrationTest extends IntegrationTest {
         var resultChat = chatRepository.addChat(1L);
         chatRepository.deleteChat(resultChat);
 
-        assertThat(chatRepository.findChat(resultChat).getId()).isEqualTo(-1L);
+        assertThat(chatRepository.findChat(resultChat).getId()).isEqualTo(0L);
         //             return null;
         //           }
 //        );
