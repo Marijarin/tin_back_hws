@@ -9,7 +9,6 @@ import edu.java.service.LinkService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.Collection;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,7 @@ public class JpaLinkService implements LinkService {
 
     private final JpaChatRepository chatRepository;
 
-  @Autowired
+    @Autowired
     public JpaLinkService(JpaLinkDao linkDao, JpaChatRepository chatRepository) {
         this.linkDao = linkDao;
         this.chatRepository = chatRepository;
@@ -59,7 +58,7 @@ public class JpaLinkService implements LinkService {
     @Override
     @Transactional
     public Collection<LinkDao> listAll(long tgChatId) {
-       // var chat = chatRepository.findChatEntityById(tgChatId);
+        // var chat = chatRepository.findChatEntityById(tgChatId);
         var links = linkDao.findAll()
             .stream()
             .filter(linkEntity -> linkEntity.getChats().stream().map(ChatEntity::getId).toList().contains(tgChatId));

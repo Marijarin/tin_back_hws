@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("ConstantName")
+@SuppressWarnings({"ConstantName", "MagicNumber"})
 public interface LinkUpdater {
     Map<String, EventName> eventMap = EventName.getEventMap();
 
@@ -16,6 +16,7 @@ public interface LinkUpdater {
     EventLink checkOneStackOverFlowLink(LinkDao link);
 
     Map<String, List<LinkDao>> classifySavedLinksNotUpdatedYet(long days);
+
     default List<EventLink> update() {
         var mapOfNotUpdatedYet = classifySavedLinksNotUpdatedYet(1);
         if (!mapOfNotUpdatedYet.isEmpty()) {
@@ -70,9 +71,11 @@ public interface LinkUpdater {
         }
         return result;
     }
-    default String getIdsForSOFRequest(String url){
+
+    default String getIdsForSOFRequest(String url) {
         return url.split("stackoverflow.com/questions/")[1].split("/")[0];
     }
+
     default List<String> getParametersForGitHubRequest(String url) {
         var sList = url.split("/");
         if (sList.length > 4) {

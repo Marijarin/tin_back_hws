@@ -1,6 +1,5 @@
 package edu.java.domain.jpa;
 
-import edu.java.domain.jpa.entity.ChatEntity;
 import edu.java.domain.jpa.entity.LinkEntity;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -13,5 +12,5 @@ public interface JpaLinkDao extends JpaRepository<LinkEntity, Long> {
 
     LinkEntity findByUrl(String url);
 
-    List<LinkEntity>findLinkEntitiesByLastUpdatedBefore(OffsetDateTime lastUpdated);
+    List<LinkEntity> findLinkEntitiesByLastUpdatedBefore(OffsetDateTime lastUpdated);
 }

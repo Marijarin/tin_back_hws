@@ -6,11 +6,11 @@ import edu.java.domain.jdbc.JdbcLinkDao;
 import edu.java.domain.model.LinkDao;
 import edu.java.service.LinkUpdater;
 import edu.java.service.model.EventLink;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
