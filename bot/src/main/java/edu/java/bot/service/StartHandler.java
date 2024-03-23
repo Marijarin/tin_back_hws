@@ -47,7 +47,7 @@ public class StartHandler implements CommandHandler {
             assert scrapperClient != null;
             var chat = scrapperClient.findChat(botUser.chatId());
             logger.error(chat);
-            if (chat.chatId() == -1) {
+            if (chat.chatId() == 0) {
                 scrapperClient.registerChat(botUser.chatId());
             } else {
                 return new SendMessage(botUser.chatId(), applicationConfig.alreadyRegistered());

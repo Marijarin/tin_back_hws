@@ -64,7 +64,7 @@ public class TrackHandler implements CommandHandler {
         if (!isTest) {
             assert scrapperClient != null;
             var chatDB = scrapperClient.findChat(botUser.chatId());
-            if (chatDB.chatId() == -1) {
+            if (chatDB.chatId() == 0) {
                 return askToRegister(botUser.chatId());
             }
             putUser(bot, botUser);

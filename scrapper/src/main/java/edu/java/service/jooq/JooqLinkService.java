@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+//@Service
 public class JooqLinkService implements LinkService {
     private final JooqLinkDao linkRepository;
 
-    @Autowired
+   // @Autowired
     public JooqLinkService(JooqLinkDao linkRepository) {
         this.linkRepository = linkRepository;
     }
@@ -26,13 +26,8 @@ public class JooqLinkService implements LinkService {
 
     @Override
     @Transactional
-    public LinkDao remove(long tgChatId, URI url) {
-        return linkRepository.deleteLink(tgChatId, url);
-    }
-
-    @Override
-    public long findLinkId(long tgChatId, URI url) {
-        return linkRepository.findByUrl(url).getId();
+    public void remove(long tgChatId, URI url) {
+        linkRepository.deleteLink(tgChatId, url);
     }
 
     @Override

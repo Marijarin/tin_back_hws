@@ -11,11 +11,22 @@ import java.util.Map;
 public interface LinkUpdater {
     Map<String, EventName> eventMap = EventName.getEventMap();
 
-    List<EventLink> update();
-
     EventLink checkOneGitHubLink(LinkDao link);
 
     EventLink checkOneStackOverFlowLink(LinkDao link);
+
+    Map<String, List<LinkDao>> classifySavedLinksNotUpdatedYet(long days);
+    default List<EventLink> update() {
+        var mapOfNotUpdatedYet = classifySavedLinksNotUpdatedYet(1);
+        if (!mapOfNotUpdatedYet.isEmpty()) {
+            var stackOverFlowList = extractLinksByKeyWord(mapOfNotUpdatedYet, "stackoverflow");
+            var gitHubList = extractLinksByKeyWord(mapOfNotUpdatedYet, "github");
+            var result = updateFromGithub(gitHubList);
+            result.addAll(updateFromStackOverFlow(stackOverFlowList));
+            return result;
+        }
+        return List.of();
+    }
 
     default List<LinkDao> extractLinksByKeyWord(Map<String, List<LinkDao>> all, String key) {
         var mapKey = all.keySet().stream().filter(it -> it.contains(key)).findFirst().orElseGet(String::new);
@@ -58,5 +69,16 @@ public interface LinkUpdater {
             }
         }
         return result;
+    }
+    default String getIdsForSOFRequest(String url){
+        return url.split("stackoverflow.com/questions/")[1].split("/")[0];
+    }
+    default List<String> getParametersForGitHubRequest(String url) {
+        var sList = url.split("/");
+        if (sList.length > 4) {
+            return List.of(sList[3], sList[4]);
+        } else {
+            return List.of();
+        }
     }
 }

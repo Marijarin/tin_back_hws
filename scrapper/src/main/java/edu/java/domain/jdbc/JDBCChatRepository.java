@@ -113,7 +113,7 @@ public class JDBCChatRepository {
                     ), id
             );
         } catch (EmptyResultDataAccessException e) {
-            return new ChatDao(-1L, OffsetDateTime.now(), null);
+            return new ChatDao(0L, OffsetDateTime.now(), null);
         }
     }
 

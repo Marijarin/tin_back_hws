@@ -114,7 +114,7 @@ public class JDBCLinkDao {
         if (chatIds.contains(chatId)) {
             return chatId;
         } else {
-            return -1L;
+            return 0L;
         }
     }
 
