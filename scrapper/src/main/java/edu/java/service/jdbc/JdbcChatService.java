@@ -1,6 +1,6 @@
 package edu.java.service.jdbc;
 
-import edu.java.domain.jdbc.JDBCChatRepository;
+import edu.java.domain.jdbc.JdbcChatRepository;
 import edu.java.domain.model.ChatDao;
 import edu.java.service.ChatService;
 import java.net.URI;
@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class JdbcChatService implements ChatService {
-    private final JDBCChatRepository chatRepository;
+    private final JdbcChatRepository chatRepository;
 
     @Autowired
-    public JdbcChatService(JDBCChatRepository chatRepository) {
+    public JdbcChatService(JdbcChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }
 

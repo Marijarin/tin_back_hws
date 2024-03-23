@@ -1,7 +1,7 @@
 package edu.java;
 
-import edu.java.domain.jdbc.JDBCChatRepository;
-import edu.java.domain.jdbc.JDBCLinkDao;
+import edu.java.domain.jdbc.JdbcChatRepository;
+import edu.java.domain.jdbc.JdbcLinkDao;
 import edu.java.domain.model.ChatDao;
 import edu.java.domain.model.LinkDao;
 import java.net.URI;
@@ -19,13 +19,13 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest(classes = {TestConfig.class, JDBCChatRepository.class, JDBCLinkDao.class})
+@SpringBootTest(classes = {TestConfig.class, JdbcChatRepository.class, JdbcLinkDao.class})
 @Testcontainers
 public class JDBCIntegrationTest extends IntegrationTest {
     @Autowired
-    JDBCLinkDao linkRepository;
+    JdbcLinkDao linkRepository;
     @Autowired
-    JDBCChatRepository chatRepository;
+    JdbcChatRepository chatRepository;
     @Autowired
     JdbcTemplate jdbcTemplate;
 //    private TransactionTemplate transactionTemplate;

@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//@Service
+@Service
 public class JooqLinkService implements LinkService {
     private final JooqLinkDao linkRepository;
 
-   // @Autowired
+    @Autowired
     public JooqLinkService(JooqLinkDao linkRepository) {
         this.linkRepository = linkRepository;
     }

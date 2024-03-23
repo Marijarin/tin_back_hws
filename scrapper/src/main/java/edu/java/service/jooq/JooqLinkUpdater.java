@@ -14,14 +14,14 @@ import org.springframework.stereotype.Service;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
-//@Service
+@Service
 public class JooqLinkUpdater implements LinkUpdater {
     private final JooqLinkDao linkDao;
     private final GitHubClient gitHubClient;
 
     private final StackOverflowClient stackOverflowClient;
 
-   // @Autowired
+   @Autowired
     public JooqLinkUpdater(JooqLinkDao linkDao, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient) {
         this.linkDao = linkDao;
         this.gitHubClient = gitHubClient;

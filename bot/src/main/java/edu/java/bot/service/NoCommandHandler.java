@@ -12,6 +12,7 @@ import edu.java.bot.service.model.Bot;
 import edu.java.bot.service.model.BotUser;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,11 @@ public class NoCommandHandler implements CommandHandler {
     }
 
     private SendMessage convertToLink(BotUser botUser, String text, Bot bot) {
+        if (text.equals(applicationConfig.deleteWithSecretPhrase())) {
+            var chatId = botUser.chatId();
+            processDelete(botUser, bot);
+            return askToRegister(chatId);
+        }
         var command = bot.isWaiting().get(botUser);
         bot.isWaiting().replace(botUser, null);
         Pattern pattern = Pattern.compile(applicationConfig.pattern());
@@ -133,6 +139,28 @@ public class NoCommandHandler implements CommandHandler {
             return convertToLink(botUser, text, bot);
         }
         return askToRegister(botUser.chatId());
+    }
+
+    private void processDelete(BotUser botUser, Bot bot) {
+        if (!isTest) {
+            assert scrapperClient != null;
+            var listLinks = scrapperClient.getLinksFromTG(botUser.chatId()).links();
+            if (listLinks != null) {
+                stopForAllLinks(listLinks, botUser.chatId());
+            }
+            scrapperClient.deleteChat(botUser.chatId());
+        }
+        bot.chats().remove(botUser);
+        bot.isWaiting().remove(botUser);
+    }
+
+    private void stopForAllLinks(List<LinkResponse> listLinks, long chatId) {
+        if (!listLinks.isEmpty()) {
+            listLinks.forEach(link -> {
+                assert scrapperClient != null;
+                scrapperClient.stopLinkTracking(chatId, new RemoveLinkRequest(link.url()));
+            });
+        }
     }
 
     private SendMessage askToRegister(long chatId) {

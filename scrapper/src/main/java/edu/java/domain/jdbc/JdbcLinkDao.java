@@ -17,10 +17,10 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository @SuppressWarnings({"LocalVariableName", "MultipleStringLiterals", "OperatorWrap", "MagicNumber"})
-public class JDBCLinkDao {
+public class JdbcLinkDao {
     private final JdbcTemplate jdbcTemplate;
 
-    public JDBCLinkDao(JdbcTemplate jdbcTemplate) {
+    public JdbcLinkDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

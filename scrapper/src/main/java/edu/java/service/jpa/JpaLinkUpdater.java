@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
-//@Service
+@Service
 public class JpaLinkUpdater implements LinkUpdater {
 
     private final JpaLinkDao linkDao;
@@ -30,7 +30,7 @@ public class JpaLinkUpdater implements LinkUpdater {
 
     private final StackOverflowClient stackOverflowClient;
 
-   // @Autowired
+   @Autowired
     public JpaLinkUpdater(
         JpaLinkDao linkDao,
         JpaEventRepository eventRepository,

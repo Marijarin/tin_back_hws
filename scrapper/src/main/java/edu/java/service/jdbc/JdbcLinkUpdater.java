@@ -2,7 +2,7 @@ package edu.java.service.jdbc;
 
 import edu.java.client.GitHubClient;
 import edu.java.client.StackOverflowClient;
-import edu.java.domain.jdbc.JDBCLinkDao;
+import edu.java.domain.jdbc.JdbcLinkDao;
 import edu.java.domain.model.LinkDao;
 import edu.java.service.LinkUpdater;
 import edu.java.service.model.EventLink;
@@ -16,13 +16,13 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class JdbcLinkUpdater implements LinkUpdater {
-    private final JDBCLinkDao linkDao;
+    private final JdbcLinkDao linkDao;
     private final GitHubClient gitHubClient;
 
     private final StackOverflowClient stackOverflowClient;
 
     @Autowired
-    public JdbcLinkUpdater(JDBCLinkDao linkDao, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient) {
+    public JdbcLinkUpdater(JdbcLinkDao linkDao, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient) {
         this.linkDao = linkDao;
         this.gitHubClient = gitHubClient;
         this.stackOverflowClient = stackOverflowClient;

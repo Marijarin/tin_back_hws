@@ -1,6 +1,6 @@
 package edu.java.service.jdbc;
 
-import edu.java.domain.jdbc.JDBCLinkDao;
+import edu.java.domain.jdbc.JdbcLinkDao;
 import edu.java.domain.model.LinkDao;
 import edu.java.service.LinkService;
 import java.net.URI;
@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class JdbcLinkService implements LinkService {
 
-    private final JDBCLinkDao linkRepository;
+    private final JdbcLinkDao linkRepository;
 
      @Autowired
-    public JdbcLinkService(JDBCLinkDao linkRepository) {
+    public JdbcLinkService(JdbcLinkDao linkRepository) {
         this.linkRepository = linkRepository;
     }
 

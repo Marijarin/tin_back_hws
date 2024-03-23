@@ -15,12 +15,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @SuppressWarnings({"LocalVariableName", "MultipleStringLiterals"})
-public class JDBCChatRepository {
+public class JdbcChatRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public JDBCChatRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcChatRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

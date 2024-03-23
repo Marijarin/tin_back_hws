@@ -14,13 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//@Service
+@Service
 public class JpaLinkService implements LinkService {
     private final JpaLinkDao linkDao;
 
     private final JpaChatRepository chatRepository;
 
-  //  @Autowired
+  @Autowired
     public JpaLinkService(JpaLinkDao linkDao, JpaChatRepository chatRepository) {
         this.linkDao = linkDao;
         this.chatRepository = chatRepository;
