@@ -13,17 +13,14 @@ import liquibase.exception.LiquibaseException;
 import liquibase.resource.DirectoryResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 import liquibase.resource.SearchPathResourceAccessor;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@SpringBootTest(classes = {TestConfig.class})
+@SpringBootTest
 @Testcontainers
 public class IntegrationTest {
     public static PostgreSQLContainer<?> POSTGRES;
@@ -42,8 +39,6 @@ public class IntegrationTest {
         }
     }
 
-    @Autowired JdbcTemplate jdbcTemplate;
-
     private static void runMigrations(JdbcDatabaseContainer<?> c) throws LiquibaseException, SQLException {
         java.sql.Connection connection = DriverManager
             .getConnection(c.getJdbcUrl(), c.getUsername(), c.getPassword());
@@ -59,7 +54,7 @@ public class IntegrationTest {
             new DirectoryResourceAccessor(changelogPath)
         )) {
             Liquibase liquibase = new liquibase
-                .Liquibase("master.xml", resourceAccessor, database);
+                .Liquibase("master.yaml", resourceAccessor, database);
 
             liquibase.update(new Contexts(), new LabelExpression());
         } catch (Exception e) {

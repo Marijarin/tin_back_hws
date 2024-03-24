@@ -52,7 +52,6 @@ public class JpaChatService implements ChatService {
     @Override
     @Transactional
     public List<ChatDao> findAllChatsWithLink(URI url) {
-        //var link = linkDao.findByUrl(url.toString());
         var chats = chatRepository
             .findAll()
             .stream()
