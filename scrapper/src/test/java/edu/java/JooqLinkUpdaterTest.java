@@ -1,8 +1,8 @@
 package edu.java;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import edu.java.service.jdbc.JdbcLinkService;
-import edu.java.service.jdbc.JdbcLinkUpdater;
+import edu.java.service.jooq.JooqLinkService;
+import edu.java.service.jooq.JooqLinkUpdater;
 import edu.java.service.model.EventLink;
 import edu.java.service.model.EventName;
 import java.io.IOException;
@@ -16,6 +16,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
@@ -27,14 +28,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {JdbcTestConfig.class})
+@SpringBootTest(classes = {JooqTestConfig.class, JooqAutoConfiguration.class})
 @Sql(value = "classpath:sql/put_chat.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class JdbcLinkUpdaterTest extends IntegrationTest{
-    private final JdbcLinkService linkService;
-    private final JdbcLinkUpdater linkUpdater;
+public class JooqLinkUpdaterTest extends IntegrationTest {
+    private final JooqLinkService linkService;
+    private final JooqLinkUpdater linkUpdater;
 
     @Autowired
-    public JdbcLinkUpdaterTest(JdbcLinkService linkService, JdbcLinkUpdater linkUpdater) {
+    public JooqLinkUpdaterTest(JooqLinkService linkService, JooqLinkUpdater linkUpdater) {
         this.linkService = linkService;
         this.linkUpdater = linkUpdater;
     }

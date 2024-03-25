@@ -50,7 +50,9 @@ public class JooqChatRepository {
             .from(CHAT)
             .where(CHAT.ID.eq(tgChatId))
             .fetchOne();
-        assert chatRecord != null;
+        if (chatRecord == null) {
+            return new ChatDao(0L, OffsetDateTime.now(), List.of());
+        }
         return new ChatDao(chatRecord.component1(), chatRecord.component2(), List.of());
     }
 
