@@ -131,7 +131,7 @@
                 <version>${jacoco-maven-plugin.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/jooqcodegen/**</exclude>
+                        <exclude>**/scrapper.domain.jooq/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
