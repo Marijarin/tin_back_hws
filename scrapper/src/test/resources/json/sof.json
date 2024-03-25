@@ -1,0 +1,21 @@
+{
+    "items": [
+        {
+            "owner": {
+                "account_id": 2690669,
+                "reputation": 18677,
+                "user_id": 2613885,
+                "user_type": "registered",
+                "profile_image": "https://i.stack.imgur.com/5iN9n.jpg?s=256&g=1",
+                "display_name": "user",
+                "link": "https://stackoverflow.com/users/2/user"
+            },
+            "creation_date": 1711306800,
+            "down_vote_count": 0,
+            "up_vote_count": 1,
+            "post_id": 1,
+            "question_id": 1,
+            "timeline_type": "answer"
+        }
+    ]
+}
