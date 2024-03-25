@@ -54,7 +54,7 @@ public class JdbcLinkUpdaterTest extends IntegrationTest{
         wm.stubFor(get(urlPathMatching("/repos/Marijarin/tocook/events"))
             .willReturn(aResponse()
                 .withHeader("Content-Type", "application/json")
-                .withBody(Files.readString(Path.of("src/test/resources/json/gh.json")))
+                .withBody(Files.readString(Path.of("src/test/resources/json/gh-push.json")))
                 .withStatus(200)));
         try {
             linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
@@ -79,7 +79,7 @@ public class JdbcLinkUpdaterTest extends IntegrationTest{
         wm.stubFor(get(urlPathMatching("/questions/1/timeline.*"))
             .willReturn(aResponse()
                 .withHeader("Content-Type", "application/json")
-                .withBody(Files.readString(Path.of("src/test/resources/json/sof.json")))
+                .withBody(Files.readString(Path.of("src/test/resources/json/sof-answer.json")))
                 .withStatus(200)));
         try {
             linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));

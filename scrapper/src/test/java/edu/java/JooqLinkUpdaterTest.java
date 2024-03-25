@@ -55,7 +55,7 @@ public class JooqLinkUpdaterTest extends IntegrationTest {
         wm.stubFor(get(urlPathMatching("/repos/Marijarin/tocook/events"))
             .willReturn(aResponse()
                 .withHeader("Content-Type", "application/json")
-                .withBody(Files.readString(Path.of("src/test/resources/json/gh.json")))
+                .withBody(Files.readString(Path.of("src/test/resources/json/gh-create.json")))
                 .withStatus(200)));
         try {
             linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
@@ -65,7 +65,7 @@ public class JooqLinkUpdaterTest extends IntegrationTest {
             System.out.println(e.getMessage());
         }
         assertThat(eventList.getFirst().getEvent().getDescription())
-            .isEqualTo(EventName.getEventMap().get("PushEvent")
+            .isEqualTo(EventName.getEventMap().get("CreateEvent")
                 .getDescription());
         wm.verify(getRequestedFor(urlPathMatching("/repos/.*")));
     }
@@ -80,7 +80,7 @@ public class JooqLinkUpdaterTest extends IntegrationTest {
         wm.stubFor(get(urlPathMatching("/questions/1/timeline.*"))
             .willReturn(aResponse()
                 .withHeader("Content-Type", "application/json")
-                .withBody(Files.readString(Path.of("src/test/resources/json/sof.json")))
+                .withBody(Files.readString(Path.of("src/test/resources/json/sof-answer.json")))
                 .withStatus(200)));
         try {
             linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));

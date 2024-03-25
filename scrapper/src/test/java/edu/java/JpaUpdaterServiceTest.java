@@ -49,7 +49,7 @@ public class JpaUpdaterServiceTest extends IntegrationTest {
         wm.stubFor(get(urlPathMatching("/repos/Marijarin/tocook/events"))
             .willReturn(aResponse()
                 .withHeader("Content-Type", "application/json")
-                .withBody(Files.readString(Path.of("src/test/resources/json/gh.json")))
+                .withBody(Files.readString(Path.of("src/test/resources/json/gh-issue.json")))
                 .withStatus(200)));
         try {
             linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
@@ -59,7 +59,7 @@ public class JpaUpdaterServiceTest extends IntegrationTest {
             System.out.println(e.getMessage());
         }
         assertThat(eventList.getFirst().getEvent().getDescription())
-            .isEqualTo(EventName.getEventMap().get("PushEvent")
+            .isEqualTo(EventName.getEventMap().get("IssueCommentEvent")
                 .getDescription());
         wm.verify(getRequestedFor(urlPathMatching("/repos/.*")));
     }
@@ -74,7 +74,7 @@ public class JpaUpdaterServiceTest extends IntegrationTest {
         wm.stubFor(get(urlPathMatching("/questions/1/timeline.*"))
             .willReturn(aResponse()
                 .withHeader("Content-Type", "application/json")
-                .withBody(Files.readString(Path.of("src/test/resources/json/sof.json")))
+                .withBody(Files.readString(Path.of("src/test/resources/json/sof-comment.json")))
                 .withStatus(200)));
         try {
             linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
@@ -84,7 +84,7 @@ public class JpaUpdaterServiceTest extends IntegrationTest {
             System.out.println(e.getMessage());
         }
         assertThat(eventList.getFirst().getEvent().getDescription())
-            .isEqualTo(EventName.getEventMap().get("answer")
+            .isEqualTo(EventName.getEventMap().get("comment")
                 .getDescription());
         wm.verify(getRequestedFor(urlPathMatching("/questions/1/timeline.*")));
     }
