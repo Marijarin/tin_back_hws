@@ -11,8 +11,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -27,7 +25,6 @@ public class JDBCChatRepository {
     }
 
     public long addChat(long chatId) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
         String SQL = "insert into chat (id, created_at) values (?, ?)";
         var createdTime = Timestamp.from(OffsetDateTime.now().toInstant());
         jdbcTemplate.update(SQL, chatId, createdTime);
@@ -126,18 +123,23 @@ public class JDBCChatRepository {
                 rs.getLong("link_id"),
             chatId
         );
+        return processIds(ids);
+    }
+
+    private List<Link> processIds(List<Long> ids) {
         List<Link> links = new ArrayList<>();
-        if (!ids.isEmpty()) {
-            for (Long id : ids) {
-                String SQL = "select  * from link where id = ? ";
-                var link = jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Link(
-                    rs.getLong("id"),
-                    URI.create(rs.getString("url")),
-                    rs.getString("description"),
-                    rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
-                ), id);
-                links.add(link);
-            }
+        if (ids.isEmpty()) {
+            return links;
+        }
+        for (Long id : ids) {
+            String SQL = "select  * from link where id = ? ";
+            var link = jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Link(
+                rs.getLong("id"),
+                URI.create(rs.getString("url")),
+                rs.getString("description"),
+                rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
+            ), id);
+            links.add(link);
         }
         return links;
     }

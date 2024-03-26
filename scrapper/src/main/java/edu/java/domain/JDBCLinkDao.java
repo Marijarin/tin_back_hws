@@ -25,9 +25,11 @@ public class JDBCLinkDao {
 
     public Link addLink(long chatId, URI url, String description) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String SQL = "with link_insert as" +
-            " (insert into link (url, description, last_updated) values (?, ?, ?) returning id)" +
-            "insert into assignment(chat_id, link_id) values (? , (select id from link_insert)) ";
+        String SQL = """
+            with link_insert as
+            (insert into link (url, description, last_updated) values (?, ?, ?) returning id)
+            insert into assignment(chat_id, link_id) values (? , (select id from link_insert))
+            """;
         var updatedOffset = OffsetDateTime.now();
         var updatedTime = Timestamp.from(updatedOffset.toInstant());
         jdbcTemplate.update(connection -> {
@@ -123,18 +125,23 @@ public class JDBCLinkDao {
                 rs.getLong("link_id"),
             chatId
         );
+        return processIds(ids);
+    }
+
+    private List<Link> processIds(List<Long> ids) {
         List<Link> links = new ArrayList<>();
-        if (!ids.isEmpty()) {
-            for (Long id : ids) {
-                String SQL = "select  * from link where id = ? ";
-                var link =  jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Link(
-                    rs.getLong("id"),
-                    URI.create(rs.getString("url")),
-                    rs.getString("description"),
-                    rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
-                ), id);
-                links.add(link);
-            }
+        if (ids.isEmpty()) {
+            return links;
+        }
+        for (Long id : ids) {
+            String SQL = "select  * from link where id = ? ";
+            var link = jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Link(
+                rs.getLong("id"),
+                URI.create(rs.getString("url")),
+                rs.getString("description"),
+                rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
+            ), id);
+            links.add(link);
         }
         return links;
     }

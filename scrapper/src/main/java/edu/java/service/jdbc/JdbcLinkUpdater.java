@@ -49,15 +49,11 @@ public class JdbcLinkUpdater implements LinkUpdater {
 
     private List<Link> extractLinksByKeyWord(Map<String, List<Link>> all, String key) {
         var mapKey = all.keySet().stream().filter(it -> it.contains(key)).findFirst().orElseGet(String::new);
-        var list = all.get(mapKey);
-        if (list != null) {
-            return list;
-        }
-        return List.of();
+        return all.getOrDefault(mapKey, List.of());
     }
 
     private List<Link> updateFromGithub(List<Link> gitHubList) {
-        var result = new ArrayList<Link>();
+        var result = new ArrayList<Link>(gitHubList.size());
         if (!gitHubList.isEmpty()) {
             for (Link link : gitHubList) {
                 if (checkOneGitHubLink(link)) {
@@ -90,7 +86,7 @@ public class JdbcLinkUpdater implements LinkUpdater {
     }
 
     private List<Link> updateFromStackOverFlow(List<Link> stackOverFlowList) {
-        var result = new ArrayList<Link>();
+        var result = new ArrayList<Link>(stackOverFlowList.size());
         if (!stackOverFlowList.isEmpty()) {
             for (Link link : stackOverFlowList) {
                 if (checkOneStackOverFlowLink(link)) {
