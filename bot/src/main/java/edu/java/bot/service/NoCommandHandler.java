@@ -114,7 +114,7 @@ public class NoCommandHandler implements CommandHandler {
 
     private SendMessage checkDB(Bot bot, BotUser botUser, String text) {
         var chatDB = scrapperClient.findChat(botUser.chatId());
-        if (chatDB.chatId() == -1) {
+        if (chatDB.chatId() == 0) {
             return askToRegister(botUser.chatId());
         }
         putUser(bot, botUser);

@@ -66,7 +66,7 @@ public class StartHandlerTest {
 
         );
         var handler = new StartHandler(applicationConfig, scrapperClient);
-        var response = new ChatResponse(-1L);
+        var response = new ChatResponse(0L);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);

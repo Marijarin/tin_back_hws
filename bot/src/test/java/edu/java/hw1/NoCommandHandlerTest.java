@@ -72,7 +72,7 @@ public class NoCommandHandlerTest {
             Map.of()
         );
         var handler = new NoCommandHandler(applicationConfig, scrapperClient);
-        var response = new ChatResponse(-1L);
+        var response = new ChatResponse(0L);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.text()).thenReturn(CommandName.LIST.getCommand());
         Mockito.when(message.chat()).thenReturn(chat);
