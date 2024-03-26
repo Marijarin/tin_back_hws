@@ -8,9 +8,11 @@ import edu.java.bot.service.model.CustomCommand;
 import edu.java.bot.service.model.UserMessage;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 @Component
+@Getter
 public class UserMessageHandlerImpl implements UserMessageHandler {
 
     private final Map<String, CustomCommand> commands = new HashMap<>();
@@ -57,10 +59,6 @@ public class UserMessageHandlerImpl implements UserMessageHandler {
     @Override
     public SendMessage listCommands(UserMessage userMessage) {
         return new SendMessage(userMessage.chatId(), prettyPrint());
-    }
-
-    public Map<String, CustomCommand> getCommands() {
-        return commands;
     }
 
     private void addCommands() {

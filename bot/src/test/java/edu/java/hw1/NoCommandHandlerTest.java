@@ -4,15 +4,20 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
+import edu.java.bot.client.ScrapperClient;
+import edu.java.bot.client.model.AddLinkRequest;
+import edu.java.bot.client.model.ChatResponse;
+import edu.java.bot.client.model.LinkResponse;
+import edu.java.bot.client.model.RemoveLinkRequest;
 import edu.java.bot.configuration.ApplicationConfig;
-import edu.java.bot.service.model.Bot;
-import edu.java.bot.service.model.BotUser;
-import edu.java.bot.service.model.Chat;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.NoCommandHandler;
 import edu.java.bot.service.UserMessageHandler;
 import edu.java.bot.service.UserMessageHandlerImpl;
-import java.util.ArrayList;
+import edu.java.bot.service.model.Bot;
+import edu.java.bot.service.model.BotUser;
+import edu.java.bot.service.model.Chat;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -32,6 +37,8 @@ public class NoCommandHandlerTest {
     @Mock Update update = new Update();
 
     @Mock Message message = new Message();
+
+    @Mock ScrapperClient scrapperClient;
 
     User user = new User(1L);
 
@@ -64,12 +71,14 @@ public class NoCommandHandlerTest {
             Map.of(),
             Map.of()
         );
-        var handler = new NoCommandHandler(applicationConfig, true);
+        var handler = new NoCommandHandler(applicationConfig, scrapperClient);
+        var response = new ChatResponse(-1L);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.text()).thenReturn(CommandName.LIST.getCommand());
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
+        Mockito.when(scrapperClient.findChat(message.chat().id())).thenReturn(response);
 
         var result = handler.handle(bot, messageHandler, update);
 
@@ -92,13 +101,16 @@ public class NoCommandHandlerTest {
             Map.of(botUser, chat1),
             isWaiting
         );
-        var handler = new NoCommandHandler(applicationConfig, true);
+        var handler = new NoCommandHandler(applicationConfig, scrapperClient);
+        var linkRequest = new AddLinkRequest(URI.create("https://stackoverflow.com/search?q=unsupported%20link"));
+
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.text()).thenReturn("https://stackoverflow.com/search?q=unsupported%20link");
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
-
+        Mockito.when(scrapperClient.startLinkTracking(botUser.chatId(), linkRequest))
+            .thenReturn(new LinkResponse(1L, URI.create("https://stackoverflow.com/search?q=unsupported%20link")));
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(
@@ -121,13 +133,15 @@ public class NoCommandHandlerTest {
             Map.of(botUser, chat1),
             isWaiting
         );
-        var handler = new NoCommandHandler(applicationConfig, true);
+        var handler = new NoCommandHandler(applicationConfig, scrapperClient);
+        var linkRequest = new RemoveLinkRequest(URI.create("https://stackoverflow.com/search?q=unsupported%20link"));
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.text()).thenReturn("https://stackoverflow.com/search?q=unsupported%20link");
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
-
+        Mockito.when(scrapperClient.stopLinkTracking(botUser.chatId(), linkRequest))
+            .thenReturn(new LinkResponse(1L, URI.create("https://stackoverflow.com/search?q=unsupported%20link")));
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(
@@ -150,7 +164,7 @@ public class NoCommandHandlerTest {
             Map.of(botUser, chat1),
             isWaiting
         );
-        var handler = new NoCommandHandler(applicationConfig, true);
+        var handler = new NoCommandHandler(applicationConfig, scrapperClient);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.text()).thenReturn("stackoverflow.com/search?q=unsupported%20link");
         Mockito.when(message.chat()).thenReturn(chat);

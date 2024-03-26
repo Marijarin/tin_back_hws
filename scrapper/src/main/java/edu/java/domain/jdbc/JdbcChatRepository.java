@@ -95,11 +95,6 @@ public class JdbcChatRepository {
         return chatList;
     }
 
-    public void deleteAll() {
-        String SQL = "delete from chat";
-        jdbcTemplate.update(SQL);
-    }
-
     public ChatDao findChat(long id) {
         String SQL = "select * from chat where id = ?";
         try {
@@ -123,18 +118,23 @@ public class JdbcChatRepository {
                 rs.getLong("link_id"),
             chatId
         );
+        return processIds(ids);
+    }
+
+    private List<LinkDao> processIds(List<Long> ids) {
         List<LinkDao> links = new ArrayList<>();
-        if (!ids.isEmpty()) {
-            for (Long id : ids) {
-                String SQL = "select  * from link where id = ? ";
-                var link = jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new LinkDao(
-                    rs.getLong("id"),
-                    URI.create(rs.getString("url")),
-                    rs.getString("description"),
-                    rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
-                ), id);
-                links.add(link);
-            }
+        if (ids.isEmpty()) {
+            return links;
+        }
+        for (Long id : ids) {
+            String SQL = "select  * from link where id = ? ";
+            var link = jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new LinkDao(
+                rs.getLong("id"),
+                URI.create(rs.getString("url")),
+                rs.getString("description"),
+                rs.getTimestamp("last_updated").toInstant().atOffset(ZoneOffset.UTC)
+            ), id);
+            links.add(link);
         }
         return links;
     }

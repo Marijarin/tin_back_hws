@@ -19,19 +19,9 @@ public class ListHandler implements CommandHandler {
     private final ApplicationConfig applicationConfig;
     private final ScrapperClient scrapperClient;
 
-    private final boolean isTest;
-
-    @Autowired
-    private ListHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
+    @Autowired public ListHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
         this.applicationConfig = applicationConfig;
         this.scrapperClient = scrapperClient;
-        this.isTest = false;
-    }
-
-    public ListHandler(ApplicationConfig applicationConfig, boolean isTest) {
-        this.applicationConfig = applicationConfig;
-        this.scrapperClient = null;
-        this.isTest = isTest;
     }
 
     @Override
@@ -51,15 +41,12 @@ public class ListHandler implements CommandHandler {
     }
 
     private List<String> processScrapperResponse(long id) {
-        if (!isTest) {
-            assert scrapperClient != null;
             var linkResponseList = scrapperClient.getLinksFromTG(id);
             if (linkResponseList.size() > 0) {
                 return Optional
                     .of(linkResponseList.links().stream().map(it -> it.url().toString()).toList())
                     .orElseGet(ArrayList::new);
             }
-        }
         return List.of();
     }
 
@@ -83,8 +70,6 @@ public class ListHandler implements CommandHandler {
     }
 
     private SendMessage checkChatInDB(Bot bot, BotUser botUser) {
-        if (!isTest) {
-            assert scrapperClient != null;
             var chatDB = scrapperClient.findChat(botUser.chatId());
             if (chatDB.chatId()  == 0) {
                 return askToRegister(botUser.chatId());
@@ -92,8 +77,6 @@ public class ListHandler implements CommandHandler {
             putUser(bot, botUser);
             bot.chats().get(botUser).links().addAll(processScrapperResponse(botUser.chatId()));
             return listLinks(botUser, bot);
-        }
-        return askToRegister(botUser.chatId());
     }
 
 }

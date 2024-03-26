@@ -10,10 +10,8 @@ import edu.java.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.Optional;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,13 +86,12 @@ public class ScrapperController {
             @ApiResponse(responseCode = "200", description = "Ссылка успешно добавлена")
         })
     @PostMapping("/links")
-    ResponseEntity<LinkResponse> startLinkTracking(
+    LinkResponse startLinkTracking(
         @RequestHeader("Tg-Chat-Id") long tgChatId,
         @RequestBody @Valid AddLinkRequest linkRequest
     ) {
         linkService.add(tgChatId, linkRequest.link());
-        LinkResponse linkResponse = new LinkResponse(tgChatId, linkRequest.link());
-        return ResponseEntity.of(Optional.of(linkResponse));
+        return new LinkResponse(tgChatId, linkRequest.link());
     }
 
     @Operation(
@@ -103,12 +100,11 @@ public class ScrapperController {
             @ApiResponse(responseCode = "200", description = "Ссылка успешно убрана")
         })
     @DeleteMapping("/links")
-    ResponseEntity<LinkResponse> stopLinkTracking(
+    LinkResponse stopLinkTracking(
         @RequestHeader("Tg-Chat-Id") long tgChatId,
         @RequestBody @Valid RemoveLinkRequest linkRequest
     ) {
         linkService.remove(tgChatId, linkRequest.link()); //todo
-        LinkResponse linkResponse = new LinkResponse(tgChatId, linkRequest.link());
-        return ResponseEntity.of(Optional.of(linkResponse));
+        return new LinkResponse(tgChatId, linkRequest.link());
     }
 }

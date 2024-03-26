@@ -22,19 +22,10 @@ import org.springframework.stereotype.Component;
 public class NoCommandHandler implements CommandHandler {
     private final ApplicationConfig applicationConfig;
     private final ScrapperClient scrapperClient;
-    private final boolean isTest;
 
-    @Autowired
-    private NoCommandHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
+    @Autowired public NoCommandHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
         this.scrapperClient = scrapperClient;
         this.applicationConfig = applicationConfig;
-        this.isTest = false;
-    }
-
-    public NoCommandHandler(ApplicationConfig applicationConfig, boolean isTest) {
-        this.applicationConfig = applicationConfig;
-        this.isTest = isTest;
-        this.scrapperClient = null;
     }
 
     @Override
@@ -85,10 +76,7 @@ public class NoCommandHandler implements CommandHandler {
         bot.isWaiting().replace(botUser, null);
         bot.chats().get(botUser).links().add(url);
         var linkRequest = new AddLinkRequest(URI.create(url));
-        if (!isTest) {
-            assert scrapperClient != null;
-            scrapperClient.startLinkTracking(botUser.chatId(), linkRequest);
-        }
+        scrapperClient.startLinkTracking(botUser.chatId(), linkRequest);
         return new SendMessage(
             botUser.chatId(),
             applicationConfig.done() + url
@@ -98,15 +86,11 @@ public class NoCommandHandler implements CommandHandler {
     private SendMessage processUnTrack(BotUser botUser, String url, Bot bot) {
         bot.isWaiting().replace(botUser, null);
         var linkRequest = new RemoveLinkRequest(URI.create(url));
-        LinkResponse linkResponse = null;
-        if (!isTest) {
-            assert scrapperClient != null;
-            linkResponse = scrapperClient.stopLinkTracking(botUser.chatId(), linkRequest);
-        }
-        return handleLinkResponseOrInMemory(linkResponse, bot, botUser, url);
+        LinkResponse linkResponse = scrapperClient.stopLinkTracking(botUser.chatId(), linkRequest);
+        return handleLinkResponseInMemory(linkResponse, bot, botUser, url);
     }
 
-    private SendMessage handleLinkResponseOrInMemory(LinkResponse linkResponse, Bot bot, BotUser botUser, String url) {
+    private SendMessage handleLinkResponseInMemory(LinkResponse linkResponse, Bot bot, BotUser botUser, String url) {
         var list = bot.chats().get(botUser).links();
         if (linkResponse != null && linkResponse.id() > 0 && linkResponse.url().toString().equals(url)) {
             bot.chats().get(botUser).links().remove(linkResponse.url().toString());
@@ -129,27 +113,20 @@ public class NoCommandHandler implements CommandHandler {
     }
 
     private SendMessage checkDB(Bot bot, BotUser botUser, String text) {
-        if (!isTest) {
-            assert scrapperClient != null;
-            var chatDB = scrapperClient.findChat(botUser.chatId());
-            if (chatDB.chatId() == -1) {
-                return askToRegister(botUser.chatId());
-            }
-            putUser(bot, botUser);
-            return convertToLink(botUser, text, bot);
+        var chatDB = scrapperClient.findChat(botUser.chatId());
+        if (chatDB.chatId() == -1) {
+            return askToRegister(botUser.chatId());
         }
-        return askToRegister(botUser.chatId());
+        putUser(bot, botUser);
+        return convertToLink(botUser, text, bot);
     }
 
     private void processDelete(BotUser botUser, Bot bot) {
-        if (!isTest) {
-            assert scrapperClient != null;
-            var listLinks = scrapperClient.getLinksFromTG(botUser.chatId()).links();
-            if (listLinks != null) {
-                stopForAllLinks(listLinks, botUser.chatId());
-            }
-            scrapperClient.deleteChat(botUser.chatId());
+        var listLinks = scrapperClient.getLinksFromTG(botUser.chatId()).links();
+        if (listLinks != null) {
+            stopForAllLinks(listLinks, botUser.chatId());
         }
+        scrapperClient.deleteChat(botUser.chatId());
         bot.chats().remove(botUser);
         bot.isWaiting().remove(botUser);
     }

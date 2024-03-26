@@ -15,19 +15,10 @@ public class TrackHandler implements CommandHandler {
     private final ApplicationConfig applicationConfig;
 
     private final ScrapperClient scrapperClient;
-    private final boolean isTest;
 
-    @Autowired
-    private TrackHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
+    @Autowired public TrackHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
         this.applicationConfig = applicationConfig;
         this.scrapperClient = scrapperClient;
-        this.isTest = false;
-    }
-
-    public TrackHandler(ApplicationConfig applicationConfig, boolean isTest) {
-        this.scrapperClient = null;
-        this.applicationConfig = applicationConfig;
-        this.isTest = isTest;
     }
 
     @Override
@@ -61,16 +52,12 @@ public class TrackHandler implements CommandHandler {
     }
 
     private SendMessage checkDB(Bot bot, BotUser botUser) {
-        if (!isTest) {
-            assert scrapperClient != null;
-            var chatDB = scrapperClient.findChat(botUser.chatId());
-            if (chatDB.chatId() == 0) {
-                return askToRegister(botUser.chatId());
-            }
-            putUser(bot, botUser);
-            bot.isWaiting().replace(botUser, getCommand());
-            return waitForALink(botUser, bot);
+        var chatDB = scrapperClient.findChat(botUser.chatId());
+        if (chatDB.chatId() == -1) {
+            return askToRegister(botUser.chatId());
         }
-        return askToRegister(botUser.chatId());
+        putUser(bot, botUser);
+        bot.isWaiting().replace(botUser, getCommand());
+        return waitForALink(botUser, bot);
     }
 }
