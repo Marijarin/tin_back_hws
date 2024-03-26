@@ -16,20 +16,11 @@ import org.springframework.stereotype.Component;
 public class StartHandler implements CommandHandler {
     private final ApplicationConfig applicationConfig;
     private final ScrapperClient scrapperClient;
-    private final boolean isTest;
     Logger logger = LogManager.getLogger();
 
-    @Autowired
-    private StartHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
+    @Autowired public StartHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
         this.applicationConfig = applicationConfig;
         this.scrapperClient = scrapperClient;
-        this.isTest = false;
-    }
-
-    public StartHandler(ApplicationConfig applicationConfig, boolean isTest) {
-        this.applicationConfig = applicationConfig;
-        this.isTest = isTest;
-        this.scrapperClient = null;
     }
 
     @Override
@@ -43,8 +34,6 @@ public class StartHandler implements CommandHandler {
     }
 
     private SendMessage processStart(Bot bot, BotUser botUser) {
-        if (!isTest) {
-            assert scrapperClient != null;
             var chat = scrapperClient.findChat(botUser.chatId());
             logger.error(chat);
             if (chat.chatId() == -1) {
@@ -52,7 +41,6 @@ public class StartHandler implements CommandHandler {
             } else {
                 return new SendMessage(botUser.chatId(), applicationConfig.alreadyRegistered());
             }
-        }
         putUser(bot, botUser);
         return new SendMessage(
             botUser.chatId(),

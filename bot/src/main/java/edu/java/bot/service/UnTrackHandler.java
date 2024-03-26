@@ -14,19 +14,10 @@ import org.springframework.stereotype.Component;
 public class UnTrackHandler implements CommandHandler {
     private final ApplicationConfig applicationConfig;
     private final ScrapperClient scrapperClient;
-    private final boolean isTest;
 
-    @Autowired
-    private UnTrackHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
+    @Autowired public UnTrackHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
         this.applicationConfig = applicationConfig;
         this.scrapperClient = scrapperClient;
-        this.isTest = false;
-    }
-
-    public UnTrackHandler(ApplicationConfig applicationConfig, boolean isTest) {
-        this.scrapperClient = null;
-        this.applicationConfig = applicationConfig;
-        this.isTest = isTest;
     }
 
     @Override
@@ -55,8 +46,6 @@ public class UnTrackHandler implements CommandHandler {
     }
 
     private SendMessage checkDB(Bot bot, BotUser botUser) {
-        if (!isTest) {
-            assert scrapperClient != null;
             var chatDB = scrapperClient.findChat(botUser.chatId());
             if (chatDB.chatId() == -1) {
                 return askToRegister(botUser.chatId());
@@ -65,8 +54,6 @@ public class UnTrackHandler implements CommandHandler {
             bot.isWaiting().replace(botUser, getCommand());
             return waitForALink(botUser, bot);
         }
-        return askToRegister(botUser.chatId());
-    }
 
     @Override
     public CommandName getCommand() {
