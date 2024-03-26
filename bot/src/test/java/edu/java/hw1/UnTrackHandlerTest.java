@@ -4,6 +4,8 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
+import edu.java.bot.client.ScrapperClient;
+import edu.java.bot.client.model.ChatResponse;
 import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.UnTrackHandler;
@@ -17,6 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,6 +34,7 @@ public class UnTrackHandlerTest {
     @Mock Update update = new Update();
 
     @Mock Message message = new Message();
+    @Mock ScrapperClient scrapperClient;
 
     User user = new User(1L);
 
@@ -69,7 +73,7 @@ chat1.links().add("https://stackoverflow.com/search?q=unsupported%20link");
             Map.of(botUser, chat1),
             isWaiting
         );
-        var handler = new UnTrackHandler(applicationConfig, true);
+        var handler = new UnTrackHandler(applicationConfig, scrapperClient);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
@@ -87,11 +91,13 @@ chat1.links().add("https://stackoverflow.com/search?q=unsupported%20link");
             new HashMap<>(),
             new HashMap<>()
         );
-        var handler = new UnTrackHandler(applicationConfig, true);
+        var handler = new UnTrackHandler(applicationConfig, scrapperClient);
+        var response = new ChatResponse(-1L);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
+        Mockito.when(scrapperClient.findChat(message.chat().id())).thenReturn(response);
 
         var result = handler.handle(bot, messageHandler, update);
 

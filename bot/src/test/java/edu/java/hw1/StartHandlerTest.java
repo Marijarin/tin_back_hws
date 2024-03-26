@@ -4,6 +4,8 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
+import edu.java.bot.client.ScrapperClient;
+import edu.java.bot.client.model.ChatResponse;
 import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.StartHandler;
@@ -17,6 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,6 +33,7 @@ public class StartHandlerTest {
     @Mock Update update = new Update();
 
     @Mock Message message = new Message();
+    @Mock ScrapperClient scrapperClient;
     HashMap<BotUser, CommandName> isWaiting = new HashMap<>();
     User user = new User(1L);
 
@@ -60,11 +64,13 @@ public class StartHandlerTest {
             ""
 
         );
-        var handler = new StartHandler(applicationConfig, true);
+        var handler = new StartHandler(applicationConfig, scrapperClient);
+        var response = new ChatResponse(-1L);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
+        Mockito.when(scrapperClient.findChat(message.chat().id())).thenReturn(response);
 
         var result = handler.handle(bot, messageHandler, update);
 
@@ -103,7 +109,7 @@ public class StartHandlerTest {
             ""
 
         );
-        var handler = new StartHandler(applicationConfig, true);
+        var handler = new StartHandler(applicationConfig, scrapperClient);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);

@@ -48,8 +48,8 @@ public class JdbcLinkUpdater implements LinkUpdater {
     @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
     public EventLink checkOneGitHubLink(LinkDao link) {
         var sList = link.getUri().toString().split("/");
-        String owner = "";
-        String repo = "";
+        String owner;
+        String repo;
         if (sList.length > 4) {
             owner = sList[3];
             repo = sList[4];

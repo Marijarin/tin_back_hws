@@ -19,11 +19,7 @@ public interface LinkUpdater {
 
     default List<LinkDao> extractLinksByKeyWord(Map<String, List<LinkDao>> all, String key) {
         var mapKey = all.keySet().stream().filter(it -> it.contains(key)).findFirst().orElseGet(String::new);
-        var list = all.get(mapKey);
-        if (list != null) {
-            return list;
-        }
-        return List.of();
+        return all.getOrDefault(mapKey, List.of());
     }
 
     default String decipherEventType(String eventType) {
