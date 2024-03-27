@@ -132,12 +132,7 @@ public class NoCommandHandler implements CommandHandler {
     }
 
     private void stopForAllLinks(List<LinkResponse> listLinks, long chatId) {
-        if (!listLinks.isEmpty()) {
-            listLinks.forEach(link -> {
-                assert scrapperClient != null;
-                scrapperClient.stopLinkTracking(chatId, new RemoveLinkRequest(link.url()));
-            });
-        }
+            listLinks.forEach(link -> scrapperClient.stopLinkTracking(chatId, new RemoveLinkRequest(link.url())));
     }
 
     private SendMessage askToRegister(long chatId) {

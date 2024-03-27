@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
@@ -28,6 +29,8 @@ public class JdbcLinkUpdater implements LinkUpdater {
         this.stackOverflowClient = stackOverflowClient;
     }
 
+    @Override
+    @Transactional
     public Map<String, List<LinkDao>> classifySavedLinksNotUpdatedYet(long days) {
         var checkTime = OffsetDateTime.now().minusDays(days);
         var allLinksNotUpdated = linkDao.findAllLinksWithLastUpdateEarlierThan(checkTime);
@@ -35,6 +38,8 @@ public class JdbcLinkUpdater implements LinkUpdater {
     }
 
     @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
+    @Override
+    @Transactional
     public EventLink checkOneGitHubLink(LinkDao link) {
         var list = getParametersForGitHubRequest(link.getUri().toString());
         var owner = list.getFirst();
@@ -52,6 +57,8 @@ public class JdbcLinkUpdater implements LinkUpdater {
         return null;
     }
 
+    @Override
+    @Transactional
     public EventLink checkOneStackOverFlowLink(LinkDao link) {
         String ids = getIdsForSOFRequest(link.getUri().toString());
         var updateFromSite = stackOverflowClient.getResponse(ids);

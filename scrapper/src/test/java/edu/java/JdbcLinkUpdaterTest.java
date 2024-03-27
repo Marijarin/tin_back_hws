@@ -93,4 +93,27 @@ public class JdbcLinkUpdaterTest extends IntegrationTest{
                 .getDescription());
         wm.verify(getRequestedFor(urlPathMatching("/questions/1/timeline.*")));
     }
+
+    @Test
+    @Transactional
+    @Rollback
+    void triesToUpdateButListIsEmpty() throws IOException {
+        var eventList = new ArrayList<EventLink>();
+        long chatId = 10000L;
+        var linkDao = linkService.add(chatId, URI.create("https://stackoverflow.com/questions/1/how-to"));
+        wm.stubFor(get(urlPathMatching("/questions/1/timeline.*"))
+            .willReturn(aResponse()
+                .withHeader("Content-Type", "application/json")
+                .withBody(Files.readString(Path.of("src/test/resources/json/empty-sof.json")))
+                .withStatus(200)));
+        try {
+            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
+            eventList = (ArrayList<EventLink>) linkUpdater
+                .updateFromStackOverFlow(List.of(linkDao));
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        }
+        assertThat(eventList.isEmpty()).isTrue();
+        wm.verify(getRequestedFor(urlPathMatching("/questions/1/timeline.*")));
+    }
 }

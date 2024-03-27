@@ -30,7 +30,7 @@ public class JpaLinkUpdater implements LinkUpdater {
 
     private final StackOverflowClient stackOverflowClient;
 
-   @Autowired
+    @Autowired
     public JpaLinkUpdater(
         JpaLinkDao linkDao,
         JpaEventRepository eventRepository,
@@ -50,7 +50,9 @@ public class JpaLinkUpdater implements LinkUpdater {
         var owner = list.getFirst();
         var repo = list.getLast();
         var updateFromSite = gitHubClient.getResponse(owner, repo);
-        if (!updateFromSite.isEmpty()) {
+        if (updateFromSite.isEmpty()) {
+            return null;
+        } else {
             if (updateFromSite.getFirst().updatedAt().isAfter(link.getLastUpdated())) {
                 var update = updateFromSite.getFirst();
                 var linkRequest = linkDao.findByUrl(link.getUri().toString());

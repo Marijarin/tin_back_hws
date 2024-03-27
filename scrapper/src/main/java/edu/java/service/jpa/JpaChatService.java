@@ -8,6 +8,7 @@ import edu.java.service.ChatService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class JpaChatService implements ChatService {
     private final JpaChatRepository chatRepository;
 
- @Autowired
+    @Autowired
     public JpaChatService(JpaChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }
@@ -35,12 +36,10 @@ public class JpaChatService implements ChatService {
     @Override
     @Transactional
     public ChatDao findChatById(long tgChatId) {
-        var entity = chatRepository.findChatEntityById(tgChatId);
-        if (entity != null) {
-            return new ChatDao(entity.getId(), entity.getCreatedAt(), List.of());
-        } else {
-            return new ChatDao(0L, OffsetDateTime.now(), List.of());
-        }
+        var entity = Optional.ofNullable(
+            chatRepository.findChatEntityById(tgChatId))
+            .orElse(new ChatEntity(0L, OffsetDateTime.now(), List.of()));
+        return new ChatDao(entity.getId(), entity.getCreatedAt(), List.of());
     }
 
     @Override

@@ -7,10 +7,8 @@ import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.model.Bot;
 import edu.java.bot.service.model.BotUser;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,12 +39,10 @@ public class ListHandler implements CommandHandler {
     }
 
     private List<String> processScrapperResponse(long id) {
-            var linkResponseList = scrapperClient.getLinksFromTG(id);
-            if (linkResponseList.size() > 0) {
-                return Optional
-                    .of(linkResponseList.links().stream().map(it -> it.url().toString()).toList())
-                    .orElseGet(ArrayList::new);
-            }
+        var linkResponseList = scrapperClient.getLinksFromTG(id);
+        if (linkResponseList.size() > 0) {
+            return linkResponseList.links().stream().map(it -> it.url().toString()).toList();
+        }
         return List.of();
     }
 
@@ -70,13 +66,13 @@ public class ListHandler implements CommandHandler {
     }
 
     private SendMessage checkChatInDB(Bot bot, BotUser botUser) {
-            var chatDB = scrapperClient.findChat(botUser.chatId());
-            if (chatDB.chatId()  == 0) {
-                return askToRegister(botUser.chatId());
-            }
-            putUser(bot, botUser);
-            bot.chats().get(botUser).links().addAll(processScrapperResponse(botUser.chatId()));
-            return listLinks(botUser, bot);
+        var chatDB = scrapperClient.findChat(botUser.chatId());
+        if (chatDB.chatId() == 0) {
+            return askToRegister(botUser.chatId());
+        }
+        putUser(bot, botUser);
+        bot.chats().get(botUser).links().addAll(processScrapperResponse(botUser.chatId()));
+        return listLinks(botUser, bot);
     }
 
 }

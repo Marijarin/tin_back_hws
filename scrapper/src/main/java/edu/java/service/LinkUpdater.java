@@ -19,14 +19,15 @@ public interface LinkUpdater {
 
     default List<EventLink> update() {
         var mapOfNotUpdatedYet = classifySavedLinksNotUpdatedYet(1);
-        if (!mapOfNotUpdatedYet.isEmpty()) {
+        if (mapOfNotUpdatedYet.isEmpty()) {
+            return List.of();
+        } else {
             var stackOverFlowList = extractLinksByKeyWord(mapOfNotUpdatedYet, "stackoverflow");
             var gitHubList = extractLinksByKeyWord(mapOfNotUpdatedYet, "github");
             var result = updateFromGithub(gitHubList);
             result.addAll(updateFromStackOverFlow(stackOverFlowList));
             return result;
         }
-        return List.of();
     }
 
     default List<LinkDao> extractLinksByKeyWord(Map<String, List<LinkDao>> all, String key) {
@@ -44,12 +45,10 @@ public interface LinkUpdater {
 
     default List<EventLink> updateFromGithub(List<LinkDao> gitHubList) {
         var result = new ArrayList<EventLink>(gitHubList.size());
-        if (!gitHubList.isEmpty()) {
-            for (LinkDao link : gitHubList) {
-                var eventLink = checkOneGitHubLink(link);
-                if (eventLink != null && eventLink.getEvent() != null) {
-                    result.add(eventLink);
-                }
+        for (LinkDao link : gitHubList) {
+            var eventLink = checkOneGitHubLink(link);
+            if (eventLink != null && eventLink.getEvent() != null) {
+                result.add(eventLink);
             }
         }
         return result;
@@ -57,12 +56,10 @@ public interface LinkUpdater {
 
     default List<EventLink> updateFromStackOverFlow(List<LinkDao> stackOverFlowList) {
         var result = new ArrayList<EventLink>(stackOverFlowList.size());
-        if (!stackOverFlowList.isEmpty()) {
-            for (LinkDao link : stackOverFlowList) {
-                var eventLink = checkOneStackOverFlowLink(link);
-                if (eventLink != null && eventLink.getEvent() != null) {
-                    result.add(eventLink);
-                }
+        for (LinkDao link : stackOverFlowList) {
+            var eventLink = checkOneStackOverFlowLink(link);
+            if (eventLink != null && eventLink.getEvent() != null) {
+                result.add(eventLink);
             }
         }
         return result;
