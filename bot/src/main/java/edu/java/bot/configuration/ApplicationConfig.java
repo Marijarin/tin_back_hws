@@ -31,7 +31,10 @@ public record ApplicationConfig(
     String notTracked,
 
     @NotEmpty
-    String baseUrlScrapper
+    String baseUrlScrapper,
+
+    @NotEmpty
+    String seeUpdate
     ) {
 
 }

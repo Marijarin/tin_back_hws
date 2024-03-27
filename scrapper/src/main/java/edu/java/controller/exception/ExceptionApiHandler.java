@@ -36,7 +36,7 @@ public class ExceptionApiHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ApiResponse(responseCode = "404", description = "Чат не существует")
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler({ResourceNotFoundException.class, org.springframework.dao.EmptyResultDataAccessException.class})
     public ApiErrorResponse handle404(ResourceNotFoundException exception) {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
             "Объект не существует",

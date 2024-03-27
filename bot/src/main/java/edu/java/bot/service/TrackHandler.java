@@ -2,6 +2,7 @@ package edu.java.bot.service;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.client.ScrapperClient;
 import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.model.Bot;
@@ -13,13 +14,11 @@ import org.springframework.stereotype.Component;
 public class TrackHandler implements CommandHandler {
     private final ApplicationConfig applicationConfig;
 
-    @Autowired
-    private TrackHandler(ApplicationConfig applicationConfig) {
-        this.applicationConfig = applicationConfig;
-    }
+    private final ScrapperClient scrapperClient;
 
-    public TrackHandler(ApplicationConfig applicationConfig, boolean isTest) {
+    @Autowired public TrackHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
         this.applicationConfig = applicationConfig;
+        this.scrapperClient = scrapperClient;
     }
 
     @Override
@@ -28,7 +27,7 @@ public class TrackHandler implements CommandHandler {
         if (isBotHaving(bot, botUser)) {
             return waitForALink(botUser, bot);
         } else {
-            return askToRegister(botUser.chatId());
+            return checkDB(bot, botUser);
         }
     }
 
@@ -50,5 +49,15 @@ public class TrackHandler implements CommandHandler {
             chatId,
             applicationConfig.register()
         );
+    }
+
+    private SendMessage checkDB(Bot bot, BotUser botUser) {
+        var chatDB = scrapperClient.findChat(botUser.chatId());
+        if (chatDB.chatId() == -1) {
+            return askToRegister(botUser.chatId());
+        }
+        putUser(bot, botUser);
+        bot.isWaiting().replace(botUser, getCommand());
+        return waitForALink(botUser, bot);
     }
 }

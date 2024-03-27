@@ -1,7 +1,6 @@
 package edu.java;
 
 import java.io.File;
-import java.io.StringWriter;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import liquibase.Contexts;
@@ -23,7 +22,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {TestConfig.class})
 @Testcontainers
@@ -49,7 +47,6 @@ public class IntegrationTest {
     private static void runMigrations(JdbcDatabaseContainer<?> c) throws LiquibaseException, SQLException {
         java.sql.Connection connection = DriverManager
             .getConnection(c.getJdbcUrl(), c.getUsername(), c.getPassword());
-        System.out.println(c.getJdbcUrl());
         Database database = DatabaseFactory
             .getInstance()
             .findCorrectDatabaseImplementation(new JdbcConnection(connection));
@@ -75,12 +72,5 @@ public class IntegrationTest {
         registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRES::getUsername);
         registry.add("spring.datasource.password", POSTGRES::getPassword);
-    }
-
-    @Test
-    void updateTable() throws SQLException, InterruptedException {
-        Thread.sleep(1000);
-        System.out.println(jdbcTemplate.getDataSource().getConnection().getClientInfo());
-        jdbcTemplate.update("INSERT INTO scrapper.public.chat (id, created_at) VALUES (100000, CURRENT_TIMESTAMP)");
     }
 }

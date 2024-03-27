@@ -6,17 +6,18 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.configuration.ApplicationConfig;
-import edu.java.bot.service.model.Bot;
-import edu.java.bot.service.model.BotUser;
-import edu.java.bot.service.model.Chat;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.CommandHandler;
 import edu.java.bot.service.PenBot;
 import edu.java.bot.service.UserMessageHandler;
+import edu.java.bot.service.UserMessageHandlerImpl;
+import edu.java.bot.service.model.Bot;
+import edu.java.bot.service.model.BotUser;
+import edu.java.bot.service.model.Chat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import edu.java.bot.service.UserMessageHandlerImpl;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -46,7 +47,7 @@ public class PenBotTest {
             botUser.chatId(),
             botUser.id(),
             botUser.name(),
-            List.of()
+            new HashSet<>()
         );
         isWaiting.put(botUser, null);
         Bot bot = new Bot(
@@ -66,6 +67,7 @@ public class PenBotTest {
             "1",
             "1",
             "1",
+            "",
             ""
 
         );

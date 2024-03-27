@@ -2,6 +2,7 @@ package edu.java.bot.service;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.client.ScrapperClient;
 import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.model.Bot;
@@ -12,14 +13,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class UnTrackHandler implements CommandHandler {
     private final ApplicationConfig applicationConfig;
+    private final ScrapperClient scrapperClient;
 
-    @Autowired
-    private UnTrackHandler(ApplicationConfig applicationConfig) {
+    @Autowired public UnTrackHandler(ApplicationConfig applicationConfig, ScrapperClient scrapperClient) {
         this.applicationConfig = applicationConfig;
-    }
-
-    public UnTrackHandler(ApplicationConfig applicationConfig, boolean isTest) {
-        this.applicationConfig = applicationConfig;
+        this.scrapperClient = scrapperClient;
     }
 
     @Override
@@ -28,7 +26,7 @@ public class UnTrackHandler implements CommandHandler {
         if (isBotHaving(bot, botUser)) {
             return waitForALink(botUser, bot);
         } else {
-            return askToRegister(botUser.chatId());
+            return checkDB(bot, botUser);
         }
     }
 
@@ -46,6 +44,16 @@ public class UnTrackHandler implements CommandHandler {
             applicationConfig.sendLink()
         );
     }
+
+    private SendMessage checkDB(Bot bot, BotUser botUser) {
+            var chatDB = scrapperClient.findChat(botUser.chatId());
+            if (chatDB.chatId() == -1) {
+                return askToRegister(botUser.chatId());
+            }
+            putUser(bot, botUser);
+            bot.isWaiting().replace(botUser, getCommand());
+            return waitForALink(botUser, bot);
+        }
 
     @Override
     public CommandName getCommand() {

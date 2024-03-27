@@ -2,8 +2,8 @@ package edu.java.client.model;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import java.net.URI;
+import java.util.List;
 
 public record LinkUpdate(
     @Min(1)
@@ -11,7 +11,6 @@ public record LinkUpdate(
     @NotBlank
     URI url,
     String description,
-    @NotEmpty
-    long[] tgChatIds
+    List<Long> tgChatIds
 ) {
 }

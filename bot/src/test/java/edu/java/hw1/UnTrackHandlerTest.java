@@ -4,19 +4,22 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
+import edu.java.bot.client.ScrapperClient;
+import edu.java.bot.client.model.ChatResponse;
 import edu.java.bot.configuration.ApplicationConfig;
-import edu.java.bot.service.model.Bot;
-import edu.java.bot.service.model.BotUser;
-import edu.java.bot.service.model.Chat;
 import edu.java.bot.repository.CommandName;
 import edu.java.bot.service.UnTrackHandler;
 import edu.java.bot.service.UserMessageHandler;
 import edu.java.bot.service.UserMessageHandlerImpl;
+import edu.java.bot.service.model.Bot;
+import edu.java.bot.service.model.BotUser;
+import edu.java.bot.service.model.Chat;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,6 +34,7 @@ public class UnTrackHandlerTest {
     @Mock Update update = new Update();
 
     @Mock Message message = new Message();
+    @Mock ScrapperClient scrapperClient;
 
     User user = new User(1L);
 
@@ -49,6 +53,7 @@ public class UnTrackHandlerTest {
         "1",
         "1",
         "1",
+        "",
         ""
 
     );
@@ -59,15 +64,16 @@ public class UnTrackHandlerTest {
             botUser.chatId(),
             botUser.id(),
             botUser.name(),
-            List.of("https://stackoverflow.com/search?q=unsupported%20link")
+            new HashSet<>()
         );
+chat1.links().add("https://stackoverflow.com/search?q=unsupported%20link");
         isWaiting.put(botUser, null);
         var bot = new Bot(
             telegramBot,
             Map.of(botUser, chat1),
             isWaiting
         );
-        var handler = new UnTrackHandler(applicationConfig, true);
+        var handler = new UnTrackHandler(applicationConfig, scrapperClient);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
@@ -85,11 +91,13 @@ public class UnTrackHandlerTest {
             new HashMap<>(),
             new HashMap<>()
         );
-        var handler = new UnTrackHandler(applicationConfig, true);
+        var handler = new UnTrackHandler(applicationConfig, scrapperClient);
+        var response = new ChatResponse(-1L);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
+        Mockito.when(scrapperClient.findChat(message.chat().id())).thenReturn(response);
 
         var result = handler.handle(bot, messageHandler, update);
 

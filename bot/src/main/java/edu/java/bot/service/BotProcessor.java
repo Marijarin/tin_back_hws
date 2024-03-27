@@ -2,6 +2,7 @@ package edu.java.bot.service;
 
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import edu.java.bot.service.model.SendUpdate;
 import java.util.List;
 
 public interface BotProcessor extends AutoCloseable, UpdatesListener {
@@ -15,4 +16,6 @@ public interface BotProcessor extends AutoCloseable, UpdatesListener {
 
     @Override
     void close();
+
+    void processUpdateFromScrapper(SendUpdate sendUpdate);
 }
