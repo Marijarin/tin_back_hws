@@ -1,9 +1,9 @@
 package edu.java;
 
-import edu.java.domain.JDBCChatRepository;
-import edu.java.domain.JDBCLinkDao;
-import edu.java.domain.dao.Chat;
-import edu.java.domain.dao.Link;
+import edu.java.domain.jdbc.JDBCChatRepository;
+import edu.java.domain.jdbc.JDBCLinkDao;
+import edu.java.domain.model.ChatDao;
+import edu.java.domain.model.LinkDao;
 import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -12,7 +12,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,7 +84,7 @@ public class JDBCIntegrationTest extends IntegrationTest {
     void removeLink() {
         //       transactionTemplate.execute(status -> {
         var resultChat = chatRepository.addChat(1L);
-        var link = new Link(
+        var link = new LinkDao(
             resultChat,
             URI.create(
                 "https://stackoverflow.com/questions/64268012/java-postgresql-how-to-generate-primary-key-automatically"),
@@ -107,7 +106,7 @@ public class JDBCIntegrationTest extends IntegrationTest {
     @Rollback
     void findAllChats() {
         //      transactionTemplate.execute(status -> {
-        var resultChatList = new ArrayList<Chat>();
+        var resultChatList = new ArrayList<ChatDao>();
         for (int i = 0; i < 4; i++) {
             var id = chatRepository.addChat(i);
             var chat = chatRepository.findChat(id);
@@ -126,7 +125,7 @@ public class JDBCIntegrationTest extends IntegrationTest {
     @Rollback
     void findAllChatsWithLink() {
         //       transactionTemplate.execute(status -> {
-        var resultChatList = new ArrayList<Chat>();
+        var resultChatList = new ArrayList<ChatDao>();
         for (int i = 1; i < 4; i++) {
             var id = chatRepository.addChat(i);
             var chat = chatRepository.findChat(id);
@@ -193,8 +192,8 @@ public class JDBCIntegrationTest extends IntegrationTest {
         linkRepository.addLink(1L, uri2);
         linkRepository.addLink(2L, uri1);
 
-        var result1 = linkRepository.findAllLinksFromChat(1L).stream().map(Link::getUri);
-        var result2 = linkRepository.findAllLinksFromChat(2L).stream().map(Link::getUri);
+        var result1 = linkRepository.findAllLinksFromChat(1L).stream().map(LinkDao::getUri);
+        var result2 = linkRepository.findAllLinksFromChat(2L).stream().map(LinkDao::getUri);
 
         assertThat(result1).isEqualTo(List.of(uri2));
         assertThat(result2).isEqualTo(List.of(uri1));

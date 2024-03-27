@@ -18,7 +18,7 @@ public class UpdateHandler {
     SendMessage sendUpdate(SendUpdate sendUpdate, long chatId) {
         return new SendMessage(
             chatId,
-            applicationConfig.seeUpdate() + "\n" + sendUpdate.description() + "\n" + sendUpdate.url()
+            applicationConfig.seeUpdate() + "\n" + sendUpdate.eventDescription() + "\n" + sendUpdate.url()
         );
     }
 }

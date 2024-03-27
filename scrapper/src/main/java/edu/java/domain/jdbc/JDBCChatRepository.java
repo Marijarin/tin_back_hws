@@ -1,7 +1,7 @@
-package edu.java.domain;
+package edu.java.domain.jdbc;
 
-import edu.java.domain.dao.Chat;
-import edu.java.domain.dao.Link;
+import edu.java.domain.model.ChatDao;
+import edu.java.domain.model.LinkDao;
 import java.net.URI;
 import java.sql.Timestamp;
 import java.time.OffsetDateTime;
@@ -38,25 +38,25 @@ public class JDBCChatRepository {
         return id;
     }
 
-    public List<Chat> findAllChatsWithLink(long linkId) {
+    public List<ChatDao> findAllChatsWithLink(long linkId) {
         String SQL1 = "select assignment.chat_id from assignment where link_id = ?";
         Long id = jdbcTemplate.queryForObject(SQL1, (rs, rowNum) ->
                 rs.getLong("chat_id"),
             linkId
         );
-        List<Chat> chatList = List.of();
+        List<ChatDao> chatList = List.of();
         if (id != null) {
             String SQL = "select * from chat where id = ?";
             chatList = jdbcTemplate.query(
                 SQL,
                 (rs, rowNum) ->
-                    new Chat(
+                    new ChatDao(
                         rs.getLong("id"),
                         rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC),
                         new ArrayList<>()
                     ), id
             );
-            for (Chat c : chatList) {
+            for (ChatDao c : chatList) {
                 c.getLinks().addAll(findAllLinksForChat(c.getId()));
             }
         }
@@ -64,7 +64,7 @@ public class JDBCChatRepository {
     }
 
     @SuppressWarnings("LineLength")
-    public List<Chat> findAllChatsWithLink(URI url) {
+    public List<ChatDao> findAllChatsWithLink(URI url) {
         String SQL1 = "select id from link where url = ?";
         Long id = jdbcTemplate.queryForObject(SQL1, (rs, rowNum) ->
                 rs.getLong("id"),
@@ -76,19 +76,19 @@ public class JDBCChatRepository {
         return List.of();
     }
 
-    public List<Chat> findAllChats() {
+    public List<ChatDao> findAllChats() {
         String SQL = "select * from chat";
-        List<Chat> chatList = jdbcTemplate.query(
+        List<ChatDao> chatList = jdbcTemplate.query(
             SQL,
             (rs, rowNum) ->
-                new Chat(
+                new ChatDao(
                     rs.getLong("id"),
                     rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC),
                     new ArrayList<>()
                 )
         );
         if (!chatList.isEmpty()) {
-            for (Chat c : chatList) {
+            for (ChatDao c : chatList) {
                 c.getLinks().addAll(findAllLinksForChat(c.getId()));
             }
         }
@@ -100,24 +100,24 @@ public class JDBCChatRepository {
         jdbcTemplate.update(SQL);
     }
 
-    public Chat findChat(long id) {
+    public ChatDao findChat(long id) {
         String SQL = "select * from chat where id = ?";
         try {
             return jdbcTemplate.queryForObject(
                 SQL,
                 (rs, rowNum) ->
-                    new Chat(
+                    new ChatDao(
                         rs.getLong("id"),
                         rs.getTimestamp("created_at").toInstant().atOffset(ZoneOffset.UTC),
                         new ArrayList<>()
                     ), id
             );
         } catch (EmptyResultDataAccessException e) {
-            return new Chat(-1L, OffsetDateTime.now(), null);
+            return new ChatDao(-1L, OffsetDateTime.now(), null);
         }
     }
 
-    public List<Link> findAllLinksForChat(long chatId) {
+    public List<LinkDao> findAllLinksForChat(long chatId) {
         String SQL1 = "select assignment.link_id from assignment where chat_id = ?";
         List<Long> ids = jdbcTemplate.query(SQL1, (rs, rowNum) ->
                 rs.getLong("link_id"),
@@ -126,14 +126,14 @@ public class JDBCChatRepository {
         return processIds(ids);
     }
 
-    private List<Link> processIds(List<Long> ids) {
-        List<Link> links = new ArrayList<>();
+    private List<LinkDao> processIds(List<Long> ids) {
+        List<LinkDao> links = new ArrayList<>();
         if (ids.isEmpty()) {
             return links;
         }
         for (Long id : ids) {
             String SQL = "select  * from link where id = ? ";
-            var link = jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new Link(
+            var link = jdbcTemplate.queryForObject(SQL, (rs, rowNum) -> new LinkDao(
                 rs.getLong("id"),
                 URI.create(rs.getString("url")),
                 rs.getString("description"),

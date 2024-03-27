@@ -7,6 +7,9 @@ import java.util.List;
 public record ResponseStackOverflowDTO(
     List<Item> items
 ) {
-    public record Item(@JsonProperty("creation_date") OffsetDateTime creationDate) {
+    public record Item(
+        @JsonProperty("creation_date") OffsetDateTime creationDate,
+        @JsonProperty("timeline_type") String eventType
+    ) {
     }
 }

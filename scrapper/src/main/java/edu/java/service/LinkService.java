@@ -1,15 +1,15 @@
 package edu.java.service;
 
-import edu.java.domain.dao.Link;
+import edu.java.domain.model.LinkDao;
 import java.net.URI;
 import java.util.Collection;
 
 public interface LinkService {
-    Link add(long tgChatId, URI url);
+    LinkDao add(long tgChatId, URI url);
 
-    Link remove(long tgChatId, URI url);
+    LinkDao remove(long tgChatId, URI url);
 
     long findLinkId(long tgChatId, URI url);
 
-    Collection<Link> listAll(long tgChatId);
+    Collection<LinkDao> listAll(long tgChatId);
 }

@@ -1,26 +1,28 @@
-package edu.java.service.jdbc;
+package edu.java.service.jooq;
 
 import edu.java.client.GitHubClient;
 import edu.java.client.StackOverflowClient;
-import edu.java.domain.jdbc.JDBCLinkDao;
+import edu.java.domain.jooq.JooqLinkDao;
 import edu.java.domain.model.LinkDao;
 import edu.java.service.LinkUpdater;
 import edu.java.service.model.EventLink;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
-//@Service
-public class JdbcLinkUpdater implements LinkUpdater {
-    private final JDBCLinkDao linkDao;
+@Service
+public class JooqLinkUpdater implements LinkUpdater {
+    private final JooqLinkDao linkDao;
     private final GitHubClient gitHubClient;
 
     private final StackOverflowClient stackOverflowClient;
 
-    //@Autowired
-    public JdbcLinkUpdater(JDBCLinkDao linkDao, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient) {
+    @Autowired
+    public JooqLinkUpdater(JooqLinkDao linkDao, GitHubClient gitHubClient, StackOverflowClient stackOverflowClient) {
         this.linkDao = linkDao;
         this.gitHubClient = gitHubClient;
         this.stackOverflowClient = stackOverflowClient;
@@ -48,8 +50,8 @@ public class JdbcLinkUpdater implements LinkUpdater {
     @SuppressWarnings({"MagicNumber", "MultipleStringLiterals"})
     public EventLink checkOneGitHubLink(LinkDao link) {
         var sList = link.getUri().toString().split("/");
-        String owner;
-        String repo;
+        String owner = "";
+        String repo = "";
         if (sList.length > 4) {
             owner = sList[3];
             repo = sList[4];

@@ -9,6 +9,8 @@ public record SendUpdate(
     URI url,
     String description,
     @NotEmpty
-    long[] tgChatIds
+    long[] tgChatIds,
+    @NotEmpty
+    String eventDescription
 ) {
 }

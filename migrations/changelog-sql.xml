@@ -10,4 +10,7 @@
     <changeSet id="init_tables" author="Marijarin">
         <sqlFile path="sql/init_tables.sql" relativeToChangelogFile="true"/>
     </changeSet>
+    <changeSet id="add_columns" author="Marijarin">
+        <sqlFile path="sql/add_events.sql" relativeToChangelogFile="true"/>
+    </changeSet>
 </databaseChangeLog>

@@ -1,4 +1,4 @@
-package edu.java.domain.dao;
+package edu.java.domain.model;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
@@ -11,10 +11,10 @@ import org.springframework.data.annotation.Id;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Chat {
+public class ChatDao {
     @Id
     long id;
     @NotNull
     OffsetDateTime createdAt;
-    List<Link> links;
+    List<LinkDao> links;
 }

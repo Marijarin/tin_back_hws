@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS chat
 
 CREATE TABLE IF NOT EXISTS link
 (
-    id          SERIAL PRIMARY KEY,
+    id          BIGSERIAL PRIMARY KEY,
     url         varchar         NOT NULL,
     description varchar         ,
     last_updated timestamp with time zone NOT NULL
