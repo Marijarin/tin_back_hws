@@ -6,6 +6,7 @@ app:
   baseUrlGitHub: "https://api.github.com"
   baseUrlStackOverflow: "https://api.stackexchange.com/2.3"
   baseUrlBot: "http://localhost:8090"
+  database-access-type: jpa
 spring:
   application:
     name: scrapper

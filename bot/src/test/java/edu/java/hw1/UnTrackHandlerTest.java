@@ -54,6 +54,7 @@ public class UnTrackHandlerTest {
         "1",
         "1",
         "",
+        "",
         ""
 
     );
@@ -92,7 +93,7 @@ chat1.links().add("https://stackoverflow.com/search?q=unsupported%20link");
             new HashMap<>()
         );
         var handler = new UnTrackHandler(applicationConfig, scrapperClient);
-        var response = new ChatResponse(-1L);
+        var response = new ChatResponse(0L);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);

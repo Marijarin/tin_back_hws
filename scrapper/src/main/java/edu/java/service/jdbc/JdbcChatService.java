@@ -1,18 +1,20 @@
 package edu.java.service.jdbc;
 
-import edu.java.domain.jdbc.JDBCChatRepository;
+import edu.java.domain.jdbc.JdbcChatRepository;
 import edu.java.domain.model.ChatDao;
 import edu.java.service.ChatService;
 import java.net.URI;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//@Service
+@Service
 public class JdbcChatService implements ChatService {
-    private final JDBCChatRepository chatRepository;
+    private final JdbcChatRepository chatRepository;
 
-    //@Autowired
-    public JdbcChatService(JDBCChatRepository chatRepository) {
+    @Autowired
+    public JdbcChatService(JdbcChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }
 

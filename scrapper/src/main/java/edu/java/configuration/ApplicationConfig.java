@@ -21,7 +21,8 @@ public record ApplicationConfig(
     @NotEmpty
     String baseUrlStackOverflow,
     @NotEmpty
-    String baseUrlBot
+    String baseUrlBot,
+    AccessType databaseAccessType
 ) {
     @Bean
     public DefaultConfigurationCustomizer postgresJooqCustomizer() {
@@ -32,6 +33,12 @@ public record ApplicationConfig(
     }
 
     public record Scheduler(boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
+    }
+
+    public enum AccessType {
+        JDBC,
+        JPA,
+        JOOQ
     }
 
 }

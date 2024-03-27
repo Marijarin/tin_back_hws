@@ -4,6 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum EventName {
+    Pushed {
+        @Override
+        public String getMeaning() {
+            return "PushEvent";
+        }
+
+        @Override
+        public String getDescription() {
+            return Created.heading + "A piece of code has been pushed!";
+        }
+    },
     Created {
         @Override
         public String getMeaning() {
@@ -64,6 +75,7 @@ public enum EventName {
                 case SOFComment -> map.put(SOFComment.getMeaning(), SOFComment);
                 case Created -> map.put(Created.getMeaning(), Created);
                 case IssueComment -> map.put(IssueComment.getMeaning(), IssueComment);
+                case Pushed -> map.put(Pushed.getMeaning(), Pushed);
             }
         }
         return map;

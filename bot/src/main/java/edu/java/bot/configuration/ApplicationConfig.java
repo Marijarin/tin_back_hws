@@ -34,7 +34,9 @@ public record ApplicationConfig(
     String baseUrlScrapper,
 
     @NotEmpty
-    String seeUpdate
-    ) {
+    String seeUpdate,
+    @NotEmpty
+    String deleteWithSecretPhrase
+) {
 
 }

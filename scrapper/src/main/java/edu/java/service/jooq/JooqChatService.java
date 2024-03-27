@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class JooqChatService implements ChatService {
     private final JooqChatRepository chatRepository;
 
-    @Autowired
+   @Autowired
     public JooqChatService(JooqChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }

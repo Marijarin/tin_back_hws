@@ -15,12 +15,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @SuppressWarnings({"LocalVariableName", "MultipleStringLiterals"})
-public class JDBCChatRepository {
+public class JdbcChatRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public JDBCChatRepository(JdbcTemplate jdbcTemplate) {
+    public JdbcChatRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -95,11 +95,6 @@ public class JDBCChatRepository {
         return chatList;
     }
 
-    public void deleteAll() {
-        String SQL = "delete from chat";
-        jdbcTemplate.update(SQL);
-    }
-
     public ChatDao findChat(long id) {
         String SQL = "select * from chat where id = ?";
         try {
@@ -113,7 +108,7 @@ public class JDBCChatRepository {
                     ), id
             );
         } catch (EmptyResultDataAccessException e) {
-            return new ChatDao(-1L, OffsetDateTime.now(), null);
+            return new ChatDao(0L, OffsetDateTime.now(), null);
         }
     }
 

@@ -26,13 +26,8 @@ public class JooqLinkService implements LinkService {
 
     @Override
     @Transactional
-    public LinkDao remove(long tgChatId, URI url) {
-        return linkRepository.deleteLink(tgChatId, url);
-    }
-
-    @Override
-    public long findLinkId(long tgChatId, URI url) {
-        return linkRepository.findByUrl(url).getId();
+    public void remove(long tgChatId, URI url) {
+        linkRepository.deleteLink(tgChatId, url);
     }
 
     @Override

@@ -54,6 +54,7 @@ public class TrackHandlerTest {
         "1",
         "1",
         "",
+        "",
         ""
 
     );
@@ -92,7 +93,7 @@ public class TrackHandlerTest {
             new HashMap<>()
         );
         var handler = new TrackHandler(applicationConfig, scrapperClient);
-        var response = new ChatResponse(-1L);
+        var response = new ChatResponse(0L);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);

@@ -12,6 +12,7 @@ app:
   pattern: "^(https?://){1}([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$"
   baseUrlScrapper: "http://localhost:8080"
   seeUpdate: "Find out new content from source: "
+  deleteWithSecretPhrase: "bye"
 spring:
   application:
     name: bot

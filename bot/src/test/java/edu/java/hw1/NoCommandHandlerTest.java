@@ -59,6 +59,7 @@ public class NoCommandHandlerTest {
         "^(https?://){1}([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$",
         "6",
         "",
+        "",
         ""
 
     );
@@ -71,7 +72,7 @@ public class NoCommandHandlerTest {
             Map.of()
         );
         var handler = new NoCommandHandler(applicationConfig, scrapperClient);
-        var response = new ChatResponse(-1L);
+        var response = new ChatResponse(0L);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.text()).thenReturn(CommandName.LIST.getCommand());
         Mockito.when(message.chat()).thenReturn(chat);

@@ -7,15 +7,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("ConstantName")
+@SuppressWarnings({"ConstantName", "MagicNumber"})
 public interface LinkUpdater {
     Map<String, EventName> eventMap = EventName.getEventMap();
-
-    List<EventLink> update();
 
     EventLink checkOneGitHubLink(LinkDao link);
 
     EventLink checkOneStackOverFlowLink(LinkDao link);
+
+    Map<String, List<LinkDao>> classifySavedLinksNotUpdatedYet(long days);
+
+    default List<EventLink> update() {
+        var mapOfNotUpdatedYet = classifySavedLinksNotUpdatedYet(1);
+        if (mapOfNotUpdatedYet.isEmpty()) {
+            return List.of();
+        } else {
+            var stackOverFlowList = extractLinksByKeyWord(mapOfNotUpdatedYet, "stackoverflow");
+            var gitHubList = extractLinksByKeyWord(mapOfNotUpdatedYet, "github");
+            var result = updateFromGithub(gitHubList);
+            result.addAll(updateFromStackOverFlow(stackOverFlowList));
+            return result;
+        }
+    }
 
     default List<LinkDao> extractLinksByKeyWord(Map<String, List<LinkDao>> all, String key) {
         var mapKey = all.keySet().stream().filter(it -> it.contains(key)).findFirst().orElseGet(String::new);
@@ -31,28 +44,37 @@ public interface LinkUpdater {
     }
 
     default List<EventLink> updateFromGithub(List<LinkDao> gitHubList) {
-        var result = new ArrayList<EventLink>();
-        if (!gitHubList.isEmpty()) {
-            for (LinkDao link : gitHubList) {
-                var eventLink = checkOneGitHubLink(link);
-                if (eventLink != null && eventLink.getEvent() != null) {
-                    result.add(eventLink);
-                }
+        var result = new ArrayList<EventLink>(gitHubList.size());
+        for (LinkDao link : gitHubList) {
+            var eventLink = checkOneGitHubLink(link);
+            if (eventLink != null && eventLink.getEvent() != null) {
+                result.add(eventLink);
             }
         }
         return result;
     }
 
     default List<EventLink> updateFromStackOverFlow(List<LinkDao> stackOverFlowList) {
-        var result = new ArrayList<EventLink>();
-        if (!stackOverFlowList.isEmpty()) {
-            for (LinkDao link : stackOverFlowList) {
-                var eventLink = checkOneStackOverFlowLink(link);
-                if (eventLink != null && eventLink.getEvent() != null) {
-                    result.add(eventLink);
-                }
+        var result = new ArrayList<EventLink>(stackOverFlowList.size());
+        for (LinkDao link : stackOverFlowList) {
+            var eventLink = checkOneStackOverFlowLink(link);
+            if (eventLink != null && eventLink.getEvent() != null) {
+                result.add(eventLink);
             }
         }
         return result;
+    }
+
+    default String getIdsForSOFRequest(String url) {
+        return url.split("stackoverflow.com/questions/")[1].split("/")[0];
+    }
+
+    default List<String> getParametersForGitHubRequest(String url) {
+        var sList = url.split("/");
+        if (sList.length > 4) {
+            return List.of(sList[3], sList[4]);
+        } else {
+            return List.of();
+        }
     }
 }
