@@ -25,7 +25,7 @@ public class ExceptionApiHandler {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
             "Некорректные параметры запроса",
             "400",
-            MethodArgumentNotValidException.class.getName(),
+            exception,
             exception.getMessage().trim(),
             Arrays.stream(exception.getStackTrace()).map(StackTraceElement::getClassName).limit(5)
                 .toArray(String[]::new)
@@ -41,7 +41,7 @@ public class ExceptionApiHandler {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
             "Объект не существует",
             "404",
-            RuntimeException.class.getName(),
+            exception,
             exception.getMessage().trim(),
             Arrays.stream(exception.getStackTrace()).map(StackTraceElement::getClassName).limit(5)
                 .toArray(String[]::new)
@@ -57,7 +57,7 @@ public class ExceptionApiHandler {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
             "Ошибка на сервере при обработке данных",
             "500",
-            RuntimeException.class.getName(),
+            exception,
             exception.getMessage().trim(),
             Arrays.stream(exception.getStackTrace())
                 .map(StackTraceElement::getClassName).limit(5)
@@ -74,7 +74,7 @@ public class ExceptionApiHandler {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
             "Конфликт при обработке данных",
             "409",
-            RuntimeException.class.getName(),
+            exception,
             exception.getMessage().split(" ; ")[0].split(":")[1].trim(),
             Arrays.stream(exception.getStackTrace())
                 .map(StackTraceElement::getClassName).limit(5)

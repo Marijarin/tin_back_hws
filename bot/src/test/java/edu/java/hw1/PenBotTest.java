@@ -69,7 +69,11 @@ public class PenBotTest {
             "1",
             "",
             "",
-            ""
+            "",
+            "",
+            "",
+            "",
+            List.of()
 
         );
         Map<String, CommandHandler> commandHandlers = Map.of(command.name(), new CommandHandler() {

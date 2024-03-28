@@ -2,7 +2,9 @@ package edu.java.configuration;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
+import edu.java.controller.dto.ApiErrorResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,12 +32,14 @@ public class RetryConfig {
         return (request, next) -> next.exchange(request)
             .flatMap(clientResponse -> Mono.just(clientResponse)
                 .filter(response -> clientResponse.statusCode().isError())
-                .flatMap(response -> clientResponse.createException())
-                .flatMap(Mono::error)
+                .flatMap(response -> clientResponse.toEntity(ApiErrorResponse.class))
+                .flatMap(mono -> {
+                    var body = Optional.ofNullable(mono.getBody()).orElseThrow();
+                    var e = body.exception();
+                    return Mono.error(e);
+                })
                 .thenReturn(clientResponse))
-            .retryWhen(Retry.maxInARow(3)
-                .filter(errors.getOrDefault(applicationConfig.errorFilters().getFirst(), defaultError))
-                .filter(errors.getOrDefault(applicationConfig.errorFilters().getLast(), defaultError)));
+            .retryWhen(Retry.maxInARow(3));
     }
 
     @Bean
@@ -43,8 +47,12 @@ public class RetryConfig {
         return (request, next) -> next.exchange(request)
             .flatMap(clientResponse -> Mono.just(clientResponse)
                 .filter(response -> clientResponse.statusCode().isError())
-                .flatMap(response -> clientResponse.createException())
-                .flatMap(Mono::error)
+                .flatMap(response -> clientResponse.toEntity(ApiErrorResponse.class))
+                .flatMap(mono -> {
+                    var body = Optional.ofNullable(mono.getBody()).orElseThrow();
+                    var e = body.exception();
+                    return Mono.error(e);
+                })
                 .thenReturn(clientResponse))
             .retryWhen(Retry.fixedDelay(4, Duration.ofSeconds(2))
                 .filter(errors.getOrDefault(applicationConfig.errorFilters().getFirst(), defaultError))
@@ -56,8 +64,12 @@ public class RetryConfig {
         return (request, next) -> next.exchange(request)
             .flatMap(clientResponse -> Mono.just(clientResponse)
                 .filter(response -> clientResponse.statusCode().isError())
-                .flatMap(response -> clientResponse.createException())
-                .flatMap(Mono::error)
+                .flatMap(response -> clientResponse.toEntity(ApiErrorResponse.class))
+                .flatMap(mono -> {
+                    var body = Optional.ofNullable(mono.getBody()).orElseThrow();
+                    var e = body.exception();
+                    return Mono.error(e);
+                })
                 .thenReturn(clientResponse))
             .retryWhen(Retry.backoff(4, Duration.ofSeconds(3))
                 .filter(errors.getOrDefault(applicationConfig.errorFilters().get(2), defaultError))
