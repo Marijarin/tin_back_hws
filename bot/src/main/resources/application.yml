@@ -13,6 +13,15 @@ app:
   baseUrlScrapper: "http://localhost:8080"
   seeUpdate: "Find out new content from source: "
   deleteWithSecretPhrase: "bye"
+  type-linear: "linear"
+  type-constant: "constant"
+  type-exponential: "exponential"
+  error-filters:
+    - "e400"
+    - "e404NotFound"
+    - "e404Empty"
+    - "e500"
+    - "e409"
 spring:
   application:
     name: bot

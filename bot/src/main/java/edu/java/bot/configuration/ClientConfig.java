@@ -8,21 +8,26 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import reactor.core.publisher.Mono;
+import java.util.Map;
 
 @Configuration
 public class ClientConfig {
     private final ApplicationConfig applicationConfig;
 
+    private final Map<String, ExchangeFilterFunction> filters;
+
     Logger logger = LogManager.getLogger();
 
     @Autowired
-    public ClientConfig(ApplicationConfig applicationConfig) {
+    public ClientConfig(ApplicationConfig applicationConfig, Map<String, ExchangeFilterFunction> filters) {
         this.applicationConfig = applicationConfig;
+        this.filters = filters;
     }
 
     @SuppressWarnings("MagicNumber")
@@ -49,11 +54,17 @@ public class ClientConfig {
 
     @Bean
     ScrapperClient scrapperClient() {
+        var wc = WebClientAdapter
+            .create(webClient(applicationConfig.baseUrlScrapper())
+                .mutate()
+                .filter(filters.get(applicationConfig.typeLinear()))
+                .build());
         HttpServiceProxyFactory httpServiceProxyFactory =
             HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlScrapper())))
+                .builderFor(wc)
                 .build();
         return httpServiceProxyFactory.createClient(ScrapperClient.class);
     }
+
 }
 
