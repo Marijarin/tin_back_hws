@@ -3,6 +3,7 @@ package edu.java.hw7;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.bot.client.ScrapperClient;
+import edu.java.bot.configuration.CustomRetry;
 import edu.java.bot.controller.dto.ApiErrorResponse;
 import java.time.Duration;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpExchangeAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+import reactor.core.Exceptions;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -44,16 +46,51 @@ public class ScrapperClientTest {
                 .filter(response -> clientResponse.statusCode().isError())
                 .flatMap(response -> clientResponse.toEntity(ApiErrorResponse.class))
                 .flatMap(mono -> {
-                    var body = Optional.ofNullable(mono.getBody()).orElseThrow();
+                    var body = Optional.ofNullable(mono.getBody())
+                        .orElse(
+                            new ApiErrorResponse(" ", "400", new IllegalStateException("hello"), "", new String[0]));
                     var e = body.exception();
                     return Mono.error(e);
                 })
                 .thenReturn(clientResponse))
-            .retryWhen(Retry.fixedDelay(2, Duration.ofSeconds(1)));
+      .retryWhen( new CustomRetry(6, 2, Duration.ofSeconds(1)))
+            .retryWhen(Retry.max(0));
+    }
+
+    ExchangeFilterFunction constant() {
+        return (request, next) -> next.exchange(request)
+            .flatMap(clientResponse -> Mono.just(clientResponse)
+                .filter(response -> clientResponse.statusCode().isError())
+                .flatMap(response -> clientResponse.toEntity(ApiErrorResponse.class))
+                .flatMap(mono -> {
+                    var body = Optional.ofNullable(mono.getBody())
+                        .orElse(
+                            new ApiErrorResponse(" ", "400", new RuntimeException(), "", new String[0]));
+                    var e = body.exception();
+                    return Mono.error(e);
+                })
+                .thenReturn(clientResponse))
+            .retryWhen(Retry.fixedDelay(3, Duration.ofSeconds(1)));
+    }
+
+    ExchangeFilterFunction exponential() {
+        return (request, next) -> next.exchange(request)
+            .flatMap(clientResponse -> Mono.just(clientResponse)
+                .filter(response -> clientResponse.statusCode().isError())
+                .flatMap(response -> clientResponse.toEntity(ApiErrorResponse.class))
+                .flatMap(mono -> {
+                    var body = Optional.ofNullable(mono.getBody())
+                        .orElse(
+                            new ApiErrorResponse(" ", "400", new RuntimeException(), "", new String[0]));
+                    var e = body.exception();
+                    return Mono.error(e);
+                })
+                .thenReturn(clientResponse))
+            .retryWhen(Retry.backoff(4, Duration.ofSeconds(2)));
     }
 
     @Test
-    public void retries2TimesWhenLinear() {
+    public void retries6TimesWhenLinear() {
         HttpExchangeAdapter wc = WebClientAdapter
             .create(webClient1
                 .mutate()
@@ -73,6 +110,54 @@ public class ScrapperClientTest {
         } catch (IllegalStateException e) {
             System.out.println(e.getMessage());
         }
-        wm.verify(1 + 2, getRequestedFor(urlPathMatching("/tg-chat/1000")));
+        wm.verify(1 + 6, getRequestedFor(urlPathMatching("/tg-chat/1000")));
+    }
+
+    @Test
+    public void retries3TimesWhenConstant() {
+        HttpExchangeAdapter wc = WebClientAdapter
+            .create(webClient1
+                .mutate()
+                .filter(constant())
+                .build());
+
+        HttpServiceProxyFactory httpServiceProxyFactory =
+            HttpServiceProxyFactory
+                .builderFor(wc)
+                .build();
+        var client = httpServiceProxyFactory.createClient(ScrapperClient.class);
+        wm.stubFor(get(urlPathMatching("/tg-chat/1000"))
+            .willReturn(aResponse()
+                .withStatus(400)));
+        try {
+            client.findChat(1000L);
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        }
+        wm.verify(1 + 3, getRequestedFor(urlPathMatching("/tg-chat/1000")));
+    }
+
+    @Test
+    public void retries4TimesWhenExp() {
+        HttpExchangeAdapter wc = WebClientAdapter
+            .create(webClient1
+                .mutate()
+                .filter(exponential())
+                .build());
+
+        HttpServiceProxyFactory httpServiceProxyFactory =
+            HttpServiceProxyFactory
+                .builderFor(wc)
+                .build();
+        var client = httpServiceProxyFactory.createClient(ScrapperClient.class);
+        wm.stubFor(get(urlPathMatching("/tg-chat/1000"))
+            .willReturn(aResponse()
+                .withStatus(400)));
+        try {
+            client.findChat(1000L);
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        }
+        wm.verify(1 + 4, getRequestedFor(urlPathMatching("/tg-chat/1000")));
     }
 }
