@@ -118,7 +118,8 @@ public class StartHandlerTest {
             "",
             "",
             "",
-            List.of()
+            List.of(),
+            0
 
         );
         var handler = new StartHandler(applicationConfig, scrapperClient);
