@@ -34,6 +34,8 @@ public record ApplicationConfig(
     String typeExponential,
 
     List<String> errorFilters,
+
+    int filterCode,
     RateLimit read,
     RateLimit write
 ) {

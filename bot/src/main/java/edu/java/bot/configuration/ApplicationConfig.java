@@ -47,7 +47,9 @@ public record ApplicationConfig(
 
     String typeExponential,
 
-    List<String> errorFilters
+    List<String> errorFilters,
+
+    int filterCode
 ) {
 
 }

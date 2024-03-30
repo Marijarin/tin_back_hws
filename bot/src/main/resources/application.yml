@@ -22,6 +22,7 @@ app:
     - "e404Empty"
     - "e500"
     - "e409"
+  filter-code: 400
 spring:
   application:
     name: bot

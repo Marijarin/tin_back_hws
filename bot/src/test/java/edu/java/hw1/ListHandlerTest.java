@@ -64,7 +64,8 @@ public class ListHandlerTest {
         "",
         "",
         "",
-        List.of()
+        List.of(),
+        0
 
     );
 

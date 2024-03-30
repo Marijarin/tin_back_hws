@@ -16,6 +16,7 @@ app:
     - "e404Empty"
     - "e500"
     - "e409"
+  filter-code: 500
   rate-limit:
     read:
       count: 1

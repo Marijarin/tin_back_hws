@@ -65,7 +65,8 @@ public class NoCommandHandlerTest {
         "",
         "",
         "",
-        List.of()
+        List.of(),
+        0
 
     );
 

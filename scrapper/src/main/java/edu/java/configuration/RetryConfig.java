@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import reactor.core.publisher.Mono;
@@ -40,14 +41,17 @@ public class RetryConfig {
                     return Mono.error(e);
                 })
                 .thenReturn(clientResponse))
-            .retryWhen(Retry.maxInARow(3));
+            .retryWhen(Retry.maxInARow(3)
+                .filter(errors.getOrDefault(applicationConfig.errorFilters().getFirst(), defaultError))
+                .filter(errors.getOrDefault(applicationConfig.errorFilters().getLast(), defaultError)));
     }
 
     @Bean
     ExchangeFilterFunction linear() {
         return (request, next) -> next.exchange(request)
             .flatMap(clientResponse -> Mono.just(clientResponse)
-                .filter(response -> clientResponse.statusCode().isError())
+                .filter(response -> clientResponse.statusCode()
+                    .isSameCodeAs(HttpStatusCode.valueOf(applicationConfig.filterCode())))
                 .flatMap(response -> clientResponse.toEntity(ApiErrorResponse.class))
                 .flatMap(mono -> {
                     var body = Optional.ofNullable(mono.getBody()).orElseThrow();
@@ -55,9 +59,7 @@ public class RetryConfig {
                     return Mono.error(e);
                 })
                 .thenReturn(clientResponse))
-            .retryWhen(Retry.fixedDelay(4, Duration.ofSeconds(2))
-                .filter(errors.getOrDefault(applicationConfig.errorFilters().getFirst(), defaultError))
-                .filter(errors.getOrDefault(applicationConfig.errorFilters().get(4), defaultError)));
+            .retryWhen(new CustomRetry(6, 2, Duration.ofSeconds(1)));
     }
 
     @Bean
@@ -72,7 +74,7 @@ public class RetryConfig {
                     return Mono.error(e);
                 })
                 .thenReturn(clientResponse))
-            .retryWhen(Retry.backoff(4, Duration.ofSeconds(3))
+            .retryWhen(Retry.backoff(4, Duration.ofSeconds(2))
                 .filter(errors.getOrDefault(applicationConfig.errorFilters().get(2), defaultError))
                 .filter(errors.getOrDefault(applicationConfig.errorFilters().get(3), defaultError)));
     }
