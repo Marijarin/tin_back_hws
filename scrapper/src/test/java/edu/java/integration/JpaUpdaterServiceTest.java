@@ -35,6 +35,8 @@ public class JpaUpdaterServiceTest extends IntegrationTest {
     @Autowired JpaLinkService linkService;
     @Autowired JpaLinkUpdater linkUpdater;
 
+    private final int offset = 365;
+
     @RegisterExtension
     static WireMockExtension wm = WireMockExtension.newInstance()
         .options(wireMockConfig().port(8080))
@@ -52,7 +54,7 @@ public class JpaUpdaterServiceTest extends IntegrationTest {
                 .withBody(Files.readString(Path.of("src/test/resources/json/gh-issue.json")))
                 .withStatus(200)));
         try {
-            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
+            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(offset)));
             eventList = (ArrayList<EventLink>) linkUpdater
                 .updateFromGithub(List.of(linkDao));
         } catch (IllegalStateException e) {
@@ -77,7 +79,7 @@ public class JpaUpdaterServiceTest extends IntegrationTest {
                 .withBody(Files.readString(Path.of("src/test/resources/json/sof-comment.json")))
                 .withStatus(200)));
         try {
-            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
+            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(offset)));
             eventList = (ArrayList<EventLink>) linkUpdater
                 .updateFromStackOverFlow(List.of(linkDao));
         } catch (IllegalStateException e) {

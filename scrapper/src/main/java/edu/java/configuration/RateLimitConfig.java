@@ -12,7 +12,7 @@ public class RateLimitConfig {
     }
 
     @Bean
-    ApplicationConfig.ReadWriteLimit readWriteLimit(){
+    ApplicationConfig.ReadWriteLimit readWriteLimit() {
         return new ApplicationConfig.ReadWriteLimit(applicationConfig.read(), applicationConfig.write());
     }
 }

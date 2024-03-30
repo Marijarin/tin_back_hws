@@ -1,11 +1,11 @@
 package edu.java.configuration;
 
+import java.util.function.Predicate;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import java.util.function.Predicate;
 
 @Configuration
 public class ErrorConfig {

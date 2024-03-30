@@ -1,10 +1,10 @@
 package edu.java.configuration;
 
+import edu.java.controller.dto.ApiErrorResponse;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import edu.java.controller.dto.ApiErrorResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 @Configuration
+@SuppressWarnings("MagicNumber")
 public class RetryConfig {
 
     private final ApplicationConfig applicationConfig;

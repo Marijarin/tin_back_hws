@@ -33,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JooqLinkUpdaterTest extends IntegrationTest {
     private final JooqLinkService linkService;
     private final JooqLinkUpdater linkUpdater;
+    private final int offset = 365;
 
     @Autowired
     public JooqLinkUpdaterTest(JooqLinkService linkService, JooqLinkUpdater linkUpdater) {
@@ -58,7 +59,7 @@ public class JooqLinkUpdaterTest extends IntegrationTest {
                 .withBody(Files.readString(Path.of("src/test/resources/json/gh-create.json")))
                 .withStatus(200)));
         try {
-            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
+            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(offset)));
             eventList = (ArrayList<EventLink>) linkUpdater
                 .updateFromGithub(List.of(linkDao));
         } catch (IllegalStateException e) {
@@ -83,7 +84,7 @@ public class JooqLinkUpdaterTest extends IntegrationTest {
                 .withBody(Files.readString(Path.of("src/test/resources/json/sof-answer.json")))
                 .withStatus(200)));
         try {
-            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
+            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(offset)));
             eventList = (ArrayList<EventLink>) linkUpdater
                 .updateFromStackOverFlow(List.of(linkDao));
         } catch (IllegalStateException e) {

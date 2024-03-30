@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 @Configuration
+@SuppressWarnings("MagicNumber")
 public class RetryConfig {
 
     private final ApplicationConfig applicationConfig;
