@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 @SuppressWarnings({"MultipleStringLiterals", "MagicNumber"})
 @RestControllerAdvice
@@ -25,6 +26,22 @@ public class ExceptionApiHandler {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
             "Некорректные параметры запроса",
             "400",
+            exception,
+            exception.getMessage().trim(),
+            Arrays.stream(exception.getStackTrace()).map(StackTraceElement::getClassName).limit(5)
+                .toArray(String[]::new)
+        );
+        logger.info(apiErrorResponse.toString());
+        return apiErrorResponse;
+    }
+
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    @ApiResponse(responseCode = "429", description = "Слишком много запросов")
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ApiErrorResponse handle429(HttpClientErrorException exception) {
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
+            "Слишком много запросов",
+            "429",
             exception,
             exception.getMessage().trim(),
             Arrays.stream(exception.getStackTrace()).map(StackTraceElement::getClassName).limit(5)

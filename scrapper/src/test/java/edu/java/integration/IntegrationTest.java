@@ -1,4 +1,4 @@
-package edu.java;
+package edu.java.integration;
 
 import java.io.File;
 import java.sql.DriverManager;

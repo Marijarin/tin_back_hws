@@ -1,29 +1,28 @@
-package edu.java;
+package edu.java.integration;
 
-import edu.java.service.jooq.JooqChatService;
-import edu.java.service.jooq.JooqLinkService;
-import java.net.URI;
+import edu.java.service.jdbc.JdbcChatService;
+import edu.java.service.jdbc.JdbcLinkService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+import java.net.URI;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {JooqTestConfig.class, JooqAutoConfiguration.class})
+@SpringBootTest(classes = {JdbcTestConfig.class})
 @Sql(value = "classpath:sql/put_chat.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class JooqChatServiceTest extends IntegrationTest{
-    private final JooqChatService chatService;
-    private final JooqLinkService linkService;
+public class JdbcChatServiceTest extends IntegrationTest {
+    private final JdbcChatService chatService;
+
+    private final JdbcLinkService linkService;
 
     @Autowired
-    public JooqChatServiceTest(JooqChatService chatService, JooqLinkService linkService) {
+    public JdbcChatServiceTest(JdbcChatService chatService, JdbcLinkService linkService) {
         this.chatService = chatService;
         this.linkService = linkService;
     }
-
     @Test
     @Transactional
     @Rollback

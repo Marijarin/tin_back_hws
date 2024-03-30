@@ -1,10 +1,10 @@
 package edu.java.bot.configuration;
 
+import edu.java.bot.controller.dto.ApiErrorResponse;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import edu.java.bot.controller.dto.ApiErrorResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;

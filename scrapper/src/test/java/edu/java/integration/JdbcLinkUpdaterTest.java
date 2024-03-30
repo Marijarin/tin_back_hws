@@ -1,4 +1,4 @@
-package edu.java;
+package edu.java.integration;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import edu.java.service.jdbc.JdbcLinkService;
@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {JdbcTestConfig.class})
 @Sql(value = "classpath:sql/put_chat.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class JdbcLinkUpdaterTest extends IntegrationTest{
+public class JdbcLinkUpdaterTest extends IntegrationTest {
     private final JdbcLinkService linkService;
     private final JdbcLinkUpdater linkUpdater;
 

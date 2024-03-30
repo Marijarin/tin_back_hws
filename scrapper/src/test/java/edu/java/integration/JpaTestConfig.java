@@ -1,4 +1,4 @@
-package edu.java;
+package edu.java.integration;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -34,7 +34,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import reactor.core.publisher.Mono;
-import static edu.java.IntegrationTest.POSTGRES;
+import static edu.java.integration.IntegrationTest.POSTGRES;
 
 @Configuration
 @ComponentScan("edu.java.domain.jpa")

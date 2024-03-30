@@ -33,7 +33,9 @@ public record ApplicationConfig(
 
     String typeExponential,
 
-    List<String> errorFilters
+    List<String> errorFilters,
+    RateLimit read,
+    RateLimit write
 ) {
     @Bean
     public DefaultConfigurationCustomizer postgresJooqCustomizer() {
@@ -52,4 +54,9 @@ public record ApplicationConfig(
         JOOQ
     }
 
+    public record RateLimit(int count, int tokens, int period) {
+    }
+
+    public record ReadWriteLimit(RateLimit read, RateLimit write) {
+    }
 }

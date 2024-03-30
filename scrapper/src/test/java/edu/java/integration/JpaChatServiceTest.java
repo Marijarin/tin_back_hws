@@ -1,4 +1,4 @@
-package edu.java;
+package edu.java.integration;
 
 import edu.java.service.jpa.JpaChatService;
 import edu.java.service.jpa.JpaLinkService;

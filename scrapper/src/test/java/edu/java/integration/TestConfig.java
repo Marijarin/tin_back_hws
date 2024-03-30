@@ -1,4 +1,4 @@
-package edu.java;
+package edu.java.integration;
 
 import javax.sql.DataSource;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import static edu.java.IntegrationTest.POSTGRES;
+import static edu.java.integration.IntegrationTest.POSTGRES;
 
 @Configuration
 @EnableTransactionManagement

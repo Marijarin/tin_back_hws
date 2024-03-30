@@ -16,6 +16,15 @@ app:
     - "e404Empty"
     - "e500"
     - "e409"
+  rate-limit:
+    read:
+      count: 1
+      tokens: 1
+      period: 1
+    write:
+      count: 1
+      tokens: 1
+      period: 1
 spring:
   application:
     name: scrapper
