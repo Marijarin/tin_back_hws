@@ -8,11 +8,13 @@ import org.jooq.conf.RenderQuotedNames;
 import org.jooq.impl.DefaultConfiguration;
 import org.springframework.boot.autoconfigure.jooq.DefaultConfigurationCustomizer;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
+@ConfigurationPropertiesScan
 public record ApplicationConfig(
     @NotNull
     @Bean
@@ -36,8 +38,17 @@ public record ApplicationConfig(
     List<String> errorFilters,
 
     int filterCode,
-    RateLimit read,
-    RateLimit write
+    int readCount,
+
+    int readTokens,
+
+    int readPeriod,
+    int writeCount,
+
+    int writeTokens,
+
+    int writePeriod
+
 ) {
     @Bean
     public DefaultConfigurationCustomizer postgresJooqCustomizer() {
@@ -56,7 +67,7 @@ public record ApplicationConfig(
         JOOQ
     }
 
-    public record RateLimit(int count, int tokens, int period) {
+    public record RateLimit(@NotNull int count, int tokens, int period) {
     }
 
     public record ReadWriteLimit(RateLimit read, RateLimit write) {

@@ -37,7 +37,7 @@ public class ExceptionApiHandler {
 
     @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
     @ApiResponse(responseCode = "429", description = "Слишком много запросов")
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(HttpClientErrorException.class)
     public ApiErrorResponse handle429(HttpClientErrorException exception) {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
             "Слишком много запросов",

@@ -290,4 +290,27 @@ public class ScrapperClientTest {
         }
         wm.verify(1 + 3, getRequestedFor(urlPathMatching("/tg-chat/1000")));
     }
+    @Test
+    void noRetriesWhen200Response(){
+        HttpExchangeAdapter wc = WebClientAdapter
+            .create(webClient1
+                .mutate()
+                .filter(linear1())
+                .build());
+
+        HttpServiceProxyFactory httpServiceProxyFactory =
+            HttpServiceProxyFactory
+                .builderFor(wc)
+                .build();
+        var client = httpServiceProxyFactory.createClient(ScrapperClient.class);
+        wm.stubFor(get(urlPathMatching("/tg-chat/1000"))
+            .willReturn(aResponse()
+                .withStatus(200)));
+        try {
+            client.findChat(1000);
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        }
+        wm.verify(1, getRequestedFor(urlPathMatching("/tg-chat/1000")));
+    }
 }
