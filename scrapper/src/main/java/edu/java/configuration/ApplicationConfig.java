@@ -41,7 +41,6 @@ public record ApplicationConfig(
     int count,
 
     int tokens,
-
     int period
 
 ) {
