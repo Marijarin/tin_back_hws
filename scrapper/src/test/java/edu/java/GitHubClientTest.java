@@ -1,4 +1,4 @@
-package edu.java.unit;
+package edu.java;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;

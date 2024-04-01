@@ -1,4 +1,4 @@
-package edu.java.unit;
+package edu.java;
 
 import edu.java.controller.ScrapperController;
 import edu.java.domain.model.ChatDao;

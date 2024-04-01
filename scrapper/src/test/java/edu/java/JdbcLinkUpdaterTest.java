@@ -1,4 +1,4 @@
-package edu.java.integration;
+package edu.java;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import edu.java.service.jdbc.JdbcLinkService;

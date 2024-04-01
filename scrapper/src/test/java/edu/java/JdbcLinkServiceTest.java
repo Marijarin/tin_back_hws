@@ -1,7 +1,6 @@
-package edu.java.integration;
+package edu.java;
 
 import edu.java.domain.jdbc.JdbcLinkDao;
-import edu.java.integration.IntegrationTest;
 import edu.java.service.LinkService;
 import edu.java.service.jdbc.JdbcLinkService;
 import java.net.URI;

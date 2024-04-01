@@ -1,15 +1,18 @@
-package edu.java.integration;
+package edu.java;
 
 import edu.java.client.GitHubClient;
 import edu.java.client.StackOverflowClient;
-import edu.java.domain.jdbc.JdbcChatRepository;
-import edu.java.domain.jdbc.JdbcLinkDao;
+import edu.java.domain.jooq.JooqChatRepository;
+import edu.java.domain.jooq.JooqLinkDao;
 import edu.java.service.ChatService;
 import edu.java.service.LinkService;
 import edu.java.service.LinkUpdater;
-import edu.java.service.jdbc.JdbcChatService;
-import edu.java.service.jdbc.JdbcLinkService;
-import edu.java.service.jdbc.JdbcLinkUpdater;
+import edu.java.service.jooq.JooqChatService;
+import edu.java.service.jooq.JooqLinkService;
+import edu.java.service.jooq.JooqLinkUpdater;
+import org.jooq.conf.RenderQuotedNames;
+import org.jooq.impl.DefaultConfiguration;
+import org.springframework.boot.autoconfigure.jooq.DefaultConfigurationCustomizer;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,7 +21,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -28,13 +30,13 @@ import org.springframework.web.reactive.function.client.support.WebClientAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import reactor.core.publisher.Mono;
 import javax.sql.DataSource;
-import static edu.java.integration.IntegrationTest.POSTGRES;
+import static edu.java.IntegrationTest.POSTGRES;
 
 @Configuration
-@ComponentScan("edu.java.domain.jdbc")
+@ComponentScan("edu.java.domain.jooq")
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-public class JdbcTestConfig {
+public class JooqTestConfig {
     @Bean
     public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
@@ -48,31 +50,34 @@ public class JdbcTestConfig {
             .password(POSTGRES.getPassword())
             .build();
     }
+    @Bean
+    public DefaultConfigurationCustomizer postgresJooqCustomizer() {
+        return (DefaultConfiguration c) -> c.settings()
+            .withRenderSchema(false)
+            .withRenderFormatted(true)
+            .withRenderQuotedNames(RenderQuotedNames.NEVER);
+    }
 
     @Bean
-    public JdbcTemplate jdbcTemplate() {
-        return new JdbcTemplate(dataSource());
-    }
-    @Bean
     public LinkService linkService(
-        JdbcLinkDao linkDao
+        JooqLinkDao linkDao
     ) {
-        return new JdbcLinkService(linkDao);
+        return new JooqLinkService(linkDao);
     }
 
     @Bean
     public ChatService chatService(
-        JdbcChatRepository chatRepository
+        JooqChatRepository chatRepository
     ) {
-        return new JdbcChatService(chatRepository);
+        return new JooqChatService(chatRepository);
     }
 
     @Bean LinkUpdater linkUpdater(
-        JdbcLinkDao linkDao,
+        JooqLinkDao linkDao,
         GitHubClient gitHubClient,
         StackOverflowClient stackOverflowClient
     ) {
-        return new JdbcLinkUpdater(linkDao, gitHubClient, stackOverflowClient);
+        return new JooqLinkUpdater(linkDao, gitHubClient, stackOverflowClient);
     }
     @Bean
     StackOverflowClient stackOverflowClient() {

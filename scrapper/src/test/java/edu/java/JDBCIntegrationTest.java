@@ -1,4 +1,4 @@
-package edu.java.integration;
+package edu.java;
 
 import edu.java.domain.jdbc.JdbcChatRepository;
 import edu.java.domain.jdbc.JdbcLinkDao;
