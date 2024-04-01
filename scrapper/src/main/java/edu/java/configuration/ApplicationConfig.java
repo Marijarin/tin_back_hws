@@ -38,16 +38,11 @@ public record ApplicationConfig(
     List<String> errorFilters,
 
     int filterCode,
-    int readCount,
+    int count,
 
-    int readTokens,
+    int tokens,
 
-    int readPeriod,
-    int writeCount,
-
-    int writeTokens,
-
-    int writePeriod
+    int period
 
 ) {
     @Bean
@@ -68,8 +63,5 @@ public record ApplicationConfig(
     }
 
     public record RateLimit(@NotNull int count, int tokens, int period) {
-    }
-
-    public record ReadWriteLimit(RateLimit read, RateLimit write) {
     }
 }

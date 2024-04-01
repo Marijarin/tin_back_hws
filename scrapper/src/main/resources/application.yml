@@ -17,12 +17,9 @@ app:
     - "e500"
     - "e409"
   filter-code: 500
-  read-count: 1
-  read-tokens: 1
-  read-period: 1
-  write-count: 1
-  write-tokens: 1
-  write-period: 1
+  count: 1
+  tokens: 1
+  period: 10
 spring:
   application:
     name: scrapper

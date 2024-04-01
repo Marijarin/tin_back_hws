@@ -1,45 +1,37 @@
 package edu.java.service;
 
-import edu.java.configuration.ApplicationConfig.ReadWriteLimit;
+import edu.java.configuration.ApplicationConfig;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
 import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RateLimiterService {
-    private final static int TOKEN_COUNT = 1;
 
-    private final Bucket readBucket;
-    private final Bucket writeBucket;
+    private final ApplicationConfig applicationConfig;
+
+    private final Map<String, Bucket> ipBuckets = new ConcurrentHashMap<>();
 
     @Autowired
-    public RateLimiterService(ReadWriteLimit readWriteLimit) {
-        Bandwidth readLimit = Bandwidth.classic(
-            readWriteLimit.read().count(), Refill.greedy(
-                readWriteLimit.read().tokens(),
-                Duration.ofSeconds(readWriteLimit.read().period())
-            ));
-        Bandwidth writeLimit = Bandwidth.classic(
-            readWriteLimit.write().count(), Refill.greedy(
-                readWriteLimit.write().tokens(),
-                Duration.ofSeconds(readWriteLimit.write().period())
-            ));
-        this.readBucket = Bucket.builder()
-            .addLimit(readLimit)
-            .build();
-        this.writeBucket = Bucket.builder()
-            .addLimit(writeLimit)
-            .build();
+    public RateLimiterService(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
     }
 
-    public boolean isNotLimitedRead() {
-        return readBucket.tryConsume(TOKEN_COUNT);
+    public Bucket resolveBucketByIp(String ipAddress) {
+        return ipBuckets.computeIfAbsent(ipAddress, s -> newBucket());
     }
 
-    public boolean isNotLimitedWrite() {
-        return writeBucket.tryConsume(TOKEN_COUNT);
+    private Bucket newBucket() {
+        Bandwidth bw = Bandwidth.classic(
+            applicationConfig.count(), Refill.greedy(
+                applicationConfig.tokens(),
+                Duration.ofSeconds(applicationConfig.period())
+            ));
+        return Bucket.builder().addLimit(bw).build();
     }
 }
