@@ -95,7 +95,11 @@ public class NoCommandHandlerTest {
         Mockito.when(message.from()).thenReturn(user);
         Mockito.when(scrapperClient.startLinkTracking(botUser.chatId(), linkRequest))
             .thenReturn(new LinkResponse(1L, URI.create("https://stackoverflow.com/search?q=unsupported%20link")));
-        Mockito.when(applicationConfig.done()).thenReturn("4");
+        Mockito.when(applicationConfig.pattern())
+            .thenReturn(
+                "^(https?://){1}([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$"
+            );
+        Mockito.when(applicationConfig.done()).thenReturn("4 ");
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(
@@ -127,7 +131,11 @@ public class NoCommandHandlerTest {
         Mockito.when(message.from()).thenReturn(user);
         Mockito.when(scrapperClient.stopLinkTracking(botUser.chatId(), linkRequest))
             .thenReturn(new LinkResponse(1L, URI.create("https://stackoverflow.com/search?q=unsupported%20link")));
-        Mockito.when(applicationConfig.done()).thenReturn("4");
+        Mockito.when(applicationConfig.done()).thenReturn("4 ");
+        Mockito.when(applicationConfig.pattern())
+            .thenReturn(
+                "^(https?://){1}([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$"
+            );
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(
@@ -157,6 +165,10 @@ public class NoCommandHandlerTest {
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
         Mockito.when(applicationConfig.notUnderstand()).thenReturn("sorry");
+        Mockito.when(applicationConfig.pattern())
+            .thenReturn(
+                "^(https?://){1}([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$"
+            );
 
         var result = handler.handle(bot, messageHandler, update);
 
