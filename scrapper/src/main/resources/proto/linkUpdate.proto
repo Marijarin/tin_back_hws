@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package scrapper;
+
+message LinkUpdate {
+    int64 id = 1;
+    string url = 2;
+    repeated int64 tgChatIds = 3;
+    string description = 4;
+    string eventDescription = 5;
+}

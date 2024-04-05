@@ -29,14 +29,17 @@ public record ApplicationConfig(
     String pattern,
     @NotEmpty
     String notTracked,
-
     @NotEmpty
     String baseUrlScrapper,
 
     @NotEmpty
     String seeUpdate,
     @NotEmpty
-    String deleteWithSecretPhrase
+    String deleteWithSecretPhrase,
+    @NotEmpty
+    String topic,
+    @NotEmpty
+    String id
 ) {
 
 }

@@ -22,7 +22,8 @@ public record ApplicationConfig(
     String baseUrlStackOverflow,
     @NotEmpty
     String baseUrlBot,
-    AccessType databaseAccessType
+    AccessType databaseAccessType,
+    boolean useQueue
 ) {
     @Bean
     public DefaultConfigurationCustomizer postgresJooqCustomizer() {

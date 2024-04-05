@@ -1,18 +1,17 @@
-package edu.java.client;
+package edu.java.service;
 
+import edu.java.client.BotClient;
 import edu.java.client.model.LinkUpdate;
 import edu.java.domain.model.ChatDao;
-import edu.java.service.ChatService;
-import edu.java.service.LinkUpdater;
 import edu.java.service.model.EventLink;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-public class LinkUpdaterScheduler {
+@Service
+public class LinkUpdaterSchedulerHttp implements LinkUpdaterScheduler {
     Logger logger = LogManager.getLogger();
 
     private final BotClient botClient;
@@ -22,7 +21,7 @@ public class LinkUpdaterScheduler {
     private final ChatService chatService;
 
     @Autowired
-    public LinkUpdaterScheduler(
+    public LinkUpdaterSchedulerHttp(
         BotClient botClient,
         LinkUpdater linkUpdater, ChatService chatService
     ) {
@@ -31,8 +30,9 @@ public class LinkUpdaterScheduler {
         this.chatService = chatService;
     }
 
+    @Override
     @Scheduled(fixedDelayString = "#{@scheduler.interval}")
-    void update() {
+    public void update() {
         var links = linkUpdater.update();
         if (!links.isEmpty()) {
             var linkUpdates = links.stream().map(this::makeItFromLink).toList();

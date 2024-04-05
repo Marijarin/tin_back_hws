@@ -13,6 +13,8 @@ app:
   baseUrlScrapper: "http://localhost:8080"
   seeUpdate: "Find out new content from source: "
   deleteWithSecretPhrase: "bye"
+  topic: "topic1"
+  id: "bot"
 spring:
   application:
     name: bot
