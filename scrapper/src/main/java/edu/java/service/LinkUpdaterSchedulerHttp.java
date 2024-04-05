@@ -2,6 +2,7 @@ package edu.java.service;
 
 import edu.java.client.BotClient;
 import edu.java.client.model.LinkUpdate;
+import edu.java.configuration.ApplicationConfig;
 import edu.java.domain.model.ChatDao;
 import edu.java.service.model.EventLink;
 import org.apache.logging.log4j.LogManager;
@@ -19,28 +20,32 @@ public class LinkUpdaterSchedulerHttp implements LinkUpdaterScheduler {
     private final LinkUpdater linkUpdater;
 
     private final ChatService chatService;
+    private final ApplicationConfig applicationConfig;
 
     @Autowired
     public LinkUpdaterSchedulerHttp(
-        BotClient botClient,
-        LinkUpdater linkUpdater, ChatService chatService
+            BotClient botClient,
+            LinkUpdater linkUpdater, ChatService chatService, ApplicationConfig applicationConfig
     ) {
         this.botClient = botClient;
         this.linkUpdater = linkUpdater;
         this.chatService = chatService;
+        this.applicationConfig = applicationConfig;
     }
 
     @Override
     @Scheduled(fixedDelayString = "#{@scheduler.interval}")
     public void update() {
-        var links = linkUpdater.update();
-        if (!links.isEmpty()) {
-            var linkUpdates = links.stream().map(this::makeItFromLink).toList();
-            for (LinkUpdate linkUpdate : linkUpdates) {
-                botClient.postUpdate(linkUpdate);
+        if (!applicationConfig.useQueue()) {
+            var links = linkUpdater.update();
+            if (!links.isEmpty()) {
+                var linkUpdates = links.stream().map(this::makeItFromLink).toList();
+                for (LinkUpdate linkUpdate : linkUpdates) {
+                    botClient.postUpdate(linkUpdate);
+                }
+            } else {
+                logger.info("No updates");
             }
-        } else {
-            logger.info("No updates");
         }
     }
 

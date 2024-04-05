@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,6 +16,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import reactor.core.publisher.Mono;
 
 @Configuration
+@SuppressWarnings("MagicNumber")
 public class ClientConfiguration {
     private final ApplicationConfig applicationConfig;
 
@@ -27,12 +27,10 @@ public class ClientConfiguration {
 
     Logger logger = LogManager.getLogger();
 
-    @SuppressWarnings("MagicNumber")
     @Bean
-    @Scope("prototype")
-    WebClient webClient(String baseUrl) {
+    WebClient webClientGH() {
         return WebClient.builder()
-            .baseUrl(baseUrl)
+            .baseUrl(applicationConfig.baseUrlGitHub())
             .exchangeStrategies(ExchangeStrategies
                 .builder()
                 .codecs(codecs -> codecs
@@ -42,7 +40,7 @@ public class ClientConfiguration {
             .defaultStatusHandler(
                 HttpStatusCode::isError,
                 clientResponse -> {
-                    logger.error("Error! from scrapper api");
+                    logger.error("Error! from scrapper api - GH");
                     return Mono.empty();
                 }
             )
@@ -50,10 +48,60 @@ public class ClientConfiguration {
     }
 
     @Bean
+    WebClient webClientSOF() {
+        return WebClient.builder()
+            .baseUrl(applicationConfig.baseUrlStackOverflow())
+            .exchangeStrategies(ExchangeStrategies
+                .builder()
+                .codecs(codecs -> codecs
+                    .defaultCodecs()
+                    .maxInMemorySize(500 * 1024))
+                .build())
+            .defaultStatusHandler(
+                HttpStatusCode::isError,
+                clientResponse -> {
+                    logger.error("Error! from scrapper api - SOF");
+                    return Mono.empty();
+                }
+            )
+            .build();
+    }
+
+    @Bean
+    WebClient webClientBot() {
+        return WebClient.builder()
+            .baseUrl(applicationConfig.baseUrlBot())
+            .exchangeStrategies(ExchangeStrategies
+                .builder()
+                .codecs(codecs -> codecs
+                    .defaultCodecs()
+                    .maxInMemorySize(500 * 1024))
+                .build())
+            .defaultStatusHandler(
+                HttpStatusCode::isError,
+                clientResponse -> {
+                    logger.error("Error! from scrapper api - Bot");
+                    return Mono.empty();
+                }
+            )
+            .build();
+    }
+
+    @Bean
+    BotClient botClient() {
+        HttpServiceProxyFactory httpServiceProxyFactory =
+            HttpServiceProxyFactory
+                .builderFor(WebClientAdapter.create(webClientBot()))
+                .build();
+        return httpServiceProxyFactory
+            .createClient(BotClient.class);
+    }
+
+    @Bean
     StackOverflowClient stackOverflowClient() {
         HttpServiceProxyFactory httpServiceProxyFactory =
             HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlStackOverflow())))
+                .builderFor(WebClientAdapter.create(webClientSOF()))
                 .build();
         return httpServiceProxyFactory.createClient(StackOverflowClient.class);
     }
@@ -62,19 +110,9 @@ public class ClientConfiguration {
     GitHubClient gitHubClient() {
         HttpServiceProxyFactory httpServiceProxyFactory =
             HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlGitHub())))
+                .builderFor(WebClientAdapter.create(webClientGH()))
                 .build();
         return httpServiceProxyFactory
             .createClient(GitHubClient.class);
-    }
-
-    @Bean
-    BotClient botClient() {
-        HttpServiceProxyFactory httpServiceProxyFactory =
-            HttpServiceProxyFactory
-                .builderFor(WebClientAdapter.create(webClient(applicationConfig.baseUrlBot())))
-                .build();
-        return httpServiceProxyFactory
-            .createClient(BotClient.class);
     }
 }

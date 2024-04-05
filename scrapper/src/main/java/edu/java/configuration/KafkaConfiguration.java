@@ -26,10 +26,6 @@ public record KafkaConfiguration(
     Integer maxInFlightPerConnection,
     Boolean enableIdempotence,
     String topic
-//    private String securityProtocol;
-//    private String saslMechanism;
-//    private String saslJaasConfig;
-    // String schemaRegistryUrl
 ) {
     @Bean
     public ProducerFactory<String, LinkUpdate> producerFactory() {

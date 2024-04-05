@@ -35,11 +35,7 @@ public record ApplicationConfig(
     @NotEmpty
     String seeUpdate,
     @NotEmpty
-    String deleteWithSecretPhrase,
-    @NotEmpty
-    String topic,
-    @NotEmpty
-    String id
+    String deleteWithSecretPhrase
 ) {
 
 }

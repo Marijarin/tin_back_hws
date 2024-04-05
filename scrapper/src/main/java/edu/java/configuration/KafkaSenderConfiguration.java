@@ -12,8 +12,9 @@ import org.springframework.context.annotation.Configuration;
 public class KafkaSenderConfiguration {
     @Bean
     public LinkUpdaterScheduler linkUpdaterScheduler(
-        ScrapperQueueProducer scrapperQueueProducer
+        ScrapperQueueProducer scrapperQueueProducer,
+        ApplicationConfig applicationConfig
     ) {
-        return new LinkUpdaterSchedulerKafka(scrapperQueueProducer);
+        return new LinkUpdaterSchedulerKafka(scrapperQueueProducer, applicationConfig);
     }
 }

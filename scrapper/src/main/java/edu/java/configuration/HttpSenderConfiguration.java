@@ -16,8 +16,9 @@ public class HttpSenderConfiguration {
     public LinkUpdaterScheduler linkUpdaterScheduler(
         BotClient botClient,
         ChatService chatService,
-        LinkUpdater linkUpdater
+        LinkUpdater linkUpdater,
+        ApplicationConfig applicationConfig
     ) {
-        return new LinkUpdaterSchedulerHttp(botClient, linkUpdater, chatService);
+        return new LinkUpdaterSchedulerHttp(botClient, linkUpdater, chatService, applicationConfig);
     }
 }

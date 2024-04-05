@@ -3,6 +3,7 @@ package edu.java.service;
 import edu.java.client.model.LinkUpdate;
 import edu.java.domain.model.ChatDao;
 import edu.java.service.model.EventLink;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.apache.logging.log4j.LogManager;
@@ -35,13 +36,15 @@ public class ScrapperQueueProducer {
         var links = linkUpdater.update();
         if (!links.isEmpty()) {
             var linkUpdates = links.stream().map(this::makeItFromLink).toList();
+            var results = new ArrayList<LinkUpdate>();
             for (LinkUpdate li : linkUpdates) {
                 var result = kafkaTemplateScrapper
                     .send("messages.string", 1, li.id() + li.description(), li)
                     .get();
+                results.add(result.getProducerRecord().value());
                 logger.info(result);
             }
-            return linkUpdates;
+            return results;
         }
         return List.of();
     }
