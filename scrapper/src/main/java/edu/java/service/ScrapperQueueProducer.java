@@ -33,6 +33,11 @@ public class ScrapperQueueProducer {
     }
 
     public List<LinkUpdate> send() throws ExecutionException, InterruptedException {
+//        kafkaTemplateScrapper
+//            .send("messages.string",
+//            //  1,
+//            //OffsetDateTime.now().toString(),
+//                new LinkUpdate(1L, URI.create("https://stackoverflow.com"), "12345", List.of(618490579L), "***"));
         var links = linkUpdater.update();
         if (!links.isEmpty()) {
             var linkUpdates = links.stream().map(this::makeItFromLink).toList();

@@ -3,7 +3,9 @@ package edu.java.bot.service;
 import edu.java.bot.controller.dto.LinkUpdate;
 import edu.java.bot.service.model.SendUpdate;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -19,9 +21,10 @@ public class UpdateKafkaListener {
         this.penBot = penBot;
     }
 
-
+    @RetryableTopic(attempts = "1", kafkaTemplate = "kafkaTemplateBot")
     @KafkaListener(topics = "messages.string",
                    groupId = "bot",
+                   // errorHandler = "errorHandler",
                    containerFactory = "updateKafkaListenerContainerFactory",
                    concurrency = "1")
     public void listenUpdate(
@@ -34,8 +37,16 @@ public class UpdateKafkaListener {
             linkUpdate.url(),
             linkUpdate.description(),
             linkUpdate.tgChatIds(),
-            linkUpdate.description());
+            linkUpdate.description()
+        );
         penBot.processUpdateFromScrapper(sendUpdate);
         log.info("Done!");
+    }
+
+    @DltHandler
+    public void listenDlt(
+        @Payload LinkUpdate linkUpdate
+    ) {
+        log.info("Received Message : {}", linkUpdate);
     }
 }
