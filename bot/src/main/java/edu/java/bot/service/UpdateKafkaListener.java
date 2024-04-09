@@ -32,15 +32,20 @@ public class UpdateKafkaListener {
         @Header(KafkaHeaders.RECEIVED_KEY) String key,
         @Header(KafkaHeaders.RECEIVED_PARTITION) int partition
     ) {
-        log.info("Received Message from partition {} with key {}: {}", partition, key, linkUpdate);
-        var sendUpdate = new SendUpdate(
-            linkUpdate.url(),
-            linkUpdate.description(),
-            linkUpdate.tgChatIds(),
-            linkUpdate.description()
-        );
-        penBot.processUpdateFromScrapper(sendUpdate);
-        log.info("Done!");
+        try {
+            log.info("Received Message from partition {} with key {}: {}", partition, key, linkUpdate);
+            var sendUpdate = new SendUpdate(
+                linkUpdate.url(),
+                linkUpdate.description(),
+                linkUpdate.tgChatIds(),
+                linkUpdate.description()
+            );
+            penBot.processUpdateFromScrapper(sendUpdate);
+            log.info("Done!");
+        } catch (RuntimeException runtimeException) {
+            log.error(runtimeException.getMessage());
+            listenDlt(linkUpdate);
+        }
     }
 
     @DltHandler
