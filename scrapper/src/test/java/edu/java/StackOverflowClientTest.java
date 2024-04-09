@@ -3,6 +3,8 @@ package edu.java;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import edu.java.client.StackOverflowClient;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -17,6 +19,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 
 @WireMockTest
 public class StackOverflowClientTest {
+    private static final Logger LOGGER = LogManager.getLogger();
     @RegisterExtension
     static WireMockExtension wm = WireMockExtension.newInstance()
         .options(wireMockConfig().port(8080))
@@ -44,7 +47,7 @@ public class StackOverflowClientTest {
         try {
             sof.getResponse("1");
         } catch (IllegalStateException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
         wm.verify(getRequestedFor(urlPathMatching("/questions/1/timeline.*")));
     }

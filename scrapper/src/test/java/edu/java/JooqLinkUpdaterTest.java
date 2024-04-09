@@ -13,6 +13,8 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JooqLinkUpdaterTest extends IntegrationTest {
     private final JooqLinkService linkService;
     private final JooqLinkUpdater linkUpdater;
-
+    private static final Logger LOGGER = LogManager.getLogger();
     @Autowired
     public JooqLinkUpdaterTest(JooqLinkService linkService, JooqLinkUpdater linkUpdater) {
         this.linkService = linkService;
@@ -62,7 +64,7 @@ public class JooqLinkUpdaterTest extends IntegrationTest {
             eventList = (ArrayList<EventLink>) linkUpdater
                 .updateFromGithub(List.of(linkDao));
         } catch (IllegalStateException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
         assertThat(eventList.getFirst().getEvent().getDescription())
             .isEqualTo(EventName.getEventMap().get("CreateEvent")
@@ -87,7 +89,7 @@ public class JooqLinkUpdaterTest extends IntegrationTest {
             eventList = (ArrayList<EventLink>) linkUpdater
                 .updateFromStackOverFlow(List.of(linkDao));
         } catch (IllegalStateException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
         assertThat(eventList.getFirst().getEvent().getDescription())
             .isEqualTo(EventName.getEventMap().get("answer")

@@ -14,6 +14,8 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ public class JpaUpdaterServiceTest extends IntegrationTest {
     @Autowired JpaLinkService linkService;
     @Autowired JpaLinkUpdater linkUpdater;
 
+    private static final Logger LOGGER = LogManager.getLogger();
     @RegisterExtension
     static WireMockExtension wm = WireMockExtension.newInstance()
         .options(wireMockConfig().port(8080))
@@ -56,7 +59,7 @@ public class JpaUpdaterServiceTest extends IntegrationTest {
             eventList = (ArrayList<EventLink>) linkUpdater
                 .updateFromGithub(List.of(linkDao));
         } catch (IllegalStateException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
         assertThat(eventList.getFirst().getEvent().getDescription())
             .isEqualTo(EventName.getEventMap().get("IssueCommentEvent")
@@ -81,7 +84,7 @@ public class JpaUpdaterServiceTest extends IntegrationTest {
             eventList = (ArrayList<EventLink>) linkUpdater
                 .updateFromStackOverFlow(List.of(linkDao));
         } catch (IllegalStateException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
         assertThat(eventList.getFirst().getEvent().getDescription())
             .isEqualTo(EventName.getEventMap().get("comment")
