@@ -4,8 +4,10 @@ import edu.java.bot.controller.dto.LinkUpdate;
 import edu.java.bot.service.PenBot;
 import edu.java.bot.service.UpdateKafkaListener;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,6 +21,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = {UpdateKafkaListener.class, KafkaTestConfiguration.class})
@@ -45,21 +49,29 @@ public class KafkaConsumerTest {
         new LinkUpdate(1L, URI.create("https://stackoverflow.com"), "12345", new long[0]);
     private final LinkUpdate badUpdate = null;
 
+    @BeforeEach
+    void resetLatch() {
+        listener.resetLatch();
+    }
+
     @Test
-    void listenerGetsGoodMessage() {
+    void listenerGetsGoodMessage() throws InterruptedException {
         ProducerRecord<String, LinkUpdate> record = new ProducerRecord<>(topic, goodUpdate);
         assertThat(producer).isNotNull();
         producer.send(record);
         listener.listenUpdate(goodUpdate, "", 0);
         assertThat(listener).isNotNull();
+        boolean messageConsumed = listener.getLatch().await(10, TimeUnit.SECONDS);
+        assertTrue(messageConsumed);
     }
+
     @Test
-    void listenerGetsBadMessage() {
+    void listenerDoesNotGetBadMessage() throws InterruptedException {
         ProducerRecord<String, LinkUpdate> record = new ProducerRecord<>(topic, badUpdate);
         assertThat(producer).isNotNull();
         producer.send(record);
         listener.listenUpdate(badUpdate, "", 0);
-
+        boolean messageConsumed = listener.getLatch().await(10, TimeUnit.SECONDS);
+        assertFalse(messageConsumed);
     }
-
 }
