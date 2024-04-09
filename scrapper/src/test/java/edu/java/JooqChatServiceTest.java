@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {JooqTestConfig.class, JooqAutoConfiguration.class})
 @Sql(value = "classpath:sql/put_chat.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class JooqChatServiceTest extends IntegrationTest{
+public class JooqChatServiceTest extends IntegrationTest {
     private final JooqChatService chatService;
     private final JooqLinkService linkService;
 

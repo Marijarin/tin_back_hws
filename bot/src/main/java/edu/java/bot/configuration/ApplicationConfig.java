@@ -1,6 +1,7 @@
 package edu.java.bot.configuration;
 
 import jakarta.validation.constraints.NotEmpty;
+import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -35,7 +36,19 @@ public record ApplicationConfig(
     @NotEmpty
     String seeUpdate,
     @NotEmpty
-    String deleteWithSecretPhrase
+    String deleteWithSecretPhrase,
+    @NotEmpty
+    String typeLinear,
+    @NotEmpty
+    String typeConstant,
+
+    @NotEmpty
+
+    String typeExponential,
+
+    List<String> errorFilters,
+
+    int filterCode
 ) {
 
 }

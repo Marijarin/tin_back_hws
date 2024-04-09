@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {JdbcTestConfig.class})
 @Sql(value = "classpath:sql/put_chat.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class JdbcChatServiceTest extends IntegrationTest{
+public class JdbcChatServiceTest extends IntegrationTest {
     private final JdbcChatService chatService;
 
     private final JdbcLinkService linkService;
