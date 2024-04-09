@@ -7,6 +7,19 @@ app:
   baseUrlStackOverflow: "https://api.stackexchange.com/2.3"
   baseUrlBot: "http://localhost:8090"
   database-access-type: jpa
+  type-linear: "linear"
+  type-constant: "constant"
+  type-exponential: "exponential"
+  error-filters:
+    - "e400"
+    - "e404NotFound"
+    - "e404Empty"
+    - "e500"
+    - "e409"
+  filter-code: 500
+  count: 1
+  tokens: 1
+  period: 10
 spring:
   application:
     name: scrapper

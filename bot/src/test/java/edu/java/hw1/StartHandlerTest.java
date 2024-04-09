@@ -16,6 +16,7 @@ import edu.java.bot.service.model.BotUser;
 import edu.java.bot.service.model.Chat;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,7 +63,12 @@ public class StartHandlerTest {
             "1",
             "",
             "",
-            ""
+            "",
+            "",
+            "",
+            "",
+            List.of(),
+            0
 
         );
         var handler = new StartHandler(applicationConfig, scrapperClient);
@@ -108,7 +114,12 @@ public class StartHandlerTest {
             "1",
             "",
             "",
-            ""
+            "",
+            "",
+            "",
+            "",
+            List.of(),
+            0
 
         );
         var handler = new StartHandler(applicationConfig, scrapperClient);

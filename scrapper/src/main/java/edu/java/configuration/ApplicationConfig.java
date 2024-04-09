@@ -3,15 +3,18 @@ package edu.java.configuration;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.time.Duration;
+import java.util.List;
 import org.jooq.conf.RenderQuotedNames;
 import org.jooq.impl.DefaultConfiguration;
 import org.springframework.boot.autoconfigure.jooq.DefaultConfigurationCustomizer;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
+@ConfigurationPropertiesScan
 public record ApplicationConfig(
     @NotNull
     @Bean
@@ -22,7 +25,24 @@ public record ApplicationConfig(
     String baseUrlStackOverflow,
     @NotEmpty
     String baseUrlBot,
-    AccessType databaseAccessType
+    AccessType databaseAccessType,
+    @NotEmpty
+    String typeLinear,
+    @NotEmpty
+    String typeConstant,
+
+    @NotEmpty
+
+    String typeExponential,
+
+    List<String> errorFilters,
+
+    int filterCode,
+    int count,
+
+    int tokens,
+    int period
+
 ) {
     @Bean
     public DefaultConfigurationCustomizer postgresJooqCustomizer() {
@@ -41,4 +61,6 @@ public record ApplicationConfig(
         JOOQ
     }
 
+    public record RateLimit(@NotNull int count, int tokens, int period) {
+    }
 }

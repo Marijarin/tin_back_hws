@@ -29,9 +29,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {JdbcTestConfig.class})
 @Sql(value = "classpath:sql/put_chat.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class JdbcLinkUpdaterTest extends IntegrationTest{
+public class JdbcLinkUpdaterTest extends IntegrationTest {
     private final JdbcLinkService linkService;
     private final JdbcLinkUpdater linkUpdater;
+
+    private final int offset = 365;
 
     @Autowired
     public JdbcLinkUpdaterTest(JdbcLinkService linkService, JdbcLinkUpdater linkUpdater) {
@@ -57,7 +59,7 @@ public class JdbcLinkUpdaterTest extends IntegrationTest{
                 .withBody(Files.readString(Path.of("src/test/resources/json/gh-push.json")))
                 .withStatus(200)));
         try {
-            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
+            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(offset)));
             eventList = (ArrayList<EventLink>) linkUpdater
                 .updateFromGithub(List.of(linkDao));
         } catch (IllegalStateException e) {
@@ -82,7 +84,7 @@ public class JdbcLinkUpdaterTest extends IntegrationTest{
                 .withBody(Files.readString(Path.of("src/test/resources/json/sof-answer.json")))
                 .withStatus(200)));
         try {
-            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
+            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(offset)));
             eventList = (ArrayList<EventLink>) linkUpdater
                 .updateFromStackOverFlow(List.of(linkDao));
         } catch (IllegalStateException e) {
@@ -107,7 +109,7 @@ public class JdbcLinkUpdaterTest extends IntegrationTest{
                 .withBody(Files.readString(Path.of("src/test/resources/json/empty-sof.json")))
                 .withStatus(200)));
         try {
-            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(5)));
+            linkDao.setLastUpdated(OffsetDateTime.now().minus(Duration.ofDays(1)));
             eventList = (ArrayList<EventLink>) linkUpdater
                 .updateFromStackOverFlow(List.of(linkDao));
         } catch (IllegalStateException e) {

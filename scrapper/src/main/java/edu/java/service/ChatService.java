@@ -1,6 +1,5 @@
 package edu.java.service;
 
-
 import edu.java.domain.model.ChatDao;
 import java.net.URI;
 import java.util.List;

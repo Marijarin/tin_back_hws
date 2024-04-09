@@ -61,7 +61,7 @@ public class ScrapperController {
     @DeleteMapping("/tg-chat/{id}")
     void deleteChat(@PathVariable long id) {
         chatService.unregister(id);
-    } //todo
+    }
 
     @Operation(
         summary = "Получить все отслеживаемые ссылки",
@@ -104,7 +104,7 @@ public class ScrapperController {
         @RequestHeader("Tg-Chat-Id") long tgChatId,
         @RequestBody @Valid RemoveLinkRequest linkRequest
     ) {
-        linkService.remove(tgChatId, linkRequest.link()); //todo
+        linkService.remove(tgChatId, linkRequest.link());
         return new LinkResponse(tgChatId, linkRequest.link());
     }
 }

@@ -3,7 +3,7 @@ package edu.java.controller.dto;
 public record ApiErrorResponse(
     String description,
     String code,
-    String exceptionName,
+    Throwable exception,
     String exceptionMessage,
     String[] stacktrace
 ) {

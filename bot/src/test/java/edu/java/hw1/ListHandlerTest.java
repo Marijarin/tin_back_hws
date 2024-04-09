@@ -60,7 +60,12 @@ public class ListHandlerTest {
         "1",
         "",
         "",
-        ""
+        "",
+        "",
+        "",
+        "",
+        List.of(),
+        0
 
     );
 

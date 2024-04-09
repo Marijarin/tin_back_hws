@@ -1,6 +1,5 @@
 package edu.java;
 
-import edu.java.service.jpa.JpaChatService;
 import edu.java.service.jpa.JpaLinkService;
 import java.net.URI;
 import org.junit.jupiter.api.Test;

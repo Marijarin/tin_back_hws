@@ -25,7 +25,7 @@ public class ExceptionApiHandler {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
             "Некорректные параметры запроса",
             "400",
-            MethodArgumentNotValidException.class.getName(),
+            exception,
             exception.getMessage().split(" ; ")[0].split(":")[1].trim(),
             Arrays.stream(exception.getStackTrace()).map(StackTraceElement::getClassName).limit(5)
                 .toArray(String[]::new)

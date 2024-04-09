@@ -20,6 +20,7 @@ import edu.java.bot.service.model.Chat;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,7 +61,12 @@ public class NoCommandHandlerTest {
         "6",
         "",
         "",
-        ""
+        "",
+        "",
+        "",
+        "",
+        List.of(),
+        0
 
     );
 
