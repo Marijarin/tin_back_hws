@@ -49,13 +49,13 @@ management:
   endpoints:
    jmx:
     exposure:
-      include: info, health, prometheus
+      include: "info, health, prometheus"
    web:
-    base-path: /
+    base-path: "/"
     exposure:
-      include: info, health, prometheus
+      include: "info, health, prometheus"
     path-mapping:
-      prometheus: metrics
+      prometheus: "metrics"
   metrics:
     tags:
       application=${spring:

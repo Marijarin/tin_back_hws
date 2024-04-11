@@ -1,0 +1,19 @@
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+
+scrape_configs:
+
+  - job_name: 'bot'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: ['172.17.0.1:8091']
+  - job_name: 'scrapper'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: [ '172.17.0.1:8081' ]
