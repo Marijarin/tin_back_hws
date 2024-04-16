@@ -15,14 +15,16 @@ import edu.java.bot.service.model.Bot;
 import edu.java.bot.service.model.BotUser;
 import edu.java.bot.service.model.Chat;
 import io.micrometer.core.instrument.Clock;
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Tags;
-import io.micrometer.core.instrument.step.StepCounter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
+import io.micrometer.core.instrument.step.StepCounter;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -75,8 +77,7 @@ public class PenBotTest {
                 return command;
             }
         });
-        try (PenBot penBot = new PenBot(
-            bot,
+        try (PenBot penBot = new PenBot(bot,
             applicationConfig,
             new UserMessageHandlerImpl(),
             commandHandlers,
@@ -88,9 +89,10 @@ public class PenBotTest {
             Mockito.when(message.chat()).thenReturn(chat);
             Mockito.when(message.chat().id()).thenReturn(1L);
             Mockito.when(message.from()).thenReturn(user);
-            penBot.processedUserMessagesCounter =
-                new StepCounter(new Meter.Id("", Tags.empty(), "", "", Meter.Type.COUNTER), Clock.SYSTEM, 1000);
+            penBot.processedUserMessagesCounter = new StepCounter (new Meter.Id("", Tags.empty(), "", "", Meter.Type.COUNTER), Clock.SYSTEM, 1000);
+
             int result = penBot.process(List.of(update));
+
             assertThat(result).isEqualTo(-1);
         }
     }
