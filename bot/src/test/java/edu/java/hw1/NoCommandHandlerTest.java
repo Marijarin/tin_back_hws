@@ -20,13 +20,13 @@ import edu.java.bot.service.model.Chat;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -41,35 +41,13 @@ public class NoCommandHandlerTest {
 
     @Mock ScrapperClient scrapperClient;
 
+    @Mock ApplicationConfig applicationConfig;
+
     User user = new User(1L);
 
     UserMessageHandler messageHandler = new UserMessageHandlerImpl();
     com.pengrad.telegrambot.model.Chat chat = mock(com.pengrad.telegrambot.model.Chat.class);
     BotUser botUser = new BotUser(1L, 1L, null, true);
-
-    ApplicationConfig applicationConfig = new ApplicationConfig(
-        "12345",
-        "register",
-        "1",
-        "2",
-        "sorry",
-        "3",
-        "7",
-        "8",
-        "4 ",
-        "^(https?://){1}([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$",
-        "6",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        List.of(),
-        0
-
-    );
-
     @Test
     void processesUnAuthorized() {
         Bot bot = new Bot(
@@ -85,7 +63,7 @@ public class NoCommandHandlerTest {
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
         Mockito.when(scrapperClient.findChat(message.chat().id())).thenReturn(response);
-
+        Mockito.when(applicationConfig.register()).thenReturn("register");
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(
@@ -117,6 +95,11 @@ public class NoCommandHandlerTest {
         Mockito.when(message.from()).thenReturn(user);
         Mockito.when(scrapperClient.startLinkTracking(botUser.chatId(), linkRequest))
             .thenReturn(new LinkResponse(1L, URI.create("https://stackoverflow.com/search?q=unsupported%20link")));
+        Mockito.when(applicationConfig.pattern())
+            .thenReturn(
+                "^(https?://){1}([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$"
+            );
+        Mockito.when(applicationConfig.done()).thenReturn("4 ");
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(
@@ -148,6 +131,11 @@ public class NoCommandHandlerTest {
         Mockito.when(message.from()).thenReturn(user);
         Mockito.when(scrapperClient.stopLinkTracking(botUser.chatId(), linkRequest))
             .thenReturn(new LinkResponse(1L, URI.create("https://stackoverflow.com/search?q=unsupported%20link")));
+        Mockito.when(applicationConfig.done()).thenReturn("4 ");
+        Mockito.when(applicationConfig.pattern())
+            .thenReturn(
+                "^(https?://){1}([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$"
+            );
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(
@@ -176,6 +164,11 @@ public class NoCommandHandlerTest {
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
+        Mockito.when(applicationConfig.notUnderstand()).thenReturn("sorry");
+        Mockito.when(applicationConfig.pattern())
+            .thenReturn(
+                "^(https?://){1}([\\w\\Q$-_+!*'(),%\\E]+\\.)+(\\w{2,63})(:\\d{1,4})?([\\w\\Q/$-_+!*'(),%\\E]+\\.?[\\w\\Q$-_+!*'(),%\\E={0-5}?&.])*/?$"
+            );
 
         var result = handler.handle(bot, messageHandler, update);
 

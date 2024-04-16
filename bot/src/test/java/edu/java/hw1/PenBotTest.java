@@ -24,6 +24,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import scala.App;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -36,6 +38,8 @@ public class PenBotTest {
     @Mock Update update = new Update();
 
     @Mock Message message = new Message();
+
+    @Mock ApplicationConfig applicationConfig;
 
     User user = new User(1L);
     com.pengrad.telegrambot.model.Chat chat = mock(com.pengrad.telegrambot.model.Chat.class);
@@ -54,28 +58,6 @@ public class PenBotTest {
             telegramBot,
             Map.of(botUser, chat1),
             isWaiting
-        );
-        ApplicationConfig applicationConfig = new ApplicationConfig(
-            "12345",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            List.of(),
-            0
-
         );
         Map<String, CommandHandler> commandHandlers = Map.of(command.name(), new CommandHandler() {
             @Override

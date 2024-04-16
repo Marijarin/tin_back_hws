@@ -16,11 +16,9 @@ import edu.java.bot.service.model.BotUser;
 import edu.java.bot.service.model.Chat;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -35,6 +33,8 @@ public class StartHandlerTest {
 
     @Mock Message message = new Message();
     @Mock ScrapperClient scrapperClient;
+
+    @Mock ApplicationConfig applicationConfig;
     HashMap<BotUser, CommandName> isWaiting = new HashMap<>();
     User user = new User(1L);
 
@@ -49,28 +49,6 @@ public class StartHandlerTest {
             new HashMap<>(),
             new HashMap<>()
         );
-        ApplicationConfig applicationConfig = new ApplicationConfig(
-            "12345",
-            "1",
-            "Registered! Hello, dear ",
-            "123123",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            List.of(),
-            0
-
-        );
         var handler = new StartHandler(applicationConfig, scrapperClient);
         var response = new ChatResponse(0L);
         Mockito.when(update.message()).thenReturn(message);
@@ -78,7 +56,7 @@ public class StartHandlerTest {
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
         Mockito.when(scrapperClient.findChat(message.chat().id())).thenReturn(response);
-
+        Mockito.when(applicationConfig.registered()).thenReturn("Registered! Hello, dear ");
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(
@@ -100,34 +78,12 @@ public class StartHandlerTest {
             Map.of(botUser, chat1),
             isWaiting
         );
-        ApplicationConfig applicationConfig = new ApplicationConfig(
-            "12345",
-            "1",
-            "1",
-            "1234567",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "1",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            List.of(),
-            0
-
-        );
         var handler = new StartHandler(applicationConfig, scrapperClient);
         Mockito.when(update.message()).thenReturn(message);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(1L);
         Mockito.when(message.from()).thenReturn(user);
-
+        Mockito.when(applicationConfig.alreadyRegistered()).thenReturn("1234567");
         var result = handler.handle(bot, messageHandler, update);
 
         assertThat(result.getParameters().get("text")).isEqualTo(

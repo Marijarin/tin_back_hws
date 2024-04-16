@@ -19,6 +19,7 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import reactor.core.publisher.Mono;
 
 @Configuration
+@SuppressWarnings("MagicNumber")
 public class ClientConfiguration {
     private final ApplicationConfig applicationConfig;
 

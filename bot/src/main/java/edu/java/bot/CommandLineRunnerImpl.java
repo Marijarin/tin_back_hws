@@ -15,7 +15,7 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     Logger logger = LogManager.getLogger();
 
     @Autowired
-    public CommandLineRunnerImpl(PenBot penBot, ScrapperClient scrapperClient) {
+    public CommandLineRunnerImpl(PenBot penBot) {
         this.penBot = penBot;
     }
 
@@ -23,21 +23,8 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
 
     @SuppressWarnings("MagicNumber")
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         penBot.start();
-//        Thread.sleep(10000);
-//        scrapperClient.registerChat(1L);
-//        AddLinkRequest linkRequest =
-//            new AddLinkRequest(URI.create(
-//                "https://stackoverflow.com/questions/49132346/spring-rest-controller-string-response"));
-//        scrapperClient.startLinkTracking(1L, linkRequest);
-//        scrapperClient.registerChat(2L);
-//        scrapperClient.registerChat(2L);
-//        scrapperClient.startLinkTracking(2L, linkRequest);
-//        scrapperClient.startLinkTracking(2L, linkRequest);
-//        scrapperClient.stopLinkTracking(2L, new RemoveLinkRequest(linkRequest.link()));
-//        scrapperClient.deleteChat(2L);
-//        scrapperClient.deleteChat(2L);
-//        scrapperClient.stopLinkTracking(2L, new RemoveLinkRequest(linkRequest.link()));
+        logger.info("started");
     }
 }

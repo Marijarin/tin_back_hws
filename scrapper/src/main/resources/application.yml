@@ -1,12 +1,13 @@
 app:
   scheduler:
     enable: true
-    interval: 90000
-    force-check-delay: 90000
+    interval: 20000
+    force-check-delay: 20000
   baseUrlGitHub: "https://api.github.com"
   baseUrlStackOverflow: "https://api.stackexchange.com/2.3"
   baseUrlBot: "http://localhost:8090"
   database-access-type: jpa
+  use-queue: true
   type-linear: "linear"
   type-constant: "constant"
   type-exponential: "exponential"
@@ -28,7 +29,15 @@ spring:
     username: postgres
     password: postgres
     driverClassName: org.postgresql.Driver
-
+  kafka:
+    bootstrapServers: localhost:29091
+    clientId: scrapper
+    acksMode: all
+    deliveryTimeout: 60s
+    lingerMs: 12_000
+    batchSize: 100_000
+    maxInFlightPerConnection: 5
+    enableIdempotence: true # to handle specific retry errors
 
 server:
   port: 8080
