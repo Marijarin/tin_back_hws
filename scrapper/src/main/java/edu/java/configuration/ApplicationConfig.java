@@ -26,6 +26,7 @@ public record ApplicationConfig(
     @NotEmpty
     String baseUrlBot,
     AccessType databaseAccessType,
+    Boolean useQueue,
     @NotEmpty
     String typeLinear,
     @NotEmpty

@@ -30,7 +30,6 @@ public record ApplicationConfig(
     String pattern,
     @NotEmpty
     String notTracked,
-
     @NotEmpty
     String baseUrlScrapper,
 
