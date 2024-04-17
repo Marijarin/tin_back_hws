@@ -43,7 +43,8 @@ jobs:
         with:
             images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build and push Docker image
-        uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+        run: mvn -pl scrapper -am package
+             docker build . -t scrapper -f Dockerfile
         with:
             context: .
             file: ./scrapper/scrapper.Dockerfile
