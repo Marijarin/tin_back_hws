@@ -29,6 +29,11 @@ jobs:
 
       - name: maven build
         run: mvn -pl scrapper -am package
+      - name: Copy Jar file
+        uses: actions/upload-artifact@master
+        with:
+          name: jar-file
+          path: scrapper/target/scrapper.jar
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Log in to the Container registry
