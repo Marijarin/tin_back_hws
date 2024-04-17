@@ -1,7 +1,7 @@
 FROM eclipse-temurin:21-jdk as builder
 ENV RELEASE=21
 WORKDIR /opt/build
-COPY ./target/bot.jar ./application.jar
+COPY ./target/*.jar ./application.jar
 
 RUN java -Djarmode=layertools -jar application.jar extract
 RUN $JAVA_HOME/bin/jlink \
@@ -21,7 +21,6 @@ RUN groupadd --gid 1000 bot \
 
 USER bot:bot
 WORKDIR /opt/workspace
-VOLUME /image
 COPY --from=builder $BUILD_PATH/jdk $JAVA_HOME
 COPY --from=builder $BUILD_PATH/spring-boot-loader/ ./
 COPY --from=builder $BUILD_PATH/dependencies/ ./
