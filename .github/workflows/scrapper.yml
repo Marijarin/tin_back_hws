@@ -46,7 +46,6 @@ jobs:
         run: |
             mvn -B clean compile package -DskipTests
             docker build -f scrapper/scrapper.Dockerfile scrapper/  --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            docker run ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
             docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - id: jacoco
