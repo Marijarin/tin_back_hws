@@ -45,7 +45,7 @@ jobs:
       - name: Build and push Docker image
         run: |
             mvn -B clean compile package -DskipTests
-            docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            docker build -f scrapper.Dockerfile .  --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
             docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - id: jacoco
