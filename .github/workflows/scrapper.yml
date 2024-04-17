@@ -46,9 +46,7 @@ jobs:
         run: |
             mvn -B clean compile package -DskipTests
             docker build -f scrapper/scrapper.Dockerfile scrapper/  --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      - name: Push image
-        run:
-            docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            docker push ${{ env.REGISTRY }}/Marijarin/${{ env.IMAGE_NAME }}
 
       - id: jacoco
         uses: madrapps/jacoco-report@v1.6.1
