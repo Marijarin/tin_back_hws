@@ -1,7 +1,7 @@
 FROM eclipse-temurin:21-jdk as builder
 ENV RELEASE=21
 WORKDIR /opt/build
-COPY ./target/*.jar ./application.jar
+COPY bot.jar ./application.jar
 
 RUN java -Djarmode=layertools -jar application.jar extract
 RUN $JAVA_HOME/bin/jlink \
