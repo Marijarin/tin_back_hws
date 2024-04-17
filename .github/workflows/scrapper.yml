@@ -44,7 +44,10 @@ jobs:
             images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build and push Docker image
         run: |
+            mvn -B clean compile package -DskipTests
             docker build -f scrapper/scrapper.Dockerfile scrapper/  --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Push image
+        run:
             docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - id: jacoco
