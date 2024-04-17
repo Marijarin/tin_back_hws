@@ -14,7 +14,9 @@ jobs:
     permissions:
       packages: write
       pull-requests: write
-
+    env:
+     REGISTRY: ghcr.io
+     IMAGE_NAME: ${{ github.repository }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
