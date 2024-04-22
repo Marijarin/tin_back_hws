@@ -1,4 +1,22 @@
 services:
+  scrapper:
+    image: 'scrapper'
+    build:
+      context: scrapper/
+      dockerfile: scrapper.Dockerfile
+    container_name: scrapper
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/scrapper
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgresql
+      - zookeeper
+      - kafka1
+      - prometheus
+      - grafana
+    networks:
+      - backend
   postgresql:
     image: postgres:16
     ports:
