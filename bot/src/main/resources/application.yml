@@ -53,4 +53,22 @@ springdoc:
     path: /api-docs
   default-produces-media-type: application/json
 
+management:
+  server:
+    port: 8091
+  endpoints:
+    jmx:
+      exposure:
+        include: "info, health, prometheus"
+    web:
+      base-path: "/"
+      exposure:
+        include: "info, health, prometheus"
+      path-mapping:
+        prometheus: "metrics"
+  metrics:
+    tags:
+      application=${spring:
+        application:
+          name}:
 
